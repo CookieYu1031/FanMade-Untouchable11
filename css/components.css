@@ -1,0 +1,30 @@
+/* 共用元件：按鈕、圖示按鈕、切換開關、分段選擇、按鍵樣式、提示訊息 */
+.tools-split{justify-content:space-between}
+.tg{display:flex;gap:8px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;flex-wrap:wrap;padding:0 12px 12px}
+.btn{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 12px;cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.btn{-webkit-tap-highlight-color:transparent;outline-offset:2px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.main{background:var(--mint);color:#2B2E4A;border-color:transparent;font-weight:700}
+.hint{font-size:12.5px;color:var(--muted);padding:0 14px 12px;margin:0}
+.ibtn{width:34px;height:34px;border-radius:50%;border:0;background:var(--bg);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;padding:0}
+.ibtn:hover:not(:disabled){box-shadow:inset 0 0 0 2px var(--ink)}
+.ibtn:disabled{opacity:.35;cursor:default}
+.ibtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.ibtn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.h2-acts{display:flex;gap:6px;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--bg);padding:6px 16px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--panel);font-weight:700}
+#toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--panel);padding:11px 20px;border-radius:14px;font-weight:700;opacity:0;
+  pointer-events:none;transition:opacity .2s,transform .2s;z-index:70;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+.switch{position:relative;flex:none;width:46px;height:26px;border-radius:999px;border:1px solid var(--line);background:var(--bg);cursor:pointer;padding:0}
+.switch i{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.switch[aria-checked="true"]{background:var(--ink);border-color:var(--ink)}
+.switch[aria-checked="true"] i{transform:translateX(20px);background:var(--panel)}
+.switch:focus-visible{outline:3px solid var(--ink);outline-offset:2px}

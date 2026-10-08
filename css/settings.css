@@ -1,0 +1,48 @@
+/* 設定視窗：列、音量滑桿、資料匯出匯入、重置資料 */
+.setbody{padding:4px 18px 0}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.srow label,.srow>span{font-weight:700;font-size:14px}
+#nickInput{text-align:right;width:min(240px,60%);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:7px 10px;font:inherit}
+.shead{padding:14px 18px 0;font-weight:700;font-size:14px}
+.shead-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.shead-row .tg{flex:none;flex-wrap:nowrap;font-weight:400;font-size:14px}
+.sdesc{padding:2px 18px 0;font-size:12.5px;color:var(--muted);white-space:pre-line}
+/* 音量、收錄進度表、手機跳轉按鈕 */
+.vol{display:flex;align-items:center;gap:12px}
+#volNum{font-size:13px;font-weight:700;min-width:42px;text-align:right}
+.vslider{width:150px}
+#volRange{-webkit-appearance:none;appearance:none;width:100%;height:22px;margin:0;background:transparent;cursor:pointer;display:block}
+#volRange::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(to right,var(--ink) var(--fill,50%),var(--line) var(--fill,50%))}
+#volRange::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);margin-top:-6px;box-sizing:border-box}
+#volRange::-moz-range-track{height:6px;border-radius:999px;background:var(--line)}
+#volRange::-moz-range-progress{height:6px;border-radius:999px;background:var(--ink)}
+#volRange::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);box-sizing:border-box}
+#volRange:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:6px}
+.vticks{display:flex;justify-content:space-between;padding:0 9px;margin-top:-3px;pointer-events:none}
+.vticks span{width:1px;height:6px;background:var(--muted)}
+.vticks span.on{background:var(--ink);height:8px}
+/* 設定：JSON 展開區、重置資料 */
+.jsonbox{margin:12px 14px 0}
+.jsonbox>summary{cursor:pointer;font-size:13px;font-weight:700;padding:7px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);list-style:none;display:flex;align-items:center;gap:8px;user-select:none}
+.jsonbox>summary::-webkit-details-marker{display:none}
+.jsonbox>summary::before{content:"▸";display:inline-block;transition:transform .15s}
+.jsonbox[open]>summary::before{transform:rotate(90deg)}
+.jsonbox>summary:hover{border-color:var(--ink)}
+.jsonbox textarea{width:100%;margin:10px 0 0}
+.dzone{margin-top:8px;border-top:1px dashed var(--line)}
+.btn.danger{border-color:#F0364B;color:#F0364B;font-weight:700}
+.btn.danger:hover:not(:disabled){background:#F0364B;color:#fff;box-shadow:none}
+.txt{width:calc(100% - 28px);margin:12px 14px 0;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:9px 12px;font:inherit}
+/* 額外難度：深色頂欄用淺色字、設定列、開關、近似解區 */
+.srow2{gap:0}
+.srow2 .sgrp:first-child{padding-right:16px}
+.sgrp-vol{padding-left:16px;border-left:1px solid var(--line)}
+.sgrp{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1 1 0;min-width:0}
+.sgrp>span{font-weight:700;font-size:14px;white-space:nowrap}
+.sgrp-vol{justify-content:space-between}
+.sgrp-vol .vol{flex:1;min-width:0;justify-content:flex-end;gap:8px}
+.sgrp-vol .vslider{width:auto;flex:1 1 60px;min-width:60px;max-width:150px}
+.sgrp-vol #volNum{min-width:38px}
+@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:6px 9px}}
+.srow .sub{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}

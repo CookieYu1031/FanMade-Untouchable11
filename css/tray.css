@@ -1,0 +1,12 @@
+/* 拼圖盤與拼圖卡片 */
+/* ============ 拼圖盤 ============ */
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;padding:12px}
+.card{background:var(--bg);border:2px solid transparent;border-radius:12px;padding:6px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;
+  touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.card span{font-size:11px;color:var(--muted)}
+.card.sel{border-color:var(--ink)}
+.card,.pc{-webkit-touch-callout:none}
+.card.wide{grid-column:span 2} /* 第 11 片（5 格寬）佔原本第 11、12 兩個位置 */
+.card.placed{opacity:.4}
+.card{position:relative}

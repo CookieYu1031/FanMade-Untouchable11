@@ -1,0 +1,18 @@
+/* 解答冊、縮圖、近似解區 */
+/* ============ 存檔槽 / 解答冊 ============ */
+.slot{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.slot:last-child{border-bottom:0}
+.slot .info{font-size:13px}
+.slot .info small{color:var(--muted);display:block}
+.slot .acts{display:flex;gap:6px}
+.slot .btn{padding:5px 9px;font-size:13px}
+.book-thumbs{display:flex;flex-wrap:wrap;gap:8px;max-height:260px;overflow:auto;margin-top:10px}
+.thumb{border:1px solid var(--line);background:var(--board);border-radius:8px;padding:0;cursor:pointer;
+  width:164px;height:124px;display:grid;place-items:center}
+.thumb svg{display:block}
+.thumb:hover{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.empty{color:var(--muted);font-size:13px;margin:6px 0 0}
+.book-count{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.book-count .bc-l{text-align:left}.book-count .bc-r{text-align:right}
+.nearzone{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+.neardesc{font-size:12.5px;color:var(--muted);margin:12px 0 0;white-space:pre-line}

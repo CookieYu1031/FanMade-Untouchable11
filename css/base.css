@@ -1,0 +1,34 @@
+/* 基礎：色彩 token（亮 / 暗主題）、重置、共用工具 */
+/* ============ 色彩 token（亮 / 暗主題）============ */
+:root{
+  --bg:#F3F5FB; --panel:#FFFFFF; --ink:#2B2E4A; --muted:#6B6F8F; --line:#DADDF0;
+  --board:#FFFFFF; --gridline:#E3E6F5; --red:#F0364B; --blue:#A9CFF7; --p6:#D2F0B5; --p4:#F9B8D2; --lvc:#F28B8B;
+  --pink:#F7B7C5; --peach:#FFC9A3; --yellow:#FDE79A; --mint:#B7E5CD; --sky:#B0D6F2; --lav:#D0BDF2;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;
+    --board:#20223B; --gridline:#34375A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;
+  --board:#20223B; --gridline:#34375A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55}
+button{font:inherit;color:inherit}
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px}
+
+[hidden]{display:none!important}
+html.lock{overflow:hidden}
+.modal{overscroll-behavior:contain}
+
+/* 設定檔載入失敗時的提示（見 js/main.js） */
+.load-error{max-width:640px;margin:40px auto;padding:20px 24px;background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.load-error h2{margin:0 0 8px;font-size:18px}
+.load-error code,.load-error pre{background:var(--bg);border-radius:6px;padding:1px 6px;font-size:13px;white-space:pre-wrap}

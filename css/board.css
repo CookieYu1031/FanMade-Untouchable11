@@ -1,0 +1,13 @@
+/* 底板、選取拼圖的工具列、拖曳殘影 */
+.stage{margin-bottom:0;display:flex;flex-direction:column}
+.board-wrap{padding:14px;overflow:auto;display:flex;justify-content:center;flex:1}
+#board{display:block;margin:auto;touch-action:none;background:var(--board);border-radius:3px;
+  border:2px solid var(--line);user-select:none;-webkit-user-select:none}
+.pc{cursor:grab}
+.pc.sel rect{stroke:var(--ink);stroke-width:.1}
+
+.ptools{position:fixed;z-index:45;display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--panel);
+  border:1px solid var(--line);box-shadow:0 6px 16px rgba(20,22,40,.22)}
+.ptools[hidden]{display:none}
+.ghost{position:fixed;z-index:50;pointer-events:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));opacity:.92}
+.stage>h2{color:var(--lvink,#2B2E4A)}

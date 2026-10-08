@@ -1,0 +1,12 @@
+/* 統計視窗：收錄進度表 */
+.stat{width:100%;border-collapse:collapse;font-size:13.5px}
+.stat th{text-align:center;font-size:12px;color:var(--muted);padding:12px 12px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.stat td{text-align:center;padding:10px 12px;border-bottom:1px dashed var(--line);vertical-align:middle;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lvtag{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;color:#2B2E4A;white-space:nowrap}
+.pg{display:flex;align-items:center;gap:8px;width:226px;margin:0 auto;text-align:left}
+.pbar{flex:none;width:150px;height:10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.pbar>i{display:block;height:100%;border-radius:999px;background:var(--c)}
+.dots{display:flex;flex-wrap:wrap;gap:5px}
+.dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--c);box-sizing:border-box}
+.dots i.on{background:var(--c)}
+.pct{min-width:60px;font-weight:700;text-align:left}

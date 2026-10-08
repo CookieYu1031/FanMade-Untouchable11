@@ -1,0 +1,22 @@
+{
+  "_說明": "palette：fill = 方塊填色、edge = 方塊邊線（較深一階）。slotColors：依關卡的槽位數決定顏色序（拼圖本身沒有顏色，顏色跟槽位掛鉤）。",
+  "palette": {
+    "red": {"fill": "#F28B8B", "edge": "#DB6464"},
+    "pink": {"fill": "#F9B8D2", "edge": "#E98BB3"},
+    "orange": {"fill": "#F9B27A", "edge": "#E78D47"},
+    "lorange": {"fill": "#FCD3AE", "edge": "#EDB07D"},
+    "yellow": {"fill": "#FBE08A", "edge": "#E3C24E"},
+    "green": {"fill": "#86CF8E", "edge": "#5DB26A"},
+    "lgreen": {"fill": "#D2F0B5", "edge": "#A6D080"},
+    "blue": {"fill": "#8DBDF0", "edge": "#5E96D8"},
+    "lblue": {"fill": "#BFE3F8", "edge": "#8CC4E6"},
+    "teal": {"fill": "#8EDCD0", "edge": "#5BBFB0"},
+    "indigo": {"fill": "#A4A3E8", "edge": "#7B7AD0"},
+    "purple": {"fill": "#C9A8EE", "edge": "#A47DD6"}
+  },
+  "slotColors": {
+    "9": ["red", "pink", "orange", "yellow", "green", "teal", "blue", "indigo", "purple"],
+    "11": ["red", "pink", "orange", "yellow", "green", "lgreen", "blue", "lblue", "teal", "indigo", "purple"],
+    "12": ["red", "pink", "orange", "lorange", "yellow", "green", "lgreen", "blue", "lblue", "teal", "indigo", "purple"]
+  }
+}
