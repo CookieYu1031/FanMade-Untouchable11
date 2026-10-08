@@ -1,6 +1,6 @@
 /* =====================================================================
  * 設定載入 —— 讀取 data/*.json，組出拼圖庫、配色、關卡
- *   pieces.json：35 種六格拼圖（分「適用組」1~21 號、「不適用組」22~35 號）
+ *   pieces.json：35 種六格拼圖（皆為六格骨牌；1~21 號「常用組」、22~35 號「非常用組」）
  *   levels.json：關卡（尺寸、解答數、各槽位放哪一號拼圖）與拼圖盤顯示順序
  *   colors.json：色盤與「槽位數 → 顏色序」
  * 匯出的都是「容器」（陣列 / 物件）：loadConfig() 只會往裡面填資料，不會換掉它們，
@@ -10,7 +10,7 @@ import { cellsOf } from './matrix.js';
 
 export const PIECES = [];          // 拼圖物件陣列（依號碼排序）
 export const PIECE = {};           // 代號 → 拼圖物件
-export const PIECE_GROUPS = [];    // 拼圖分組（適用組 / 不適用組）
+export const PIECE_GROUPS = [];    // 拼圖分組（常用組 / 非常用組）
 export const COLORS = {};          // 色名 → { fill, edge }
 export const SLOT_COLORS = {};     // 槽位數 → 色名陣列
 export const LEVELS = [];          // 關卡陣列（索引 = lv - 1）
@@ -29,7 +29,7 @@ async function fetchJSON(path) {
   return res.json();
 }
 
-/* ---- 拼圖：驗證「全體都是六格拼圖」，並依群組標記是否適用 ---- */
+/* ---- 拼圖：驗證「全體都是六格拼圖」，並依群組標記是否為常用組（僅作分類，不限制關卡使用） ---- */
 function buildPieces(data) {
   const { family, groups, pieces } = data;
   if (!Array.isArray(pieces) || pieces.length !== family.count)
@@ -53,14 +53,14 @@ function buildPieces(data) {
     if (cellsOf(matrix).length !== family.cells)
       throw new Error(`pieces.json：${no} 號不是 ${family.cells} 格拼圖（${family.name}）`);
     const group = groups.find(g => no >= g.range[0] && no <= g.range[1]);
-    const piece = { no, id: pieceId(no), name: `${no}號`, def: p.def, matrix, group: group.id, applicable: group.applicable };
+    const piece = { no, id: pieceId(no), name: `${no}號`, def: p.def, matrix, group: group.id, common: group.common };
     PIECES.push(piece);
   });
   Object.keys(PIECE).forEach(k => delete PIECE[k]);
   PIECES.forEach(p => { PIECE[p.id] = p; });
 }
 
-/* ---- 關卡：槽位 → 拼圖號碼，並檢查只能用「適用組」的拼圖 ---- */
+/* ---- 關卡：槽位 → 拼圖號碼（任何組別的拼圖都可使用） ---- */
 function buildLevels(data) {
   const sets = data.slotSets || {};
   Object.keys(TRAY_ORDER).forEach(k => delete TRAY_ORDER[k]);
@@ -75,7 +75,6 @@ function buildLevels(data) {
     nums.forEach(n => {
       const p = PIECE[pieceId(n)];
       if (!p) throw new Error(`levels.json：第 ${src.lv} 關使用了不存在的 ${n} 號拼圖`);
-      if (!p.applicable) throw new Error(`levels.json：第 ${src.lv} 關使用了不適用組的 ${n} 號拼圖`);
     });
     if (new Set(nums).size !== nums.length) throw new Error(`levels.json：第 ${src.lv} 關的拼圖號碼重複`);
     const L = { ...src, pieces: nums, ids: nums.map(pieceId).join('') };

@@ -11,8 +11,8 @@
 ## 結構
 - `index.html`：頁面結構（所有視窗的 HTML）
 - `data/`：設定檔
-  - `pieces.json`：35 種六格拼圖（1~21 號「適用組」、22~35 號「不適用組」），啟動時會驗證每片都是 6 格
-  - `levels.json`：關卡（尺寸、解答數、各槽位放哪一號拼圖）、拼圖盤順序；關卡只能用適用組拼圖
+  - `pieces.json`：35 種六格骨牌（1~21 號「常用組」、22~35 號「非常用組」），啟動時會驗證每片都是 6 格
+  - `levels.json`：關卡（尺寸、解答數、各槽位放哪一號拼圖）、拼圖盤順序；關卡可使用任一組的拼圖
   - `colors.json`：色盤與「槽位數 → 顏色序」
 - `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats）；載入順序見 index.html，順序會影響覆蓋關係
 - `js/`：依功能分檔（ES modules），進入點 `main.js`

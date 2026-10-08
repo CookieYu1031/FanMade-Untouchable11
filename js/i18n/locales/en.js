@@ -29,7 +29,6 @@ export default {
     'near.count':(n, m) => `<span class="bc-l">Near solutions</span><span class="bc-r"><b>${m == null ? n : n + '/' + m}</b> collected</span>`,
     'near.empty':'No near solutions yet (collected automatically)',
     'near.desc':() => `A near solution allows one corner contact.`,
-    'welcome.start':'Start playing',
     'brd.title':'Reset board', 'brd.desc':'Reset the board for this level?\nAll pieces go back to the tray. This cannot be undone.', 'brd.confirm':'Reset',
     'tip.stats':'Statistics', 'stat.title':'Statistics', 'stat.lv':'Level', 'stat.total':'Solutions', 'stat.got':'Collected', 'stat.progress':'Progress',
     'set.vol':'Volume',

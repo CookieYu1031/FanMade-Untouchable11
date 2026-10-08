@@ -2,8 +2,8 @@
   "_說明": "拼圖格式：'o' = 方塊、'x' = 空格，逗號分隔各列（由上到下）。旋轉、鏡像視為同一種拼圖；定義的是預設樣式。",
   "family": {"name": "六格骨牌", "nameEn": "Hexomino", "cells": 6, "count": 35},
   "groups": [
-    {"id": 1, "name": "適用組", "nameEn": "Applicable", "range": [1, 21], "applicable": true},
-    {"id": 2, "name": "不適用組", "nameEn": "Not applicable", "range": [22, 35], "applicable": false}
+    {"id": 1, "name": "常用組", "nameEn": "Common", "range": [1, 21], "common": true},
+    {"id": 2, "name": "非常用組", "nameEn": "Uncommon", "range": [22, 35], "common": false}
   ],
   "pieces": [
     {"no": 1, "def": "oooooo"},

@@ -29,7 +29,6 @@ export default {
     'near.count':(n, m) => `<span class="bc-l">近似解</span><span class="bc-r">已收錄 <b>${m == null ? n : n + '/' + m}</b> 組</span>`,
     'near.empty':'還沒有近似解(會自動收錄)',
     'near.desc':() => `近似解即允許存在一組角觸碰`,
-    'welcome.start':'開始遊玩',
     'brd.title':'重置版圖', 'brd.desc':'確定要重置目前等級的版圖嗎？\n版圖上的拼圖會全部回到拼圖盤，且無法復原。', 'brd.confirm':'確認重置',
     'tip.stats':'統計', 'stat.title':'統計', 'stat.lv':'等級', 'stat.total':'解答組數', 'stat.got':'收錄組數', 'stat.progress':'收錄進度',
     'set.vol':'音量',

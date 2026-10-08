@@ -1,5 +1,5 @@
 {
-  "_說明": "pieces = 各槽位依序放的拼圖號碼（號碼見 pieces.json，且必須屬於適用組）；槽位順序同時決定顏色（見 colors.json 的 slotColors）。可寫成號碼陣列，或引用 slotSets 的名稱。cols/rows = 底板寬/高（格）；total = 正解總組數；near = true（有近似解、總數未知）或近似解總組數；extra = 獨立關卡（設定中開啟才會出現）；title = 該關卡的遊戲標題（省略則用 defaultTitle）。",
+  "_說明": "pieces = 各槽位依序放的拼圖號碼（號碼見 pieces.json，常用組與非常用組皆可使用）；槽位順序同時決定顏色（見 colors.json 的 slotColors）。可寫成號碼陣列，或引用 slotSets 的名稱。cols/rows = 底板寬/高（格）；total = 正解總組數；near = true（有近似解、總數未知）或近似解總組數；extra = 獨立關卡（設定中開啟才會出現）；title = 該關卡的遊戲標題（省略則用 defaultTitle）。",
   "defaultTitle": "Untouchable 11",
   "slotSets": {
     "standard11": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 8]

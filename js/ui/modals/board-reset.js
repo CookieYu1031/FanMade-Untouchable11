@@ -1,7 +1,7 @@
 /* 重置版圖確認視窗 */
 import { Sfx } from '../../audio/sfx.js';
 import { t } from '../../i18n/i18n.js';
-import { state, curPieces, freshPieces } from '../../state/state.js';
+import { state, freshPieces } from '../../state/state.js';
 import { updateUndo } from '../../storage/history.js';
 import { $ } from '../dom.js';
 import { toast } from '../toast.js';
@@ -11,7 +11,6 @@ import { renderTray } from '../render-tray.js';
 const brdModal = $('boardResetModal');
 export function askResetBoard() {
   if (state.drag) return;
-  if (!curPieces().some(p => p.placed)) { toast(t('toast.emptyBoard')); return; }
   brdModal.classList.add('open'); $('brdConfirm').focus();
 }
 function doResetBoard() {

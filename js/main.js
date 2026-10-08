@@ -17,7 +17,6 @@ import './ui/interaction/drag.js';
 import './ui/interaction/transform.js';
 import './ui/interaction/undo.js';
 import './ui/modals/info.js';
-import './ui/modals/welcome.js';
 import './ui/modals/help.js';
 import './ui/modals/special.js';
 import './ui/modals/solution.js';

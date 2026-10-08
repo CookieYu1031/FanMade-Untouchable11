@@ -8,18 +8,27 @@ import { cellRects } from './svg.js';
 import { traySlots } from './render-tray.js';
 import { syncTools } from './piece-tools.js';
 
+// 觸控裝置（手機）捲動時網址列會收合 / 展開，window.innerHeight 與 resize 事件會跟著變動，
+// 造成圖板高度與格子大小一直改變。因此觸控 + 窄視窗時，同一個視窗寬度只取第一次的高度，不再隨捲動更新。
+let vhCache = { w: 0, h: 0 };
+export function viewportH() {
+  const w = window.innerWidth;
+  if (!window.matchMedia('(max-width:759px) and (pointer:coarse)').matches) return window.innerHeight;
+  if (vhCache.w !== w) vhCache = { w, h: window.innerHeight };   // 寬度改變（轉向、分割視窗）才重新取值
+  return vhCache.h;
+}
 // 依視窗大小決定每格像素，並設定 SVG 尺寸（viewBox 以「格」為單位，所以座標都不需換算）
 export function fitBoard() {
   const D = dims();
   const availW = Math.max(240, els.wrap.clientWidth - 30);
-  const availH = Math.max(300, window.innerHeight - 240);
+  const availH = Math.max(300, viewportH() - 240);
   let c = clamp(Math.floor(Math.min(availW / D.cols, availH / D.rows)), 14, 48);
 
   // 拼圖盤與底板共用同一個格子大小（拖曳時大小才不會跳動）。
   // 先依底板算出 c，再確認拼圖盤放得下；放不下就一起縮小，避免「盤很大、拼圖很小」或反過來。
   const trayW = Math.max(200, els.tray.clientWidth - 24), gap = 8;
   const sideBySide = window.matchMedia('(min-width: 1180px)').matches; // 拼圖盤在右側時高度受視窗限制
-  const maxH = sideBySide ? Math.max(420, window.innerHeight - 180) : Infinity;
+  const maxH = sideBySide ? Math.max(420, viewportH() - 180) : Infinity;
   // 第 11 片（5 格寬）要佔兩個欄位，所以拼圖盤至少 2 欄；高度以 12 個欄位（11 片 + 1 個空位）估算
   const trayHeight = k => {
     const cols = Math.max(2, Math.floor((trayW + gap) / (4 * k + 12 + gap)));

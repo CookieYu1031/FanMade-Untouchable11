@@ -14,5 +14,4 @@ export const Store = {
     try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 忽略：改用記憶體 */ }
   },
 };
-export const KEY_WELCOME = 'untouchable11.welcomed.v1';
 export const KEY_UI = 'untouchable11.ui.v1';

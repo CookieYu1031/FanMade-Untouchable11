@@ -12,9 +12,4 @@
 .hsec p{margin:0;line-height:1.7}
 html[lang="en"] #helpModal .box{width:min(700px,100%)}
 /* 首次開啟的歡迎視窗 */
-.wwrap{width:min(980px,100%);display:flex;flex-direction:column;align-items:center;gap:16px;max-height:100%}
-.wcols{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border-radius:18px;overflow:auto;width:100%;max-height:calc(100vh - 110px)}
-.wcol+.wcol{border-left:1px solid var(--line)}
-.wcol .panel{margin:0;border:0;border-radius:0}
-@media (max-width:759px){.wcols{grid-template-columns:1fr}.wcol+.wcol{border-left:0;border-top:1px solid var(--line)}}
 #solTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
