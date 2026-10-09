@@ -8,7 +8,7 @@ import { solModal, stepSolution } from './modals/solution.js';
 
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape' && state.drag && state.drag.hold) { cancelHold(); return; }
-  if (e.key === 'Escape') { document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open')); return; }
+  if (e.key === 'Escape') { document.querySelectorAll('.modal.open:not([data-lock])').forEach(m => m.classList.remove('open')); return; }
   if (solModal.classList.contains('open') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {   // 解答檢視：左右鍵切換
     stepSolution(e.key === 'ArrowLeft' ? -1 : 1); e.preventDefault(); return;
   }

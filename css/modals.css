@@ -5,8 +5,6 @@
 .modal textarea{width:calc(100% - 28px);margin:12px 14px 0;height:200px;border-radius:10px;border:1px solid var(--line);
   background:var(--bg);color:var(--ink);padding:10px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
 .modal .tools{padding:12px 14px 14px}
-#dataMsg{padding:8px 14px 0;font-size:13px;color:var(--muted)}
-#dataMsg:empty{display:none}
 /* 英文模式：二級介面加寬，快捷鍵說明不換行 */
 #helpModal .box,#specialModal .box{width:min(520px,100%)}
 .hsec h3{font-size:14px;margin:0 0 6px}

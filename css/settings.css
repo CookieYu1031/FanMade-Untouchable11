@@ -28,15 +28,7 @@
 .vticks{display:flex;justify-content:space-between;padding:0 9px;margin-top:-3px;pointer-events:none}
 .vticks span{width:1px;height:6px;background:var(--muted)}
 .vticks span.on{background:var(--ink);height:8px}
-/* 設定：JSON 展開區、重置資料 */
-.jsonbox{margin:12px 14px 0}
-.jsonbox>summary{cursor:pointer;font-size:13px;font-weight:700;padding:7px 12px;border:1px solid var(--line);border-radius:10px;
-  background:var(--bg);list-style:none;display:flex;align-items:center;gap:8px;user-select:none}
-.jsonbox>summary::-webkit-details-marker{display:none}
-.jsonbox>summary::before{content:"▸";display:inline-block;transition:transform .15s}
-.jsonbox[open]>summary::before{transform:rotate(90deg)}
-.jsonbox>summary:hover{border-color:var(--ink)}
-.jsonbox textarea{width:100%;margin:10px 0 0}
+/* 設定：重置資料 */
 .dzone{margin-top:14px;border-top:1px dashed var(--line)}
 .dzone .srow{border-bottom:0;padding:12px 18px}
 .srow-reset .btn{flex:none}
@@ -57,3 +49,21 @@
 .sgrp-vol #volNum{min-width:38px}
 @media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:6px 9px}.sgrp-nick #nickInput{padding:6px 6px;font-size:13px}.sel{padding:6px 30px 6px 8px;font-size:13px}.selwrap::after{right:12px}}
 .srow .sub{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
+
+/* 帳戶列：未登入顯示說明與登入按鈕；已登入顯示頭像、名稱、同步狀態與登出 */
+.srow-acct{min-height:72px}
+.acct-info{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.acct-info img,.acct-info .av{flex:none;width:38px;height:38px;border-radius:50%;background:var(--bg);object-fit:cover}
+.acct-txt{min-width:0}
+.acct-txt b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acct-txt small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.acct-txt small.err{color:#F0364B}
+.acct-txt small button{border:0;background:none;padding:0 0 0 6px;text-decoration:underline;cursor:pointer;color:inherit;font-size:inherit}
+.btn.gbtn{display:inline-flex;align-items:center;gap:8px;flex:none;font-weight:700}
+.btn.gbtn svg{width:18px;height:18px}
+.srow-acct>.btn{flex:none}
+/* 重置資料：勾選要清除的內容 */
+.rchecks{padding:12px 18px 0;display:grid;gap:10px}
+.rchk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px}
+.rchk input{margin-top:3px;width:16px;height:16px;accent-color:var(--ink);flex:none}
+.rchk small{display:block;font-size:12px;color:var(--muted)}

@@ -1,19 +1,18 @@
-/* 設定 —— 暱稱、語言、背景、獨立關卡開關、音量 */
-import { Store, KEY_SET } from '../storage/store.js';
+/* 設定 —— 暱稱、語言、背景、獨立關卡開關、音量（登入時會同步到雲端） */
+import { Store, Hooks, KEY_SET } from '../storage/store.js';
 import { normLang } from '../i18n/i18n.js';
 
-// ---- 設定 ----
-export const settings = (() => {
-  const s = Store.get(KEY_SET, {}) || {};
-  return {
-    nick: typeof s.nick === 'string' ? s.nick.slice(0, 20) : '',
-    lang: normLang(s.lang),
-    theme: s.theme === 'light' || s.theme === 'dark' ? s.theme : null, // null = 跟隨系統
-    extra: s.extra === true,   // 是否啟用獨立關卡（大師挑戰、危險貨物）
-    vol: Number.isInteger(s.vol) && s.vol >= 0 && s.vol <= 10 ? s.vol : 5, // 音量：0~10 段，每段 10%
-  };
-})();
-export const saveSettings = () => Store.set(KEY_SET, settings);
+// 把任意來源（本機存檔、雲端資料）整理成合法設定
+export const sanitizeSettings = (s = {}) => ({
+  nick: typeof s.nick === 'string' ? s.nick.slice(0, 20) : '',
+  lang: normLang(s.lang),
+  theme: s.theme === 'light' || s.theme === 'dark' ? s.theme : null, // null = 跟隨系統
+  extra: s.extra === true,   // 是否啟用獨立關卡（大師挑戰、危險貨物）
+  vol: Number.isInteger(s.vol) && s.vol >= 0 && s.vol <= 10 ? s.vol : 5, // 音量：0~10 段，每段 10%
+});
+export const settings = sanitizeSettings(Store.get(KEY_SET, {}) || {});
+export const saveSettingsLocal = () => Store.set(KEY_SET, settings);          // 只寫本機（套用雲端資料時用）
+export const saveSettings = () => { saveSettingsLocal(); if (Hooks.settings) Hooks.settings(); };   // 寫本機並通知雲端同步
 export const effTheme = () => settings.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 export function applyTheme() {
   const r = document.documentElement;

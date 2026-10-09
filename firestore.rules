@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 每位登入的使用者只能讀寫自己的資料
+    match /users/{uid}/data/{doc} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && (doc == 'settings' || doc == 'meta');
+    }
+    match /users/{uid}/book/{doc} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && request.resource.data.items is list
+                            && request.resource.data.items.size() <= 500;
+    }
+  }
+}

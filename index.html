@@ -180,6 +180,7 @@
       <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="set.title"></span><button class="ibtn" id="setClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
     <div class="setbody">
+      <div class="srow srow-acct" id="acctBox"></div>
       <div class="srow srow2">
         <div class="sgrp sgrp-nick"><label for="nickInput" data-i18n="set.nick"></label><input id="nickInput" maxlength="20" autocomplete="off" data-i18n-ph="set.nickPh"></div>
         <div class="sgrp sgrp-vol sgrp-lang"><label for="selLang" data-i18n="set.lang"></label><div class="selwrap"><select id="selLang" class="sel"><option value="zh">中文</option><option value="en">English</option><option value="ja">日本語</option></select></div></div>
@@ -190,19 +191,6 @@
       </div>
       <div class="srow"><span><span data-i18n="set.extra"></span><small class="sub" data-i18n="set.extraDesc"></small></span><button class="switch" id="swExtra" role="switch" aria-checked="false" data-i18n-title="set.extra"><i></i></button></div>
     </div>
-    <div class="shead shead-row"><span data-i18n="set.data"></span>
-      <div class="tg">
-        <button class="btn" id="dataDownload" data-i18n="data.export"></button>
-        <button class="btn" id="dataPick" data-i18n="data.pickFile"></button>
-        <input type="file" id="dataFile" accept=".json,application/json" hidden>
-      </div>
-    </div>
-    <div class="sdesc" data-i18n="set.dataDesc"></div>
-    <details class="jsonbox" id="jsonBox">
-      <summary data-i18n="data.showJson"></summary>
-      <textarea id="dataText" spellcheck="false" data-i18n-ph="data.ph"></textarea>
-    </details>
-    <div id="dataMsg"></div>
     <div class="dzone">
       <div class="srow srow-reset"><span><span data-i18n="reset.title"></span><small class="sub" data-i18n="reset.desc"></small></span><button class="btn danger" id="resetOpen" data-i18n="reset.btn"></button></div>
     </div>
@@ -227,11 +215,44 @@
     <div class="panel" style="margin:0;border:0;border-radius:0">
       <h2 style="--c:#F28B8B;background:#F28B8B"><span data-i18n="reset.confirmTitle"></span><button class="ibtn" id="resetClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
-    <div class="sdesc" style="padding-top:14px;font-size:13.5px;color:var(--ink)" data-i18n="reset.confirmDesc"></div>
+    <div class="rchecks">
+      <label class="rchk"><input type="checkbox" id="rstCache" checked><span><b data-i18n="reset.optCache"></b><small data-i18n="reset.optCacheDesc"></small></span></label>
+      <label class="rchk"><input type="checkbox" id="rstSet" checked><span><b data-i18n="reset.optSettings"></b><small data-i18n="reset.optSettingsDesc"></small></span></label>
+      <label class="rchk"><input type="checkbox" id="rstSol"><span><b data-i18n="reset.optSolutions"></b><small data-i18n="reset.optSolutionsDesc"></small></span></label>
+      <label class="rchk"><input type="checkbox" id="rstNear"><span><b data-i18n="reset.optNear"></b><small data-i18n="reset.optNearDesc"></small></span></label>
+    </div>
+    <div class="sdesc" style="padding-top:12px;font-size:13px;color:var(--muted)" data-i18n="reset.cloudNote"></div>
+    <div class="sdesc" style="padding-top:8px;font-size:13.5px;color:var(--ink)" data-i18n="reset.confirmDesc"></div>
     <input class="txt" id="resetInput" autocomplete="off" spellcheck="false" data-i18n-ph="reset.ph">
     <div class="tools" style="padding:14px;justify-content:flex-end">
       <button class="btn" id="resetCancel" data-i18n="reset.cancel"></button>
       <button class="btn danger" id="resetConfirm" data-i18n="reset.confirm" disabled></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mergeModal" data-lock>
+  <div class="box" style="width:min(440px,100%)">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="merge.title"></span></h2>
+    </div>
+    <div class="sdesc" id="mergeDesc" style="padding:16px 18px 0;font-size:13.5px;color:var(--ink)"></div>
+    <div class="tools" style="padding:16px 14px 14px;justify-content:flex-end">
+      <button class="btn" id="mergeNo" data-i18n="merge.no"></button>
+      <button class="btn main" id="mergeYes" data-i18n="merge.yes"></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="logoutModal">
+  <div class="box" style="width:min(420px,100%)">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:#F28B8B;background:#F28B8B"><span data-i18n="logout.title"></span><button class="ibtn" id="logoutClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+    </div>
+    <div class="sdesc" style="padding:16px 18px 0;font-size:13.5px;color:var(--ink)" data-i18n="logout.desc"></div>
+    <div class="tools" style="padding:16px 14px 14px;justify-content:flex-end">
+      <button class="btn" id="logoutCancel" data-i18n="reset.cancel"></button>
+      <button class="btn danger" id="logoutConfirm" data-i18n="logout.confirm"></button>
     </div>
   </div>
 </div>

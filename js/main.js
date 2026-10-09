@@ -7,6 +7,7 @@ import { state, initState, applyMode, fromNative, curLevel } from './state/state
 import { sanitizeNative, persistBoards } from './storage/boards.js';
 import { legacyBoard } from './storage/legacy.js';
 import { refresh } from './ui/render.js';
+import { initCloud } from './cloud/sync.js';
 
 // 以下模組載入時會綁定各自負責的事件
 import './audio/sfx-bindings.js';
@@ -23,6 +24,7 @@ import './ui/modals/solution.js';
 import './ui/modals/share.js';
 import './ui/modals/board-reset.js';
 import './ui/modals/settings.js';
+import './ui/modals/account.js';
 import './ui/modals/stats.js';
 import './ui/modals/reset-data.js';
 import './ui/modals/scroll-lock.js';
@@ -53,6 +55,7 @@ async function boot() {
   if (curLevel().extra && !settings.extra) state.level = 8;
   window.addEventListener('pagehide', persistBoards);
   refresh();
+  initCloud();   // 曾登入過才會載入 Firebase 並還原登入狀態
 }
 boot();
 
