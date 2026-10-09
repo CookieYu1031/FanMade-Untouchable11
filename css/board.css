@@ -11,3 +11,7 @@
 .ptools[hidden]{display:none}
 .ghost{position:fixed;z-index:50;pointer-events:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));opacity:.92}
 .stage>h2{color:var(--lvink,#2B2E4A)}
+/* 圖板標題：名稱與尺寸分開，窄視窗放不下時整組「12 × 12」一起換行，不會被拆開 */
+#levelTitle{min-width:0;line-height:1.25}
+#levelTitle .lvn{margin-right:1em}
+#levelTitle .dims{font-weight:500;white-space:nowrap}

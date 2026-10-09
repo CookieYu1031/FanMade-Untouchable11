@@ -21,6 +21,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55}
+html[lang="ja"] body{font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif}
 button{font:inherit;color:inherit}
 .wrap{max-width:1280px;margin:0 auto;padding:0 16px}
 

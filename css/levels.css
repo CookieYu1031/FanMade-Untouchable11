@@ -14,9 +14,9 @@
 .lv .badge{position:absolute;top:-6px;right:-6px;background:var(--ink);color:var(--panel);
   border-radius:999px;font-size:11px;min-width:20px;padding:1px 6px;text-align:center}
 @media (max-width:759px){
-  html[lang="en"] .lv{flex-direction:column;gap:0;padding:6px 2px}
-  html[lang="en"] .lv b,html[lang="en"] .lv small{font-size:13px}
+  html[lang="en"] .lv,html[lang="ja"] .lv{flex-direction:column;gap:0;padding:6px 2px}
+  html[lang="en"] .lv b,html[lang="en"] .lv small,html[lang="ja"] .lv b,html[lang="ja"] .lv small{font-size:13px}
   /* 英文名稱較長（如 Master Challenge、Hazmat Cargo）：允許換行，避免超出按鈕寬度 */
-  html[lang="en"] .lv{white-space:normal;line-height:1.15;text-align:center}
-  html[lang="en"] .lv b,html[lang="en"] .lv small{overflow-wrap:anywhere;word-break:normal;max-width:100%}
+  html[lang="en"] .lv,html[lang="ja"] .lv{white-space:normal;line-height:1.15;text-align:center}
+  html[lang="en"] .lv b,html[lang="en"] .lv small,html[lang="ja"] .lv b,html[lang="ja"] .lv small{overflow-wrap:anywhere;word-break:normal;max-width:100%}
 }

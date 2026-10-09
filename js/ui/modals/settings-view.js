@@ -5,7 +5,7 @@ import { $ } from '../dom.js';
 
 export function renderSettings() {
   $('nickInput').value = settings.nick;
-  document.querySelectorAll('#segLang button').forEach(b => b.classList.toggle('on', b.dataset.lang === getLang()));
+  $('selLang').value = getLang();
   const eff = effTheme();
   document.querySelectorAll('#segTheme button').forEach(b => b.classList.toggle('on', b.dataset.theme === eff));
   $('swExtra').setAttribute('aria-checked', String(!!settings.extra));

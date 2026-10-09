@@ -1,5 +1,5 @@
 /* 資料匯出 / 匯入（解答冊 + 各關卡盤面暫存 + 設定） */
-import { t, setLang, applyI18n } from '../i18n/i18n.js';
+import { t, setLang, applyI18n, LANGS } from '../i18n/i18n.js';
 import { LEVELS } from '../core/config.js';
 import { canonicalSig } from '../game/signature.js';
 import { loadBook, saveBook, addSolution, validSig, validNearSig } from '../storage/book.js';
@@ -63,7 +63,7 @@ export function importJSON(text) {
   if (data.settings && typeof data.settings === 'object') {
     const d = data.settings;
     if (typeof d.nick === 'string') settings.nick = d.nick.trim().slice(0, 20);
-    if (d.lang === 'zh' || d.lang === 'en') settings.lang = d.lang;
+    if (LANGS.includes(d.lang)) settings.lang = d.lang;
     if (typeof d.extra === 'boolean') settings.extra = d.extra;
     if (Number.isFinite(d.volume)) settings.vol = clamp(Math.round(d.volume / 10), 0, 10);
     settings.theme = (d.theme === 'light' || d.theme === 'dark') ? d.theme : null;

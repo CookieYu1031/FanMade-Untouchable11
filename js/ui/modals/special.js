@@ -1,4 +1,4 @@
-/* 「特殊」視窗：獨立關卡（大師挑戰、危險貨物）的名稱與簡介 */
+/* 「關卡資訊」視窗：獨立關卡（大師挑戰、危險貨物）的名稱與簡介 */
 import { t } from '../../i18n/i18n.js';
 import { curLevel } from '../../state/state.js';
 import { $ } from '../dom.js';

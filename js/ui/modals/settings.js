@@ -19,17 +19,16 @@ $('swExtra').addEventListener('click', () => {
   renderSettings(); regenExport();
 });
 $('btnSettings').addEventListener('click', () => {
-  renderSettings(); regenExport(); dataMsg.textContent = t('data.gen'); setModal.classList.add('open');
+  renderSettings(); regenExport(); dataMsg.textContent = ''; setModal.classList.add('open');
 });
 $('setClose').addEventListener('click', () => setModal.classList.remove('open'));
 setModal.addEventListener('click', e => { if (e.target === setModal) setModal.classList.remove('open'); });
 $('nickInput').addEventListener('input', e => {
   settings.nick = e.target.value.trim().slice(0, 20); saveSettings(); regenExport();
 });
-$('segLang').addEventListener('click', e => {
-  const b = e.target.closest('[data-lang]'); if (!b) return;
-  settings.lang = b.dataset.lang; setLang(settings.lang); saveSettings();
-  applyI18n(); refresh(); renderSettings(); regenExport(); dataMsg.textContent = t('data.gen');
+$('selLang').addEventListener('change', e => {
+  settings.lang = e.target.value; setLang(settings.lang); saveSettings();
+  applyI18n(); refresh(); renderSettings(); regenExport(); dataMsg.textContent = '';
 });
 $('segTheme').addEventListener('click', e => {
   const b = e.target.closest('[data-theme]'); if (!b) return;

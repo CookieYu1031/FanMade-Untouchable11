@@ -1,8 +1,15 @@
 /* 設定視窗：列、音量滑桿、資料匯出匯入、重置資料 */
 .setbody{padding:4px 18px 0}
-.srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;min-height:68px;border-bottom:1px dashed var(--line)}   /* 各列等高（文字換行時才會變高） */
 .srow label,.srow>span{font-weight:700;font-size:14px}
 #nickInput{text-align:right;width:min(240px,60%);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:7px 10px;font:inherit}
+/* 語言下拉選單 */
+/* 語言下拉選單：與暱稱輸入框同風格（圓角、底色、邊線），箭頭用自繪線條並與右邊框留出距離 */
+.selwrap{position:relative;flex:1 1 0;min-width:0;max-width:150px;margin-left:auto}
+.selwrap::after{content:"";position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.sel{-webkit-appearance:none;appearance:none;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:7px 34px 7px 12px;font:inherit;cursor:pointer;color-scheme:light dark}
+.sel:hover{border-color:var(--ink)}
+.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .shead{padding:14px 18px 0;font-weight:700;font-size:14px}
 .shead-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .shead-row .tg{flex:none;flex-wrap:nowrap;font-weight:400;font-size:14px}
@@ -30,7 +37,9 @@
 .jsonbox[open]>summary::before{transform:rotate(90deg)}
 .jsonbox>summary:hover{border-color:var(--ink)}
 .jsonbox textarea{width:100%;margin:10px 0 0}
-.dzone{margin-top:8px;border-top:1px dashed var(--line)}
+.dzone{margin-top:14px;border-top:1px dashed var(--line)}
+.dzone .srow{border-bottom:0;padding:12px 18px}
+.srow-reset .btn{flex:none}
 .btn.danger{border-color:#F0364B;color:#F0364B;font-weight:700}
 .btn.danger:hover:not(:disabled){background:#F0364B;color:#fff;box-shadow:none}
 .txt{width:calc(100% - 28px);margin:12px 14px 0;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:9px 12px;font:inherit}
@@ -39,10 +48,12 @@
 .srow2 .sgrp:first-child{padding-right:16px}
 .sgrp-vol{padding-left:16px;border-left:1px solid var(--line)}
 .sgrp{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1 1 0;min-width:0}
-.sgrp>span{font-weight:700;font-size:14px;white-space:nowrap}
+.sgrp>span,.sgrp>label{font-weight:700;font-size:14px;white-space:nowrap}
+/* 暱稱、語言列：與「背景、音量」列相同，同一行分兩格（等寬、中間分隔線） */
+.sgrp-nick #nickInput{flex:1 1 0;min-width:0;width:auto}
 .sgrp-vol{justify-content:space-between}
 .sgrp-vol .vol{flex:1;min-width:0;justify-content:flex-end;gap:8px}
 .sgrp-vol .vslider{width:auto;flex:1 1 60px;min-width:60px;max-width:150px}
 .sgrp-vol #volNum{min-width:38px}
-@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:6px 9px}}
+@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:6px 9px}.sgrp-nick #nickInput{padding:6px 6px;font-size:13px}.sel{padding:6px 30px 6px 8px;font-size:13px}.selwrap::after{right:12px}}
 .srow .sub{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}

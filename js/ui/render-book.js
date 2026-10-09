@@ -1,5 +1,6 @@
 /* 解答冊 —— 收錄數、縮圖、近似解區，以及放大檢視用的解答 SVG */
 import { t } from '../i18n/i18n.js';
+import { Store, KEY_UI } from '../storage/store.js';
 import { rotateCW } from '../core/matrix.js';
 import { loadBook } from '../storage/book.js';
 import { state, curLevel, lvShort, nearTotal, colorOf, clamp } from '../state/state.js';
@@ -29,27 +30,31 @@ export function renderBook() {
   const L = curLevel(), book = loadBook();
   const list = book.levels[L.lv] || [];
   // 隱藏符號按鈕：睜眼 = 目前顯示解答，閉眼 = 目前已遮蔽
+  // 這個關卡完全沒有解答（含近似解）時，停用隱藏按鈕，也不套用「隱藏」狀態（沒東西可藏）
+  const hasAny = list.length > 0 || (!!L.near && ((book.near && book.near[L.lv]) || []).length > 0);
+  const hidden = state.bookHidden && hasAny;
   const hb = $('btnHide');
-  hb.innerHTML = state.bookHidden ? EYE_OFF : EYE;
-  hb.title = state.bookHidden ? t('book.show') : t('book.hide');
+  hb.disabled = !hasAny;   // 沒有解答時停用（與「返回上一步」相同的灰階樣式），而不是消失
+  hb.innerHTML = hidden ? EYE_OFF : EYE;
+  hb.title = hidden ? t('book.show') : t('book.hide');
   hb.setAttribute('aria-label', hb.title);
-  hb.setAttribute('aria-pressed', String(state.bookHidden));
+  hb.setAttribute('aria-pressed', String(hidden));
 
   let info = `<div class="book-count">${t('book.count', lvShort(L), list.length.toLocaleString(), L.total == null ? null : L.total.toLocaleString())}</div>`, thumbs = '';
-  if (state.bookHidden) info += `<p class="empty">${t('book.hidden')}</p>`;
+  if (hidden && list.length) info += `<p class="empty">${t('book.hidden')}</p>`;   // 只遮蔽「有收錄」的區塊；空的區塊照常顯示空白提示
   else if (!list.length) info += `<p class="empty">${t('book.empty')}</p>`;
   else thumbs = thumbsHTML(list, false);
   els.bookInfo.innerHTML = info; els.bookThumbs.innerHTML = thumbs;
-  renderNear(L, book);
+  renderNear(L, book, hidden);
 }
 // 近似解區（只有 Lv8、危險貨物）：顯示在解答冊下方，附近似解定義說明
-function renderNear(L, book) {
+function renderNear(L, book, hidden) {
   const zone = $('nearZone');
   if (!L.near) { zone.hidden = true; return; }
   zone.hidden = false;
   const nl = (book.near && book.near[L.lv]) || [];
   let info = `<div class="book-count">${t('near.count', nl.length.toLocaleString(), nearTotal(L) == null ? null : nearTotal(L).toLocaleString())}</div>`, thumbs = '';
-  if (state.bookHidden) info += `<p class="empty">${t('book.hidden')}</p>`;
+  if (hidden && nl.length) info += `<p class="empty">${t('book.hidden')}</p>`;
   else if (!nl.length) info += `<p class="empty">${t('near.empty')}</p>`;
   else thumbs = thumbsHTML(nl, true);
   $('nearInfo').innerHTML = info; $('nearThumbs').innerHTML = thumbs;
@@ -70,3 +75,10 @@ export function solutionSVG(sig, maxW, maxH) {
   }));
   return `<svg viewBox="0 0 ${cols} ${rows}" width="${cols * px}" height="${rows * px}" style="background:var(--board);border:2px solid var(--line);border-radius:3px;display:block"><g stroke="var(--gridline)" stroke-width=".05">${grid}</g>${r}</svg>`;
 }
+
+// 隱藏 / 顯示解答：不論目前有沒有收錄解答都可以切換，並記住選擇
+$('btnHide').addEventListener('click', () => {
+  state.bookHidden = !state.bookHidden;
+  Store.set(KEY_UI, { ...Store.get(KEY_UI, {}), hidden: state.bookHidden });
+  renderBook();
+});

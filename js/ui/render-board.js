@@ -67,7 +67,7 @@ export function renderBoard() {
   els.gOverlay.innerHTML = ov.join('');
 
   // 標題列狀態
-  els.title.innerHTML = `${lvLong(L)}<span style="font-weight:500">　${L.cols} × ${L.rows}</span>`;
+  els.title.innerHTML = `<span class="lvn">${lvLong(L)}</span><span class="dims">${L.cols} × ${L.rows}</span>`;
   if (!an.solved) state.solveInfo = null;
   updateUndo();
   if (!(state.drag && state.drag.moved)) schedulePersist(); // 拖曳 / 吸附途中不存，放下後才存

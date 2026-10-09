@@ -1,5 +1,5 @@
 /* 分享圖片：把解答、完成時間、暱稱、製作者資訊畫成 PNG 下載（依設定的亮 / 暗背景、一律橫式） */
-import { t, fmtTime } from '../../i18n/i18n.js';
+import { t, fmtTime, getLang } from '../../i18n/i18n.js';
 import { rotateCW } from '../../core/matrix.js';
 import { LV_COLORS, LV_INK } from '../../core/config.js';
 import { settings, effTheme } from '../../state/settings.js';
@@ -21,7 +21,7 @@ function drawShareCanvas(item, L, nick, near) {
   const my = by + bh + 34, H = my + 38 + 30;
   const cv = document.createElement('canvas'); cv.width = W * S; cv.height = H * S;
   const c = cv.getContext('2d'); c.scale(S, S);
-  const FONT = '"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif';
+  const FONT = getLang() === 'ja' ? '"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif' : '"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif';
   c.fillStyle = K.bg; c.fillRect(0, 0, W, H);
   c.fillStyle = LV_COLORS[L.lv - 1]; c.fillRect(0, 0, W, barH);          // 頂欄 = 難度顏色
   c.fillStyle = LV_INK[L.lv - 1]; c.textBaseline = 'middle';

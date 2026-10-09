@@ -31,7 +31,7 @@ export function initState() {
 }
 
 export const curLevel  = () => LEVELS[state.level - 1];
-export const lvName    = L => L.names[getLang()];
+export const lvName    = L => L.names[getLang()] || L.names.zh;
 // 關卡顯示名稱：Lv1~8 有等級編號；獨立關卡（大師挑戰、危險貨物）只顯示名稱
 export const lvLong    = L => L.extra ? lvName(L) : `Level ${L.lv} ${lvName(L)}`;
 export const lvShort   = L => L.extra ? lvName(L) : `Level ${L.lv}`;

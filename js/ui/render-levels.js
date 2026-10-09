@@ -9,7 +9,7 @@ export function renderLevels() {
   root.style.setProperty('--lvc', LV_COLORS[state.level - 1]);
   root.style.setProperty('--lvink', LV_INK[state.level - 1]);
   root.toggleAttribute('data-series', !!cur.extra);
-  $('btnSpecial').hidden = !cur.extra;   // 獨立關卡才有「特殊」說明按鈕
+  $('btnSpecial').hidden = !cur.extra;   // 獨立關卡才有「關卡資訊」按鈕（在圖板標題列）
   $('heroTitle').textContent = gameTitle(cur); document.title = gameTitle(cur);   // 額外難度會換標題
   const btn = l => `<button class="lv${l.lv === state.level ? ' on' : ''}" data-lv="${l.lv}" style="--c:${LV_COLORS[l.lv - 1]};color:${LV_INK[l.lv - 1]}">`
     + (l.extra ? `<b>${lvName(l)}</b>` : `<b>Lv${l.lv}</b><small>${lvName(l)}</small>`) + `</button>`;
