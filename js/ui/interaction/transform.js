@@ -10,7 +10,7 @@ import { state, curPieces, dims, getP, shapeOf, clamp, clonePieces } from '../..
 import { els } from '../dom.js';
 import { renderBoard } from '../render-board.js';
 import { renderTray } from '../render-tray.js';
-import { updateGhost, movePreview } from './drag.js';
+import { updateGhost, movePreview, returnHeld } from './drag.js';
 
 // 外框是 4×3 或 3×4 的拼圖，旋轉時繞「某一格」轉，這樣轉完位置不會亂跑。
 // 回傳樞紐格在「旋轉前矩陣」中的區域座標 [x, y]：
@@ -71,7 +71,9 @@ export function transformSelected(kind) {
   if (p.placed) evaluate();
 }
 
+// 收回：把手上（窄視窗點拿起）或選取中（已放在方框內）的拼圖放回拼圖盤
 export function returnSelected() {
+  if (state.drag) { if (state.drag.hold) returnHeld(); return; }
   const p = getP(state.selected);
   if (!p || !p.placed) return;
   pushHistory(clonePieces(curPieces()));
@@ -81,7 +83,7 @@ export function returnSelected() {
   renderBoard(); renderTray();
 }
 
-// 選取拼圖旁的三個圖示
+// 工具列：左轉、右轉、鏡像、收回（返回上一步、清除圖板由各自的模組綁定）
 els.tools.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
   if (b.dataset.act === 'return') returnSelected();

@@ -47,18 +47,17 @@ export function renderBook() {
   els.bookInfo.innerHTML = info; els.bookThumbs.innerHTML = thumbs;
   renderNear(L, book, hidden);
 }
-// 近似解區（只有 Lv8、危險貨物）：顯示在解答冊下方，附近似解定義說明
+// 近似解區（只有 Lv8、危險貨物）：顯示在解答冊下方
 function renderNear(L, book, hidden) {
   const zone = $('nearZone');
   if (!L.near) { zone.hidden = true; return; }
   zone.hidden = false;
   const nl = (book.near && book.near[L.lv]) || [];
-  let info = `<div class="book-count">${t('near.count', nl.length.toLocaleString(), nearTotal(L) == null ? null : nearTotal(L).toLocaleString())}</div>`, thumbs = '';
+  let info = `<div class="book-count">${t('near.count', nl.length.toLocaleString(), nearTotal(L) == null ? null : nearTotal(L).toLocaleString(), t('near.desc'))}</div>`, thumbs = '';
   if (hidden && nl.length) info += `<p class="empty">${t('book.hidden')}</p>`;
   else if (!nl.length) info += `<p class="empty">${t('near.empty')}</p>`;
   else thumbs = thumbsHTML(nl, true);
   $('nearInfo').innerHTML = info; $('nearThumbs').innerHTML = thumbs;
-  $('nearDesc').textContent = t('near.desc', L.ids.length);
 }
 // 解答檢視（放大版，含格線與拼圖邊線；方向與盤面顯示一致）
 export function solutionSVG(sig, maxW, maxH) {

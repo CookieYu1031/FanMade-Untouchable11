@@ -76,12 +76,16 @@ function onUp(e) {
   const d = state.drag; state.drag = null;
   if (!d) return;
   if (!d.moved) {
-    // 單純點擊：點拼圖盤的卡片 → 拼圖吸附在滑鼠上；點方框內的拼圖 → 只選取（顯示工具列）
-    if (d.fromTray && e.type !== 'pointercancel') {
+    // 單純點擊：只有「窄視窗點拼圖盤的卡片」會拿起拼圖並跳到圖板（再點圖板放下）；
+    // 其他情況只是選取 —— 點方框內的拼圖＝選取它（可用工具列調整），點拼圖盤（寬視窗）＝不動作
+    if (d.fromTray && e.type !== 'pointercancel' && isNarrow()) {
       startHold(d.id, e.clientX, e.clientY);
-      if (isNarrow()) scrollToPanel(document.querySelector('.stage'));   // 窄視窗：拿起拼圖後自動跳到圖板
+      scrollToPanel(document.querySelector('.stage'));
     }
-    else if (d.fromTray) { state.selected = null; renderBoard(); renderTray(); }
+    else {
+      if (d.fromTray || e.type === 'pointercancel') state.selected = null;
+      renderBoard(); renderTray();
+    }
     return;
   }
   finishPlace(d, e.clientX, e.clientY);
@@ -98,11 +102,11 @@ function finishPlace(d, x, y) {
   renderBoard(); renderTray();
   evaluate();
 }
-// 點擊吸附模式：拼圖跟著滑鼠走，再按一次左鍵放下（Esc 或右鍵取消）
+// 點擊吸附模式（僅窄視窗點拼圖盤觸發）：拼圖跟著手指 / 滑鼠走，再點一次放下（Esc 或右鍵取消）
 function startHold(id, x, y) {
   const before = clonePieces(curPieces()); // 復原用：拿起之前的盤面
   const p = getP(id);
-  p.placed = false; // 若是從方框拿起，先離開盤面
+  p.placed = false;
   state.selected = id; state.chain = null;
   const d = state.drag = { id, fromTray:false, hold:true, sx:x, sy:y, cx:x, cy:y, moved:true, ghost:null, before };
   d.ghost = document.createElement('div');
@@ -110,12 +114,23 @@ function startHold(id, x, y) {
   document.body.appendChild(d.ghost);
   updateGhost(); renderBoard(); renderTray(); movePreview();
 }
+// 取消吸附（Esc / 右鍵）：恢復成拿起之前的樣子（從方框拿起的拼圖會回到原位）
 export function cancelHold() {
   const d = state.drag; if (!d || !d.hold) return;
   d.ghost.remove(); els.gPreview.innerHTML = '';
-  const p = getP(d.id); p.placed = false; p.rot = 0; p.flip = false;
-  state.drag = null; state.selected = null;
+  if (d.before) state.boards[state.level] = d.before;
+  state.drag = null; state.selected = null; state.chain = null;
   renderBoard(); renderTray();
+}
+// 收回：把吸附中的拼圖放回拼圖盤（若是從方框拿起的，可用「返回上一步」還原）
+export function returnHeld() {
+  const d = state.drag; if (!d || !d.hold) return;
+  d.ghost.remove(); els.gPreview.innerHTML = '';
+  const p = getP(d.id); p.placed = false; p.rot = 0; p.flip = false;
+  state.drag = null; state.selected = null; state.chain = null;
+  if (d.before && JSON.stringify(d.before) !== JSON.stringify(curPieces())) pushHistory(d.before);
+  Sfx.back();
+  renderBoard(); renderTray(); evaluate();
 }
 window.addEventListener('pointermove', e => {
   const d = state.drag; if (!d || !d.hold) return;
@@ -125,6 +140,7 @@ window.addEventListener('pointermove', e => {
 // 吸附中按左鍵 = 放下（用 capture 先攔截，避免同時觸發別的拖曳 / 點選）
 window.addEventListener('pointerdown', e => {
   const d = state.drag; if (!d || !d.hold || e.button > 0) return;
+  if (e.target.closest && e.target.closest('#pieceTools')) return;   // 點工具列按鈕：不當作放下
   e.preventDefault(); e.stopPropagation();
   if (e.pointerType === 'touch' || e.pointerType === 'pen') {
     // 觸控：按下時只移動預覽（可以拖曳微調位置），手指放開才放下

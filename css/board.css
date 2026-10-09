@@ -6,9 +6,13 @@
 .pc{cursor:grab}
 .pc.sel rect{stroke:var(--ink);stroke-width:.1}
 
-.ptools{position:fixed;z-index:45;display:flex;gap:6px;padding:5px;border-radius:999px;background:var(--panel);
-  border:1px solid var(--line);box-shadow:0 6px 16px rgba(20,22,40,.22)}
-.ptools[hidden]{display:none}
+.stage-body{position:relative;flex:1;display:flex;align-items:stretch;min-height:0}
+.stage-body .board-wrap{min-width:0}
+/* 常駐工具列：浮在圖板區域左側垂直置中（不佔版面，圖板仍以整個圖板區域置中）；上方為拼圖操作（左轉/右轉/鏡像/收回），分隔線下方為返回上一步、清除圖板 */
+.ptools{position:absolute;z-index:5;left:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px;
+  border-radius:999px;background:var(--panel);border:1px solid var(--line)}
+.ptools .ibtn{width:30px;height:30px}
+.psep{width:18px;height:0;margin:2px 0;border:0;border-top:2px solid var(--line)}
 .ghost{position:fixed;z-index:50;pointer-events:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));opacity:.92}
 .stage>h2{color:var(--lvink,#2B2E4A)}
 /* 圖板標題：名稱與尺寸分開，窄視窗放不下時整組「12 × 12」一起換行，不會被拆開 */
