@@ -26,7 +26,7 @@ export function addSolution(book, lv, sig, time, disp, nick, near) {
   list.push(item);
   return true;
 }
-// 檢查簽章是否真的是該難度的合法解（尺寸正確、11 片齊全、且判定為完全分開）
+// 檢查簽章是否真的是該難度的合法解（尺寸正確、拼圖片數齊全、且判定為完全分開）
 export function validSig(sig, L) {
   if (typeof sig !== 'string') return false;
   const rows = sig.split('/');

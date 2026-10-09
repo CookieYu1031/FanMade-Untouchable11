@@ -3,7 +3,7 @@ import { PIECE } from '../core/config.js';
 import { rotateCW, flipH, orient, cellsOf } from '../core/matrix.js';
 import { dims } from '../state/state.js';
 
-// 把盤面轉成字元網格：每格寫入佔用拼圖 id（A~K），空格為 '.'
+// 把盤面轉成字元網格：每格寫入佔用拼圖 id（六格骨牌 1~9、A~Z；七格骨牌 a~i），空格為 '.'
 export function gridOf(an) {
   const D = dims();
   return Array.from({ length: D.rows }, (_, y) =>
@@ -26,7 +26,7 @@ export function canonicalSig(grid) {
   }
   return cands.sort()[0];
 }
-// 由簽章還原 11 片拼圖的姿態與位置（載入解答、驗證匯入資料時使用）
+// 由簽章還原各片拼圖的姿態與位置（載入解答、驗證匯入資料時使用）
 export function piecesFromSig(sig, L) {
   const rows = sig.split('/');
   const byId = {};
@@ -37,7 +37,7 @@ export function piecesFromSig(sig, L) {
   const out = [];
   for (const p of [...L.ids].map(id => PIECE[id])) {
     const cs = byId[p.id];
-    if (!cs || cs.length !== 6) return null;
+    if (!cs || cs.length !== cellsOf(p.matrix).length) return null;   // 每片的格數依拼圖類別而定（六格 / 七格）
     const mx = Math.min(...cs.map(c => c[0])), my = Math.min(...cs.map(c => c[1]));
     const target = cs.map(([x, y]) => (x - mx) + ',' + (y - my)).sort().join(';');
     let found = null;

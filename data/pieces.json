@@ -1,5 +1,5 @@
 {
-  "_說明": "拼圖格式：'o' = 方塊、'x' = 空格，逗號分隔各列（由上到下）。旋轉、鏡像視為同一種拼圖；定義的是預設樣式。",
+  "_說明": "拼圖格式：'o' = 方塊、'x' = 空格，逗號分隔各列（由上到下）。旋轉、鏡像視為同一種拼圖；定義的是預設樣式。family / groups / pieces 是預設的六格骨牌（代號為號碼的 36 進位大寫：1~9、A~Z）；extraFamilies = 其他格數的拼圖類別（每類各自編號從 1 起，代號用 idChars 依序指定；七格骨牌的預設樣式為橫向 5×3，拼圖盤每行放兩片，不可與其他類別重複；關卡以 family 欄位指定使用哪一類）。",
   "family": {"name": "六格骨牌", "nameEn": "Hexomino", "cells": 6, "count": 35},
   "groups": [
     {"id": 1, "name": "常用組", "nameEn": "Common", "range": [1, 21], "common": true},
@@ -41,5 +41,24 @@
     {"no": 33, "def": "oox,ooo,xox"},
     {"no": 34, "def": "oox,ooo,xxo"},
     {"no": 35, "def": "ooo,ooo"}
+  ],
+  "extraFamilies": [
+    {
+      "key": "hepto",
+      "name": "七格骨牌", "nameEn": "Heptomino", "cells": 7, "count": 9,
+      "idChars": "abcdefghi",
+      "groups": [{"id": 1, "name": "七格骨牌", "nameEn": "Heptomino", "range": [1, 9], "common": true}],
+      "pieces": [
+        {"no": 1, "def": "xxxoo,oooox,oxxxx"},
+        {"no": 2, "def": "xoxxx,ooooo,oxxxx"},
+        {"no": 3, "def": "xxoxx,ooooo,oxxxx"},
+        {"no": 4, "def": "xxxox,ooooo,oxxxx"},
+        {"no": 5, "def": "xxooo,oooxx,xoxxx"},
+        {"no": 6, "def": "xxxoo,oooox,xoxxx"},
+        {"no": 7, "def": "ooxxx,xoooo,xoxxx"},
+        {"no": 8, "def": "xxoxx,ooooo,xoxxx"},
+        {"no": 9, "def": "xxoxx,xoooo,ooxxx"}
+      ]
+    }
   ]
 }

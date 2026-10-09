@@ -69,18 +69,20 @@ export default {
     'stat.title':'Statistics',
     'stat.lv':'Level',
     'stat.total':'Solutions',
+    'stat.totalNear':'<span class="tt">Solutions</span><span class="nt">(near)</span>',
+    'stat.nearSw':'Near solutions',
     'stat.got':'Collected',
     'stat.progress':'Progress',
-    'stat.near':'Near-solution statistics',
     'tip.statNear':'Near-solution statistics',
-    'tip.statExact':'Solution statistics',
 
     // ── 關卡資訊視窗 ──
     'sp.title':'Level info',
     'sp.desc.h9':'Master Challenge',
     'sp.desc.h10':'Hazmat Cargo',
+    'sp.desc.h11':'Hazmat Cargo 2',
     'sp.desc.9':'A spin-off designed by Carl Hoff based on "Untouchable 11", using a 12x12 board and 11 pieces, yet it has only 2 solutions.',
     'sp.desc.10':'A puzzle designed by Carl Hoff, using an 11x11 board and 9 pieces, with only 1 unique solution yet 3,761 near solutions (far more misleading).',
+    'sp.desc.11':'A puzzle designed by Carl Hoff based on "Hazmat Cargo", using a 12*12 board and 9 pieces (heptominoes), with only 1 unique solution yet 26,226 near solutions (a huge jump in difficulty).',
 
     // ── 重置版圖視窗 ──
     'brd.title':'Reset board',

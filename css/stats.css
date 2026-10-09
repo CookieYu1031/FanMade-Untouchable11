@@ -10,3 +10,19 @@
 .dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--c);box-sizing:border-box}
 .dots i.on{background:var(--c)}
 .pct{min-width:60px;font-weight:700;text-align:left}
+/* 分頁：左右箭頭在視窗外側（與解答檢視相同）；窄螢幕沒有外側空間，改放在視窗下方中央 */
+.statrow{position:relative;width:min(720px,100%)}
+.statrow .box{width:100%}
+@media (max-width:820px){.statrow .navbtn.prev,.statrow .navbtn.next{top:auto;bottom:-56px;transform:none;left:calc(50% - 21px);right:auto}}
+#statTitle small{font-size:12px;font-weight:500;opacity:.7;margin-left:8px}
+/* 近似解開關（標題列右側） */
+.statsw{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;cursor:pointer}
+/* 近似解列：與同關卡的正解列合成一組（關卡標籤跨兩列），文字用灰字 */
+.stat tr.g1 td{border-bottom:0;padding-bottom:3px}
+.stat tr.nr td{color:var(--muted);padding-top:3px}
+.stat th .tt{color:var(--ink)}
+.stat th .nt{color:var(--muted);font-weight:500}
+.stat tr.g1 td[rowspan]{border-bottom:1px dashed var(--line);padding-bottom:10px}   /* 跨兩列的關卡標籤保留底線 */
+.stat tr.nr .pct{color:var(--muted)}
+#statModal{grid-template-columns:minmax(0,1fr)}   /* 窄螢幕時讓視窗不被表格撐寬，表格改在視窗內橫向捲動 */
+.statrow{justify-self:center}

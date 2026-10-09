@@ -69,18 +69,20 @@ export default {
     'stat.title':'統計',
     'stat.lv':'等級',
     'stat.total':'解答組數',
+    'stat.totalNear':'<span class="tt">解答</span><span class="nt">(近似解)</span>',
+    'stat.nearSw':'近似解',
     'stat.got':'收錄組數',
     'stat.progress':'收錄進度',
-    'stat.near':'近似解統計',
     'tip.statNear':'近似解統計',
-    'tip.statExact':'正解統計',
 
     // ── 關卡資訊視窗 ──
     'sp.title':'關卡資訊',
     'sp.desc.h9':'大師挑戰',
     'sp.desc.h10':'危險貨物',
+    'sp.desc.h11':'危險貨物2',
     'sp.desc.9':'Carl Hoff 基於《Untouchable 11》所設計之衍伸作，使用12x12圖板、11片拼圖，卻僅有2組正解',
     'sp.desc.10':'Carl Hoff 所設計之作品，使用11x11圖板、9片拼圖，僅有1組唯一解，卻有3761組近似解(迷惑性更高)',
+    'sp.desc.11':'Carl Hoff 基於《危險貨物》所設計之作品，使用12*12圖板、9片拼圖(七格骨牌)，僅有1組唯一解，卻有26226組近似解(難度提升巨大)',
 
     // ── 重置版圖視窗 ──
     'brd.title':'重置版圖',

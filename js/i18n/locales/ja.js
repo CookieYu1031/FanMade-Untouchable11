@@ -69,18 +69,20 @@ export default {
     'stat.title':'統計',
     'stat.lv':'レベル',
     'stat.total':'解答数',
+    'stat.totalNear':'<span class="tt">解答数</span><span class="nt">(近似解)</span>',
+    'stat.nearSw':'近似解',
     'stat.got':'収録数',
     'stat.progress':'収録率',
-    'stat.near':'近似解の統計',
     'tip.statNear':'近似解の統計',
-    'tip.statExact':'正解の統計',
 
     // ── 關卡資訊視窗 ──
     'sp.title':'レベル情報',
     'sp.desc.h9':'名人挑戦',
     'sp.desc.h10':'危険貨物',
+    'sp.desc.h11':'危険貨物2',
     'sp.desc.9':'Carl Hoff が『Untouchable 11』をもとに設計した派生作品。12x12の盤面と11個のピースを使いますが、正解はわずか2通りです',
     'sp.desc.10':'Carl Hoff が設計した作品。11x11の盤面と9個のピースを使い、唯一解は1通りだけですが、近似解は3761通りあります（より紛らわしい）',
+    'sp.desc.11':'Carl Hoff が『危険貨物』をもとに設計した作品。12*12の盤面と9個のピース（七連ミノ）を使い、唯一解は1通りだけですが、近似解は26226通りあります（難易度が大幅にアップ）',
 
     // ── 重置版圖視窗 ──
     'brd.title':'盤面をリセット',
