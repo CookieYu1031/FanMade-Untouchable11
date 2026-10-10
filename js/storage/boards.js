@@ -3,7 +3,7 @@ import { Store, KEY_BOARDS } from './store.js';
 import { LEVELS } from '../core/config.js';
 import { state, toNative, freshPieces, absCells } from '../state/state.js';
 
-export const nativeBoards = () => Object.fromEntries(LEVELS.map(L => [L.lv, toNative(state.boards[L.lv], L.lv)]));
+const nativeBoards = () => Object.fromEntries(LEVELS.map(L => [L.lv, toNative(state.boards[L.lv], L.lv)]));
 export function persistBoards() { if (state.wiping) return; Store.set(KEY_BOARDS, { version:2, level:state.level, boards:nativeBoards() }); }
 let persistTimer = null;
 export function schedulePersist() { clearTimeout(persistTimer); persistTimer = setTimeout(persistBoards, 250); }

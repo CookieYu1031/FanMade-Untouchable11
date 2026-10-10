@@ -11,8 +11,6 @@
 .lv:hover{box-shadow:inset 0 0 0 2px var(--ink)}
 .lv.on,.lv.on:hover{opacity:1;box-shadow:inset 0 0 0 3px var(--ink)}
 .lv:focus-visible,.btn:focus-visible,.card:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.lv .badge{position:absolute;top:-6px;right:-6px;background:var(--ink);color:var(--panel);
-  border-radius:999px;font-size:11px;min-width:20px;padding:1px 6px;text-align:center}
 @media (max-width:759px){
   html[lang="en"] .lv,html[lang="ja"] .lv{flex-direction:column;gap:0;padding:6px 2px}
   html[lang="en"] .lv b,html[lang="en"] .lv small,html[lang="ja"] .lv b,html[lang="ja"] .lv small{font-size:13px}

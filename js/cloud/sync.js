@@ -69,7 +69,7 @@ function mergeBooks(a, b) {   // 聯集（以 sig 去重，雲端的順序在前
   }
   return out;
 }
-export const countBook = b => ({
+const countBook = b => ({
   sol: Object.values(b.levels || {}).reduce((n, l) => n + (l ? l.length : 0), 0),
   near: Object.values(b.near || {}).reduce((n, l) => n + (l ? l.length : 0), 0),
 });
@@ -115,7 +115,7 @@ async function doPush() {
   }
 }
 // 立刻上傳待處理的變更；回傳是否全部成功
-export function flush() {
+function flush() {
   clearTimeout(timer);
   chain = chain.then(doPush);
   return chain;

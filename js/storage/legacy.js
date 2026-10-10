@@ -6,7 +6,7 @@ import { canonicalSig } from '../game/signature.js';
 /* ---- 舊版資料遷移：舊版以 A~M 記錄拼圖（A~K = 舊第 1~11 片、L、M = 舊額外拼圖），現改用拼圖號碼代號 ----
  * 舊 A~F（1-4-1 型）= 16~21 號、G~I（2-3-1 型）= 12~14 號、J = 15 號、K = 8 號、L = 6 號、M = 9 號 */
 const LEGACY = { A:'G', B:'H', C:'I', D:'J', E:'K', F:'L', G:'C', H:'D', I:'E', J:'F', K:'8', L:'6', M:'9' };
-export const legacyStr = str => str.replace(/[A-M]/g, c => LEGACY[c]);
+const legacyStr = str => str.replace(/[A-M]/g, c => LEGACY[c]);
 const legacySig = str => canonicalSig(legacyStr(str).split('/').map(r => [...r]));   // 換代號後要重算標準簽章
 export function legacyLevels(src) {
   const out = {};

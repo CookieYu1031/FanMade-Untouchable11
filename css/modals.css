@@ -10,5 +10,4 @@
 .hsec h3{font-size:14px;margin:0 0 6px}
 .hsec p{margin:0;line-height:1.7}
 html[lang="en"] #helpModal .box{width:min(700px,100%)}
-/* 首次開啟的歡迎視窗 */
 #solTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

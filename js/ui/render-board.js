@@ -12,7 +12,7 @@ import { syncTools } from './piece-tools.js';
 // 觸控裝置（手機）捲動時網址列會收合 / 展開，window.innerHeight 與 resize 事件會跟著變動，
 // 造成圖板高度與格子大小一直改變。因此觸控 + 窄視窗時，同一個視窗寬度只取第一次的高度，不再隨捲動更新。
 let vhCache = { w: 0, h: 0 };
-export function viewportH() {
+function viewportH() {
   const w = window.innerWidth;
   if (!window.matchMedia('(max-width:759px) and (pointer:coarse)').matches) return window.innerHeight;
   if (vhCache.w !== w) vhCache = { w, h: window.innerHeight };   // 寬度改變（轉向、分割視窗）才重新取值
@@ -72,7 +72,6 @@ export function renderBoard() {
 
   // 標題列狀態
   els.title.innerHTML = `<span class="lvn">${lvLong(L)}</span><span class="dims">${L.cols} × ${L.rows}</span>`;
-  if (!an.solved) state.solveInfo = null;
   updateUndo();
   if (!(state.drag && state.drag.moved)) schedulePersist(); // 拖曳 / 吸附途中不存，放下後才存
   syncTools();

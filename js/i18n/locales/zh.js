@@ -70,10 +70,10 @@ export default {
     'stat.lv':'等級',
     'stat.total':'解答組數',
     'stat.totalNear':'<span class="tt">解答</span><span class="nt">(近似解)</span>',
-    'stat.nearSw':'近似解',
+    'stat.nearShow':'顯示近似解統計',
+    'stat.nearHide':'隱藏近似解統計',
     'stat.got':'收錄組數',
     'stat.progress':'收錄進度',
-    'tip.statNear':'近似解統計',
 
     // ── 關卡資訊視窗 ──
     'sp.title':'關卡資訊',
@@ -143,7 +143,6 @@ export default {
     // ── 提示訊息（Toast） ──
     'toast.pick':'請先點選方框中的拼圖',
     'toast.reset':'已重置版圖',
-    'toast.emptyBoard':'版圖上沒有拼圖',
     'toast.noUndo':'沒有可返回的步驟',
     'toast.new':(lv, n) => `過關！新解答已收錄（${lv} 第 ${n} 組）`,
     'toast.dup':'過關！已收錄過該解答（旋轉或鏡向後相同也視為同一組）',

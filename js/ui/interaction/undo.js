@@ -12,7 +12,7 @@ export function undo() {
   const h = histOf();
   if (!h.length) { toast(t('toast.noUndo')); return; }
   state.boards[state.level] = h.pop();
-  state.selected = null; state.chain = null; state.solveInfo = null;
+  state.selected = null; state.chain = null;
   renderBoard(); renderTray();
 }
 $('btnUndo').addEventListener('click', undo);

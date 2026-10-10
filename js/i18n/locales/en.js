@@ -70,10 +70,10 @@ export default {
     'stat.lv':'Level',
     'stat.total':'Solutions',
     'stat.totalNear':'<span class="tt">Solutions</span><span class="nt">(near)</span>',
-    'stat.nearSw':'Near solutions',
+    'stat.nearShow':'Show near-solution statistics',
+    'stat.nearHide':'Hide near-solution statistics',
     'stat.got':'Collected',
     'stat.progress':'Progress',
-    'tip.statNear':'Near-solution statistics',
 
     // ── 關卡資訊視窗 ──
     'sp.title':'Level info',
@@ -143,7 +143,6 @@ export default {
     // ── 提示訊息（Toast） ──
     'toast.pick':'Select a piece on the board first',
     'toast.reset':'Board reset',
-    'toast.emptyBoard':'The board is already empty',
     'toast.noUndo':'Nothing to undo',
     'toast.new':(lv, n) => `Solved! New solution saved (${lv}, #${n})`,
     'toast.dup':'Solved! This solution is already in your book (rotations and mirrors count as the same).',

@@ -34,7 +34,6 @@ export function evaluate() {
   if (isNew) saveBook(book);
   renderLevels(); renderBook();
   const n = (book.levels[L.lv] || []).length;
-  state.solveInfo = { isNew };
   renderBoard();
   toast(isNew ? t('toast.new', lvShort(L), n) : t('toast.dup'));
   if (isNew) Sfx.solve();

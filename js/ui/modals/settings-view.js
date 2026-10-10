@@ -13,7 +13,7 @@ export function renderSettings() {
 }
 export function renderVol() {
   const tk = $('volTicks');
-  if (!tk.children.length) tk.innerHTML = Array.from({ length: 11 }, (_, i) => '<span></span>').join('');
+  if (!tk.children.length) tk.innerHTML = Array.from({ length: 11 }, () => '<span></span>').join('');
   [...tk.children].forEach((el, i) => el.classList.toggle('on', i === settings.vol));
   const r = $('volRange');
   r.value = settings.vol;

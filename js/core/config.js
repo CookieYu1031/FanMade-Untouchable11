@@ -9,10 +9,8 @@
  * ===================================================================== */
 import { cellsOf } from './matrix.js';
 
-export const PIECES = [];          // 拼圖物件陣列（先六格骨牌，再依序是其他類別，各類內依號碼排序）
 export const PIECE = {};           // 代號 → 拼圖物件（所有類別共用同一張表，代號不可重複）
-export const FAMILIES = {};        // 類別代號（hexo、hepto…）→ { key, name, nameEn, cells, byNo, idOf }
-export const PIECE_GROUPS = [];    // 拼圖分組（常用組 / 非常用組）
+const FAMILIES = {};              // 類別代號（hexo、hepto…）→ { key, name, nameEn, cells, byNo, idOf }
 export const COLORS = {};          // 色名 → { fill, edge }
 export const SLOT_COLORS = {};     // 槽位數 → 色名陣列
 export const LEVELS = [];          // 關卡陣列（索引 = lv - 1）
@@ -24,7 +22,7 @@ export const CONFIG = { defaultTitle: 'Untouchable 11' };
 // 拼圖代號：解答簽章（盤面字元網格）以此單字元記錄每格屬於哪一片拼圖。
 //   六格骨牌：第 n 號用 n 的 36 進位大寫單字元（1~9 → '1'~'9'，10 → 'A' … 35 → 'Z'）
 //   其他類別：依 pieces.json 的 idChars 依序指定（七格骨牌 1~9 號 → 'a'~'i'），避免與六格骨牌的代號重複
-export const pieceId = n => n.toString(36).toUpperCase();
+const pieceId = n => n.toString(36).toUpperCase();
 const HEXO = 'hexo';               // 預設類別（關卡沒寫 family 時使用）
 
 async function fetchJSON(path) {
@@ -48,7 +46,6 @@ function buildFamily(key, fam, groups, pieces, idOf) {
   if (seen.size !== pieces.length) throw new Error(`pieces.json：${label}的群組範圍必須剛好涵蓋所有拼圖`);
 
   const family = { key, name: fam.name, nameEn: fam.nameEn, cells: fam.cells, byNo: {}, idOf };
-  groups.forEach(g => PIECE_GROUPS.push({ ...g, family: key }));
   pieces.forEach((p, i) => {
     const no = p.no;
     if (no !== i + 1) throw new Error(`pieces.json：${label}第 ${i + 1} 筆的 no 應為 ${i + 1}`);
@@ -59,15 +56,13 @@ function buildFamily(key, fam, groups, pieces, idOf) {
     const id = idOf(no);
     if (typeof id !== 'string' || id.length !== 1 || PIECE[id])
       throw new Error(`pieces.json：${label} ${no} 號的代號「${id}」無效或與其他拼圖重複`);
-    const group = groups.find(g => no >= g.range[0] && no <= g.range[1]);
-    const piece = { no, id, name: `${no}號`, def: p.def, matrix, group: group.id, common: group.common, family: key };
-    PIECES.push(piece); PIECE[id] = piece; family.byNo[no] = piece;
+    const piece = { no, id, matrix, family: key };
+    PIECE[id] = piece; family.byNo[no] = piece;
   });
   FAMILIES[key] = family;
 }
 
 function buildPieces(data) {
-  PIECES.length = 0; PIECE_GROUPS.length = 0;
   Object.keys(PIECE).forEach(k => delete PIECE[k]);
   Object.keys(FAMILIES).forEach(k => delete FAMILIES[k]);
   buildFamily(HEXO, data.family, data.groups, data.pieces, pieceId);

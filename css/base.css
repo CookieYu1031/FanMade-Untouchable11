@@ -2,8 +2,8 @@
 /* ============ 色彩 token（亮 / 暗主題）============ */
 :root{
   --bg:#F3F5FB; --panel:#FFFFFF; --ink:#2B2E4A; --muted:#6B6F8F; --line:#DADDF0;
-  --board:#FFFFFF; --gridline:#E3E6F5; --red:#F0364B; --blue:#A9CFF7; --p6:#D2F0B5; --p4:#F9B8D2; --lvc:#F28B8B;
-  --pink:#F7B7C5; --peach:#FFC9A3; --yellow:#FDE79A; --mint:#B7E5CD; --sky:#B0D6F2; --lav:#D0BDF2;
+  --board:#FFFFFF; --gridline:#E3E6F5; --blue:#A9CFF7; --p6:#D2F0B5; --p4:#F9B8D2; --lvc:#F28B8B;
+  --mint:#B7E5CD;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }

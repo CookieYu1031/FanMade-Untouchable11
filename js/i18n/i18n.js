@@ -4,7 +4,7 @@ import en from './locales/en.js';
 import ja from './locales/ja.js';
 
 const I18N = { zh, en, ja };
-export const LANGS = ['zh', 'en', 'ja'];   // 支援的語言（設定下拉選單依此順序）
+const LANGS = ['zh', 'en', 'ja'];   // 支援的語言（設定下拉選單依此順序）
 const HTML_LANG = { zh:'zh-Hant', en:'en', ja:'ja' };
 const LOCALE = { zh:'zh-TW', en:'en-US', ja:'ja-JP' };
 let LANG = 'zh';

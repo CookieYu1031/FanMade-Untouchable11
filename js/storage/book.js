@@ -1,8 +1,6 @@
 /* 解答冊 —— 讀寫、新增解答、驗證簽章（Level 1~8 與獨立關卡共用） */
 import { Store, Hooks, KEY_BOOK } from './store.js';
 import { legacyLevels } from './legacy.js';
-import { analyze, isNear } from '../game/analyze.js';
-import { piecesFromSig } from '../game/signature.js';
 
 export const loadBook  = () => {
   const b = Store.get(KEY_BOOK, null);
@@ -25,20 +23,4 @@ export function addSolution(book, lv, sig, time, disp, nick, near) {
   if (nick) item.nick = nick; // 作答當下的暱稱
   list.push(item);
   return true;
-}
-// 檢查簽章是否真的是該難度的合法解（尺寸正確、拼圖片數齊全、且判定為完全分開）
-export function validSig(sig, L) {
-  if (typeof sig !== 'string') return false;
-  const rows = sig.split('/');
-  if (rows.length !== L.rows || rows.some(r => r.length !== L.cols)) return false;
-  const ps = piecesFromSig(sig, L);
-  return !!ps && analyze(ps).solved;
-}
-// 檢查簽章是否為合法的近似解（只有 Lv8、危險貨物有近似解）
-export function validNearSig(sig, L) {
-  if (!L.near || typeof sig !== 'string') return false;
-  const rows = sig.split('/');
-  if (rows.length !== L.rows || rows.some(r => r.length !== L.cols)) return false;
-  const ps = piecesFromSig(sig, L);
-  return !!ps && isNear(analyze(ps), ps.length);
 }

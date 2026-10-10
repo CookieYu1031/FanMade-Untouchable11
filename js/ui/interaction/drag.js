@@ -25,7 +25,7 @@ function snapFromPointer(cx, cy, p) {
 }
 
 // ---- 拖曳 ----
-export function startDrag(e, id, fromTray) {
+function startDrag(e, id, fromTray) {
   if (e.button > 0) return;
   e.preventDefault();
   state.selected = id; state.chain = null;

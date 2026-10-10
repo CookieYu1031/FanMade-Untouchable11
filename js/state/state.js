@@ -19,7 +19,6 @@ export const state = {
   cell: 30,            // 底板每格的像素大小
   rotated: false,      // 寬螢幕時底板轉成橫式顯示（整體旋轉 90°），盤面座標以目前顯示方向為準
   bookHidden: false,   // 解答冊是否隱藏
-  solveInfo: null,     // 目前盤面過關後的收錄結果 { isNew }
   chain: null,         // 連續同方向旋轉的紀錄 { id, dir, n }，其他操作會把它清掉
   hist: {},            // 每個難度各自的「返回上一步」堆疊（最多 15 步，存盤面快照）
   wiping: false,       // 重置資料時為 true：避免離開頁面時又把盤面存回去
@@ -47,7 +46,7 @@ export const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 // 把整組盤面旋轉 90°（切換直式 / 橫式顯示時使用）。W、H = 旋轉前底板的寬、高。
 //   順時針：格 (x,y) -> (H-1-y, x)；逆時針：格 (x,y) -> (y, W-1-x)
-export function rotatePieces(pieces, dir, W, H) {
+function rotatePieces(pieces, dir, W, H) {
   return pieces.map(p => {
     if (!p.placed) return { ...p };
     const m = shapeOf(p), w = m[0].length, h = m.length;
@@ -62,7 +61,7 @@ export const toNative   = (ps, lv) => { const L = LEVELS[lv - 1]; return state.r
 export const fromNative = (ps, lv) => { const L = LEVELS[lv - 1]; return state.rotated ? rotatePieces(ps, 'cw', L.cols, L.rows) : clonePieces(ps); };
 
 // 螢幕寬度 >= 760px 視為寬螢幕，底板改橫式（左右寬、上下窄）
-export const MQ = window.matchMedia('(min-width: 760px)');
+const MQ = window.matchMedia('(min-width: 760px)');
 export function applyMode() {
   const want = MQ.matches;
   if (want === state.rotated) return false;

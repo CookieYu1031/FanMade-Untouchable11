@@ -4,7 +4,6 @@
 .card{background:var(--bg);border:2px solid transparent;border-radius:12px;padding:6px;display:flex;
   flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;
   touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
-.card span{font-size:11px;color:var(--muted)}
 .card.sel{border-color:var(--ink)}
 .card,.pc{-webkit-touch-callout:none}
 .card.wide{grid-column:span 2} /* 第 11 片（5 格寬）佔原本第 11、12 兩個位置 */

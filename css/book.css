@@ -1,11 +1,5 @@
 /* 解答冊、縮圖、近似解區 */
 /* ============ 存檔槽 / 解答冊 ============ */
-.slot{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
-.slot:last-child{border-bottom:0}
-.slot .info{font-size:13px}
-.slot .info small{color:var(--muted);display:block}
-.slot .acts{display:flex;gap:6px}
-.slot .btn{padding:5px 9px;font-size:13px}
 .book-thumbs{display:flex;flex-wrap:wrap;gap:8px;max-height:260px;overflow:auto;margin-top:10px}
 .thumb{border:1px solid var(--line);background:var(--board);border-radius:8px;padding:0;cursor:pointer;
   width:164px;height:124px;display:grid;place-items:center}

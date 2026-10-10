@@ -46,14 +46,14 @@ export default {
 
     // ── 解答冊 ──
     'book.title':'解答集',
-    'book.count':(lv, n, m) => `<span class=\"bc-l\">${lv}</span><span class=\"bc-r\">収録 <b>${m == null ? n : n + '/' + m}</b> 件</span>`,
+    'book.count':(lv, n, m) => `<span class="bc-l">${lv}</span><span class="bc-r">収録 <b>${m == null ? n : n + '/' + m}</b> 件</span>`,
     'book.hide':'解答を隠す',
     'book.show':'解答を表示',
     'book.hidden':'解答は非表示です',
     'book.empty':'まだ解答がありません（自動で収録されます）。サムネイルをクリックすると表示できます',
     'book.view':'この解答を見る',
     'near.tag':'近似解',
-    'near.count':(n, m, note) => `<span class=\"bc-l\">近似解<small class=\"bc-note\">${note}</small></span><span class=\"bc-r\">収録 <b>${m == null ? n : n + '/' + m}</b> 件</span>`,
+    'near.count':(n, m, note) => `<span class="bc-l">近似解<small class="bc-note">${note}</small></span><span class="bc-r">収録 <b>${m == null ? n : n + '/' + m}</b> 件</span>`,
     'near.empty':'近似解はまだありません（自動で収録されます）',
     'near.desc':'*近似解は角の接触を1か所まで許容します',
 
@@ -70,10 +70,10 @@ export default {
     'stat.lv':'レベル',
     'stat.total':'解答数',
     'stat.totalNear':'<span class="tt">解答数</span><span class="nt">(近似解)</span>',
-    'stat.nearSw':'近似解',
+    'stat.nearShow':'近似解の統計を表示',
+    'stat.nearHide':'近似解の統計を隠す',
     'stat.got':'収録数',
     'stat.progress':'収録率',
-    'tip.statNear':'近似解の統計',
 
     // ── 關卡資訊視窗 ──
     'sp.title':'レベル情報',
@@ -143,7 +143,6 @@ export default {
     // ── 提示訊息（Toast） ──
     'toast.pick':'先に盤面上のピースを選んでください',
     'toast.reset':'盤面をリセットしました',
-    'toast.emptyBoard':'盤面にピースがありません',
     'toast.noUndo':'戻せる操作がありません',
     'toast.new':(lv, n) => `クリア！新しい解答を保存しました（${lv} ${n}件目）`,
     'toast.dup':'クリア！この解答はすでに保存済みです（回転・反転して同じになるものは同一と見なします）',

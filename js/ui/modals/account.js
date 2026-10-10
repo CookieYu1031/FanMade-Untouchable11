@@ -66,7 +66,7 @@ function askMerge(c) {
 function applied() {
   setLang(settings.lang); applyTheme(); applyI18n();
   if (curLevel().extra && !settings.extra) state.level = 8;
-  state.selected = null; state.chain = null; state.solveInfo = null;
+  state.selected = null; state.chain = null;
   refresh(); renderSettings(); renderStats(); render();
 }
 setHandlers({ askMerge, applied, notify: k => toast(t(k)) });

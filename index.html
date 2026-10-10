@@ -105,11 +105,11 @@
       <section class="hsec">
         <div class="keys">
           <div class="key" data-k="a"><kbd>A</kbd><span data-i18n="key.ccw"></span></div>
-          <div class="key" data-k="d"><kbd>D</kbd><span data-i18n="key.cw"></span></div>
           <div class="key" data-k="s"><kbd>S</kbd><span data-i18n="key.flip"></span></div>
-          <div class="key" data-k="x"><kbd>X</kbd><span data-i18n="key.return"></span></div>
+          <div class="key" data-k="d"><kbd>D</kbd><span data-i18n="key.cw"></span></div>
           <div class="key" data-k="z"><kbd>Z</kbd><span data-i18n="key.undo"></span></div>
-              <div class="key" data-k="Delete"><kbd>Delete</kbd><span data-i18n="key.reset"></span></div>
+          <div class="key" data-k="x"><kbd>X</kbd><span data-i18n="key.return"></span></div>
+          <div class="key" data-k="Delete"><kbd>Delete</kbd><span data-i18n="key.reset"></span></div>
         </div>
       </section>
     </div>
@@ -170,7 +170,7 @@
     <button class="navbtn prev" id="statPrev" type="button" hidden data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="box">
       <div class="panel" style="margin:0;border:0;border-radius:0">
-        <h2 style="--c:var(--p4);background:var(--p4)"><span id="statTitle"></span><span style="display:flex;gap:10px;align-items:center"><label class="statsw"><span id="statSwLabel" data-i18n="stat.nearSw"></span><button class="switch" id="statSwitch" type="button" role="switch" aria-checked="false"><i></i></button></label><button class="ibtn" id="statClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></h2>
+        <h2 style="--c:var(--p4);background:var(--p4)"><span id="statTitle"></span><span style="display:flex;gap:10px;align-items:center"><button class="ibtn" id="statNearBtn" type="button" style="width:30px;height:30px"></button><button class="ibtn" id="statClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></h2>
       </div>
       <div style="overflow:auto;max-height:calc(100vh - 140px)"><table class="stat" id="statTable"></table></div>
     </div>

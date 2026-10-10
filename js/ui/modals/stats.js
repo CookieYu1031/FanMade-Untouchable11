@@ -7,6 +7,7 @@ import { loadBook } from '../../storage/book.js';
 import { settings } from '../../state/settings.js';
 import { state, lvTag, nearTotal } from '../../state/state.js';
 import { $ } from '../dom.js';
+import { EYE, EYE_OFF } from '../render-book.js';
 
 function fmtPct(n, total) {   // 無條件捨去到小數點後 2 位；不足 0.01% 顯示 0.00%
   const v = Math.min(100, n / total * 100);
@@ -50,16 +51,17 @@ export function renderStats() {
   }).join('');
   $('statTable').innerHTML = `${head}<tbody>${rows}</tbody>`;
   $('statTitle').innerHTML = t('stat.title') + (all.length > 1 ? `<small>${state.statPage + 1} / ${all.length}</small>` : '');
-  const sw = $('statSwitch');   // 近似解統計開關
-  sw.setAttribute('aria-checked', String(near));
-  sw.title = t('tip.statNear'); sw.setAttribute('aria-label', sw.title);
+  const nb = $('statNearBtn');   // 近似解統計：睜眼 = 目前顯示，閉眼 = 目前隱藏（與解答冊的隱藏按鈕相同）
+  nb.innerHTML = near ? EYE : EYE_OFF;
+  nb.title = t(near ? 'stat.nearHide' : 'stat.nearShow'); nb.setAttribute('aria-label', nb.title);
+  nb.setAttribute('aria-pressed', String(near));
   $('statPrev').hidden = state.statPage === 0;                   // 第 2 頁：左側外面有左箭頭
   $('statNext').hidden = state.statPage >= all.length - 1;       // 第 1 頁：右側外面有右箭頭
 }
 const statModal = $('statModal');
 const turn = d => { state.statPage = (state.statPage || 0) + d; renderStats(); };
 $('btnStats').addEventListener('click', () => { state.statPage = 0; renderStats(); statModal.classList.add('open'); });
-$('statSwitch').addEventListener('click', () => { state.statNear = !state.statNear; renderStats(); });
+$('statNearBtn').addEventListener('click', () => { state.statNear = !state.statNear; renderStats(); });
 $('statPrev').addEventListener('click', () => turn(-1));
 $('statNext').addEventListener('click', () => turn(1));
 window.addEventListener('keydown', e => {   // 統計視窗開著時：左右鍵換頁

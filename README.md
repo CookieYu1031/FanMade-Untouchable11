@@ -10,5 +10,5 @@
 - `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats）；載入順序見 index.html，順序會影響覆蓋關係
 - `js/`：依功能分檔（ES modules），進入點 `main.js`
   - `core/` 設定載入、矩陣工具　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄
-  - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（中、英、日）　`audio/` 音效　`io/` 匯出匯入
+  - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（中、英、日）　`audio/` 音效　`cloud/` Google 登入與雲端同步
   - `ui/` 繪製、互動（拖曳、旋轉）、各視窗、鍵盤
