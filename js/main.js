@@ -17,7 +17,7 @@ import './ui/keyboard.js';
 import './ui/interaction/drag.js';
 import './ui/interaction/transform.js';
 import './ui/interaction/undo.js';
-import './ui/modals/info.js';
+import { showWelcomeOnce } from './ui/modals/info.js';
 import './ui/modals/help.js';
 import './ui/modals/special.js';
 import './ui/modals/solution.js';
@@ -55,6 +55,7 @@ async function boot() {
   if (curLevel().extra && !settings.extra) state.level = 8;
   window.addEventListener('pagehide', persistBoards);
   refresh();
+  showWelcomeOnce();
   initCloud();   // 曾登入過才會載入 Firebase 並還原登入狀態
 }
 boot();

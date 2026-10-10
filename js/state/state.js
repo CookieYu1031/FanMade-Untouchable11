@@ -16,8 +16,9 @@ export const state = {
   boards: {},          // 每個難度各自保留一份盤面，切換難度不會遺失進度
   selected: null,      // 目前選取的拼圖 id
   drag: null,          // 拖曳中的暫存資訊
-  cell: 30,            // 底板每格的像素大小
-  rotated: false,      // 寬螢幕時底板轉成橫式顯示（整體旋轉 90°），盤面座標以目前顯示方向為準
+  cell: 30,            // 底板每格的像素大小（拖曳殘影也用這個大小）
+  trayCell: 20,        // 拼圖盤裡拼圖每格的像素大小（只依拼圖盤寬度決定，與底板無關）
+  rotated: false,      // 底板轉成橫式顯示（整體旋轉 90°；啟動時由 applyMode 設為 true），盤面座標以目前顯示方向為準
   bookHidden: false,   // 解答冊是否隱藏
   chain: null,         // 連續同方向旋轉的紀錄 { id, dir, n }，其他操作會把它清掉
   hist: {},            // 每個難度各自的「返回上一步」堆疊（最多 15 步，存盤面快照）
@@ -60,10 +61,10 @@ export const clonePieces = ps => JSON.parse(JSON.stringify(ps));
 export const toNative   = (ps, lv) => { const L = LEVELS[lv - 1]; return state.rotated ? rotatePieces(ps, 'ccw', L.rows, L.cols) : clonePieces(ps); };
 export const fromNative = (ps, lv) => { const L = LEVELS[lv - 1]; return state.rotated ? rotatePieces(ps, 'cw', L.cols, L.rows) : clonePieces(ps); };
 
-// 螢幕寬度 >= 760px 視為寬螢幕，底板改橫式（左右寬、上下窄）
-const MQ = window.matchMedia('(min-width: 760px)');
+// 底板一律用橫式顯示（左右寬、上下窄），不論視窗寬度。
+// 第一次呼叫時把初始（簡報冊方向）的盤面整個轉成橫式；之後 want 恆為 true，不會再有變化。
 export function applyMode() {
-  const want = MQ.matches;
+  const want = true;
   if (want === state.rotated) return false;
   LEVELS.forEach(L => {
     const rot = ps => want ? rotatePieces(ps, 'cw', L.cols, L.rows) : rotatePieces(ps, 'ccw', L.rows, L.cols);

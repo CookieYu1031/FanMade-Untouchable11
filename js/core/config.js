@@ -14,7 +14,6 @@ const FAMILIES = {};              // 類別代號（hexo、hepto…）→ { key,
 export const COLORS = {};          // 色名 → { fill, edge }
 export const SLOT_COLORS = {};     // 槽位數 → 色名陣列
 export const LEVELS = [];          // 關卡陣列（索引 = lv - 1）
-export const TRAY_ORDER = {};      // 槽位數 → 拼圖盤兩列排列時的順序
 export const LV_COLORS = [];       // 各關卡的代表色
 export const LV_INK = [];          // 各關卡色塊上的文字色
 export const CONFIG = { defaultTitle: 'Untouchable 11' };
@@ -77,8 +76,6 @@ function buildPieces(data) {
 /* ---- 關卡：槽位 → 拼圖號碼（任何組別的拼圖都可使用） ---- */
 function buildLevels(data) {
   const sets = data.slotSets || {};
-  Object.keys(TRAY_ORDER).forEach(k => delete TRAY_ORDER[k]);
-  Object.entries(data.trayOrder || {}).forEach(([k, v]) => { if (Array.isArray(v)) TRAY_ORDER[k] = v; });
   CONFIG.defaultTitle = data.defaultTitle || CONFIG.defaultTitle;
 
   LEVELS.length = 0; LV_COLORS.length = 0; LV_INK.length = 0;

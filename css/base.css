@@ -7,6 +7,8 @@
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
+/* 關閉觸控裝置的雙擊放大（保留捲動與雙指縮放）；#board、拼圖卡片、工具列另有更嚴格的 touch-action:none */
+*{touch-action:manipulation}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;

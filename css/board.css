@@ -8,10 +8,18 @@
 
 .stage-body{position:relative;flex:1;display:flex;align-items:stretch;min-height:0}
 .stage-body .board-wrap{min-width:0}
-/* 常駐工具列：浮在圖板區域左側垂直置中（不佔版面，圖板仍以整個圖板區域置中）；上方為拼圖操作（左轉/右轉/鏡像/收回），分隔線下方為返回上一步、清除圖板 */
-.ptools{position:absolute;z-index:5;left:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;padding:6px;
-  border-radius:999px;background:var(--panel);border:1px solid var(--line)}
+/* 常駐工具列：從圖板區域的左側邊框延伸出來、垂直置中（不佔版面，圖板仍以整個圖板區域置中）；
+   上方為拼圖操作（左轉/右轉/鏡像/收回），分隔線下方為返回上一步、清除圖板 */
+.ptools{position:absolute;z-index:5;left:0;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 6px;
+  border-radius:0 22px 22px 0;background:var(--panel);border:1px solid var(--line);border-left:0}
+.ptools{touch-action:none}   /* 第二根手指點工具列時，不要被瀏覽器當成捲動 / 縮放手勢 */
 .ptools .ibtn{width:30px;height:30px}
+/* 直向視窗（不論寬窄）：工具列常駐固定在視窗左側邊，靠近左下角（方便左手拇指點按），同樣從左側邊延伸出來；
+   橫向視窗則維持上面的樣式（貼著圖板區域左邊框、垂直置中） */
+@media (orientation:portrait){
+  .ptools{position:fixed;z-index:40;left:0;top:auto;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:none;
+    padding-left:calc(6px + env(safe-area-inset-left,0px));box-shadow:2px 2px 10px rgba(0,0,0,.15)}
+}
 .psep{width:18px;height:0;margin:2px 0;border:0;border-top:2px solid var(--line)}
 .ghost{position:fixed;z-index:50;pointer-events:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));opacity:.92}
 .stage>h2{color:var(--lvink,#2B2E4A)}

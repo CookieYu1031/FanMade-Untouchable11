@@ -4,11 +4,6 @@
   "slotSets": {
     "standard11": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 8]
   },
-  "trayOrder": {
-    "_說明": "拼圖盤排成兩列時，依槽位數使用的顯示順序（值 = 槽位序號，從 1 起算）",
-    "11": [1, 4, 2, 5, 3, 6, 9, 7, 8, 10, 11],
-    "9": [1, 2, 4, 3, 5, 6, 7, 8, 9]
-  },
   "levels": [
     {"lv": 1, "names": {"zh": "入門", "en": "Beginner", "ja": "入門"}, "color": "#F28B8B", "cols": 9, "rows": 17, "total": 65516635, "pieces": "standard11"},
     {"lv": 2, "names": {"zh": "簡單", "en": "Easy", "ja": "簡単"}, "color": "#F9B88A", "cols": 10, "rows": 15, "total": 482482, "pieces": "standard11"},

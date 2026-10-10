@@ -84,8 +84,19 @@ export function returnSelected() {
 }
 
 // 工具列：左轉、右轉、鏡像、收回（返回上一步、清除圖板由各自的模組綁定）
+const runAct = b => { if (b.dataset.act === 'return') returnSelected(); else transformSelected(b.dataset.act); };
+let touchActAt = 0;
+// 多點觸控：一根手指拖曳 / 吸附著拼圖時，用另一根手指點工具列（等同鍵盤快捷鍵）。
+// 瀏覽器在多指操作時通常不會替第二根手指產生 click，所以觸控 / 手寫筆在「按下」當下就執行
+els.tools.addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' || !state.drag) return;
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+  e.preventDefault();
+  touchActAt = performance.now();
+  runAct(b);
+});
 els.tools.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
-  if (b.dataset.act === 'return') returnSelected();
-  else transformSelected(b.dataset.act);
+  if (performance.now() - touchActAt < 700) return;   // 剛由 pointerdown 執行過，略過同一次點按產生的 click
+  runAct(b);
 });

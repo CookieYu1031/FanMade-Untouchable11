@@ -1,12 +1,13 @@
 /* 底板 —— 格子大小計算與底板 SVG（格線、拼圖、違規警示、標題列） */
 import { PIECE } from '../core/config.js';
+import { layoutTools } from './piece-tools.js';
 import { analyze } from '../game/analyze.js';
 import { schedulePersist } from '../storage/boards.js';
 import { updateUndo } from '../storage/history.js';
 import { state, curLevel, curPieces, dims, absCells, colorOf, lvLong, clamp } from '../state/state.js';
 import { els } from './dom.js';
 import { cellRects } from './svg.js';
-import { traySlots, trayUnit } from './render-tray.js';
+import { traySlots, trayUnit, trayPerRow } from './render-tray.js';
 import { syncTools } from './piece-tools.js';
 
 // 觸控裝置（手機）捲動時網址列會收合 / 展開，window.innerHeight 與 resize 事件會跟著變動，
@@ -21,27 +22,30 @@ function viewportH() {
 // 依視窗大小決定每格像素，並設定 SVG 尺寸（viewBox 以「格」為單位，所以座標都不需換算）
 export function fitBoard() {
   const D = dims();
-  const availW = Math.max(240, els.wrap.clientWidth - 30);
+  // 橫向視窗的工具列貼在圖板區域左邊框：圖板維持置中，左右各讓出工具列的寬度（+間隙），才不會被遮到
+  const toolsW = layoutTools();
+  const availW = Math.max(240, Math.min(els.wrap.clientWidth - 30, els.wrap.clientWidth - 2 * (toolsW + 8) - 4));
   const availH = Math.max(300, viewportH() - 240);
   let c = clamp(Math.floor(Math.min(availW / D.cols, availH / D.rows)), 14, 48);
 
-  // 拼圖盤與底板共用同一個格子大小（拖曳時大小才不會跳動）。
-  // 先依底板算出 c，再確認拼圖盤放得下；放不下就一起縮小，避免「盤很大、拼圖很小」或反過來。
-  const trayW = Math.max(200, els.tray.clientWidth - 24), gap = 8;
-  const sideBySide = window.matchMedia('(min-width: 1180px)').matches; // 拼圖盤在右側時高度受視窗限制
-  const maxH = sideBySide ? Math.max(420, viewportH() - 180) : Infinity;
-  // 第 11 片（5 格寬）要佔兩個欄位，所以拼圖盤至少 2 欄；高度以 12 個欄位（11 片 + 1 個空位）估算
-  // 拼圖卡片高度依本關拼圖的最大高度估算（六格骨牌最高 3 格；七格骨牌有 5 格高）
-  const u = trayUnit();   // 每個位置的寬度（格）
-  const cardRows = Math.max(3, ...curPieces().map(p => PIECE[p.id].matrix.length));
-  const trayHeight = k => {
-    const cols = Math.max(2, Math.floor((trayW + gap) / (u * k + 12 + gap)));
-    return Math.ceil(traySlots() / cols) * (cardRows * k + 12 + gap) + 24;
-  };
-  while (c > 12 && (2 * (u * c + 12) + gap > trayW || trayHeight(c) > maxH)) c--;
-
   state.cell = c;
-  els.tray.style.gridTemplateColumns = `repeat(auto-fill, minmax(${u * c + 12}px, 1fr))`;
+
+  // 拼圖盤的拼圖大小與底板無關（換關卡、底板縮放都不會變），只看拼圖盤寬度：以「至少放得下 3 片（七格骨牌關卡 2 片）」決定大小；
+  // 實際每行放幾片不設限（拼圖盤夠寬就會多放）。
+  // 拖曳出來的殘影才用底板的格子大小（state.cell），所以放到底板上大小會對得上。
+  const trayCS = getComputedStyle(els.tray);
+  const trayW = Math.max(200, els.tray.clientWidth - parseFloat(trayCS.paddingLeft) - parseFloat(trayCS.paddingRight)), gap = 8;
+  const perRow = trayPerRow(), u = trayUnit();   // u = 每個位置的寬度（格）
+  const colW = (trayW - gap * (perRow - 1)) / perRow;   // 每個位置的卡片寬（px）；卡片左右各有 6px 內距 + 2px 邊框
+  let tc = clamp(Math.floor((colW - 16) / u), 12, 28);
+  // 拼圖盤在右側（>=1180px）時高度受視窗限制，太高就縮小一點
+  const sideBySide = window.matchMedia('(min-width: 1180px)').matches;
+  const maxH = sideBySide ? Math.max(420, viewportH() - 180) : Infinity;
+  const cardRows = Math.max(3, ...curPieces().map(p => PIECE[p.id].matrix.length));   // 卡片高度依本關拼圖的最大高度（六格最高 3 格、七格 3 格）
+  const trayHeight = k => Math.ceil(traySlots() / perRow) * (cardRows * k + 16 + gap) + 24;
+  while (tc > 12 && trayHeight(tc) > maxH) tc--;
+  state.trayCell = tc;
+  els.tray.style.gridTemplateColumns = `repeat(auto-fill, minmax(${u * tc + 16}px, 1fr))`;   // 每行放幾片不設限：放得下就多放
   els.board.setAttribute('viewBox', `0 0 ${D.cols} ${D.rows}`);
   els.board.style.width = D.cols * c + 'px';
   els.board.style.height = D.rows * c + 'px';

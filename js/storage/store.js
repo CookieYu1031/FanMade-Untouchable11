@@ -4,6 +4,7 @@ export const KEY_BOOK = 'untouchable11.solutions.v1';
 export const KEY_BOARDS = 'untouchable11.boards.v1';     // 每個難度目前的盤面（自動暫存，只存在本機快取）
 export const KEY_SET = 'untouchable11.settings.v1';      // 暱稱、語言、背景、音量、額外關卡（登入時與雲端同步）
 export const KEY_UI = 'untouchable11.ui.v1';
+export const KEY_WELCOME = 'untouchable11.welcome.v1';   // 是否已顯示過「規則與資訊」（初次開啟網頁時自動彈出一次）
 export const KEY_SYNC = 'untouchable11.sync.v1';         // 雲端同步狀態 { uid, rev, dirty }
 export const KEY_REDIRECT = 'untouchable11.redirect';    // 以跳轉方式登入前先做標記，回來時才知道要載入 Firebase
 const PREFIX = 'untouchable11.';

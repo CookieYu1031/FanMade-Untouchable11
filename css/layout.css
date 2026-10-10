@@ -2,14 +2,14 @@
 .stage{position:relative}
 /* ============ 版面 ============ */
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-bottom:36px}
-/* 窄螢幕（<760px）：直式底板，單欄堆疊 */
-/* 中寬螢幕（760~1179px）：橫式底板在上，拼圖盤在下方，其餘面板並排 */
+/* 窄螢幕（<760px）：單欄堆疊（底板一律橫式） */
+/* 中寬螢幕（760~1179px）：底板在上，拼圖盤在下方，其餘面板並排 */
 @media (min-width:760px) and (max-width:1179px){
   .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
   .side .panel{margin-bottom:0}
   .side .panel{grid-column:1/-1}
 }
-/* 寬螢幕（>=1180px）：橫式底板在左，拼圖盤與其他面板在右側 */
+/* 寬螢幕（>=1180px）：底板在左，拼圖盤與其他面板在右側 */
 @media (min-width:1180px){
   /* 第一列：底板（左）與拼圖盤（右）等高；第二列：解答冊獨佔整排。
      用 display:contents 讓 aside 裡的面板直接成為 layout 的格子 */
