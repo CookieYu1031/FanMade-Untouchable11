@@ -17,14 +17,16 @@ function showSolution(list, idx, near) {
   $('solView').innerHTML = solutionSVG(item.disp || item.sig, Math.min(window.innerWidth - 96, 540), Math.max(240, window.innerHeight * 0.55));
   $('solTime').textContent = item.time ? fmtTime(item.time) : '';
   $('solNick').textContent = item.nick || settings.nick || t('anon');
-  const multi = list.length > 1;   // 多個解才出現左右切換
-  $('solPrev').hidden = $('solNext').hidden = !multi;
-  $('solIdx').textContent = multi ? `${idx + 1} / ${list.length}` : '';
+  $('solPrev').disabled = idx <= 0;                  // 左右箭頭一律顯示；沒有上（下）一個解時不可點按（不循環）
+  $('solNext').disabled = idx >= list.length - 1;
+  $('solIdx').textContent = list.length > 1 ? `${idx + 1} / ${list.length}` : '';
 }
 export function stepSolution(d) {
   const v = state.viewItem;
-  if (!v || !v.list || v.list.length < 2) return;
-  showSolution(v.list, (v.idx + d + v.list.length) % v.list.length, v.near);
+  if (!v || !v.list) return;
+  const n = v.idx + d;
+  if (n < 0 || n >= v.list.length) return;   // 已經是第一個 / 最後一個
+  showSolution(v.list, n, v.near);
 }
 function openSolution(b) {
   const L = curLevel(), near = !!b.dataset.near, bk = loadBook();

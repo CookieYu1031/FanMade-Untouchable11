@@ -5,7 +5,9 @@
   --board:#FFFFFF; --gridline:#E3E6F5; --blue:#A9CFF7; --p6:#D2F0B5; --p4:#F9B8D2; --lvc:#F28B8B;
   --mint:#B7E5CD;
   box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  /* 安全區域（Safe Area：瀏覽器圓角 / 動態島 / 底部手勢列）：統一宣告成變數，全站共用（需 viewport-fit=cover，已於 index.html 宣告） */
+  --sat:env(safe-area-inset-top,0px); --sar:env(safe-area-inset-right,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px);
+  padding-top:var(--sat); padding-bottom:var(--sab);
 }
 /* 關閉觸控裝置的雙擊放大（保留捲動與雙指縮放）；#board、拼圖卡片、工具列另有更嚴格的 touch-action:none */
 *{touch-action:manipulation}
@@ -19,7 +21,7 @@
   --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;
   --board:#20223B; --gridline:#34375A;
 }
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:var(--sat)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55}

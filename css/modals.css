@@ -1,5 +1,6 @@
 /* 二級視窗：通用外框、尺寸、歡迎視窗 */
-.modal{position:fixed;inset:0;background:rgba(20,22,40,.55);display:none;place-items:center;z-index:60;padding:16px}
+.modal{position:fixed;inset:0;background:rgba(20,22,40,.55);display:none;place-items:center;z-index:60;
+  padding:max(16px,var(--sat)) max(16px,var(--sar)) max(16px,var(--sab)) max(16px,var(--sal))}   /* 視窗內容避開動態島 / 底部手勢列 */
 .modal.open{display:grid}
 .modal .box{background:var(--panel);border-radius:18px;width:min(660px,100%);overflow:hidden}
 .modal textarea{width:calc(100% - 28px);margin:12px 14px 0;height:200px;border-radius:10px;border:1px solid var(--line);
@@ -11,3 +12,10 @@
 .hsec p{margin:0;line-height:1.7}
 html[lang="en"] #helpModal .box{width:min(700px,100%)}
 #solTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 規則與資訊視窗：內容含動畫，較高時在視窗內捲動（標題列固定） */
+#infoModal .box{max-height:100%;overflow:auto}
+#infoModal .box>.panel{position:sticky;top:0;z-index:1}
+/* 窄螢幕：規則視窗再矮一點（上限為視窗高度的 82%，並已避開安全區域），內容超出時在視窗內捲動 */
+@media (max-width:560px){
+  @supports (height:1dvh){#infoModal .box{max-height:min(100%,82dvh)}}
+}

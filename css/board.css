@@ -17,8 +17,8 @@
 /* 直向視窗（不論寬窄）：工具列常駐固定在視窗左側邊，靠近左下角（方便左手拇指點按），同樣從左側邊延伸出來；
    橫向視窗則維持上面的樣式（貼著圖板區域左邊框、垂直置中） */
 @media (orientation:portrait){
-  .ptools{position:fixed;z-index:40;left:0;top:auto;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:none;
-    padding-left:calc(6px + env(safe-area-inset-left,0px));box-shadow:2px 2px 10px rgba(0,0,0,.15)}
+  .ptools{position:fixed;z-index:40;left:0;top:auto;bottom:calc(64px + var(--sab));transform:none;
+    padding-left:calc(6px + var(--sal));box-shadow:2px 2px 10px rgba(0,0,0,.15)}
 }
 .psep{width:18px;height:0;margin:2px 0;border:0;border-top:2px solid var(--line)}
 .ghost{position:fixed;z-index:50;pointer-events:none;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));opacity:.92}

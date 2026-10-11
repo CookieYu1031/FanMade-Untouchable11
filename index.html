@@ -126,17 +126,17 @@
 </div>
 
 <div class="modal" id="infoModal">
-  <div class="box" style="width:min(520px,100%)">
+  <div class="box" style="width:min(720px,100%)">
     <div class="panel" style="margin:0;border:0;border-radius:0">
       <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="info.title"></span><button class="ibtn" id="infoClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
     <div class="help">
       <ul>
         <li><span data-i18n="info.rules"></span>
-          <ul>
-            <li data-i18n="info.rule1"></li>
-            <li data-i18n="info.rule2"></li>
-            <li data-i18n-html="info.rule3"></li>
+          <ul class="rulegrid">
+            <li><span data-i18n="info.rule1"></span><figure class="rulegif"><img class="g-l" src="assets/rules/rule-fit.gif" width="448" height="352" alt="" loading="lazy"><img class="g-d" src="assets/rules/rule-fit-dark.gif" width="448" height="352" alt="" loading="lazy"></figure></li>
+            <li><span data-i18n="info.rule2"></span><figure class="rulegif"><img class="g-l" src="assets/rules/rule-rotate.gif" width="448" height="352" alt="" loading="lazy"><img class="g-d" src="assets/rules/rule-rotate-dark.gif" width="448" height="352" alt="" loading="lazy"></figure></li>
+            <li><span data-i18n-html="info.rule3"></span><figure class="rulegif"><img class="g-l" src="assets/rules/rule-touch.gif" width="448" height="352" alt="" loading="lazy"><img class="g-d" src="assets/rules/rule-touch-dark.gif" width="448" height="352" alt="" loading="lazy"></figure></li>
           </ul>
         </li>
         <li><span data-i18n="info.designer"></span><span data-i18n-html="info.designerVal"></span></li>
@@ -150,8 +150,6 @@
 
 <div class="modal" id="solModal">
   <div class="solwrap">
-    <div class="solrow">
-    <button class="navbtn prev" id="solPrev" type="button" hidden data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="box">
       <div class="panel" style="margin:0;border:0;border-radius:0">
         <h2 id="solBar" style="--c:var(--p4);background:var(--p4)"><span id="solTitle"></span><button class="ibtn" id="solClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
@@ -159,22 +157,30 @@
       <div id="solView" style="padding:16px;display:grid;place-items:center;overflow:auto;max-height:calc(100vh - 240px)"></div>
       <div class="solmeta"><span id="solTime"></span><span id="solIdx"></span><b id="solNick"></b></div>
     </div>
-    <button class="navbtn next" id="solNext" type="button" hidden data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        <div class="navbar">
+      <div class="navgrp">
+        <button class="navbtn" id="solPrev" type="button" disabled data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="navbtn" id="solNext" type="button" disabled data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <button class="sharebtn" id="solShare"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span data-i18n="share"></span></button>
     </div>
-    <button class="sharebtn" id="solShare"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span data-i18n="share"></span></button>
   </div>
 </div>
 
 <div class="modal" id="statModal">
   <div class="statrow">
-    <button class="navbtn prev" id="statPrev" type="button" hidden data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="box">
       <div class="panel" style="margin:0;border:0;border-radius:0">
         <h2 style="--c:var(--p4);background:var(--p4)"><span id="statTitle"></span><span style="display:flex;gap:10px;align-items:center"><button class="ibtn" id="statNearBtn" type="button" style="width:30px;height:30px"></button><button class="ibtn" id="statClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></h2>
       </div>
-      <div style="overflow:auto;max-height:calc(100vh - 140px)"><table class="stat" id="statTable"></table></div>
+      <div style="overflow:auto;max-height:calc(100vh - 160px)"><table class="stat" id="statTable"></table></div>
     </div>
-    <button class="navbtn next" id="statNext" type="button" hidden data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+    <div class="navbar">
+      <div class="navgrp">
+        <button class="navbtn" id="statPrev" type="button" disabled data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="navbtn" id="statNext" type="button" disabled data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
   </div>
 </div>
 

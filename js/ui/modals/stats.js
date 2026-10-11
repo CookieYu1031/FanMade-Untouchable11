@@ -1,6 +1,6 @@
 /* 各關卡收錄進度表（正解；開啟「近似解」開關時，同一關卡再多一列近似解）
  *   分頁：第 1 頁 = Lv1~8；第 2 頁 = 獨立關卡（大師挑戰、危險貨物…，需開啟額外關卡）
- *   換頁：視窗外側的左右箭頭（或鍵盤左右鍵），做法與解答檢視相同 */
+ *   換頁：視窗下方的左右箭頭（或鍵盤左右鍵），做法與解答檢視相同；沒有上（下）一頁時箭頭不可點按 */
 import { t } from '../../i18n/i18n.js';
 import { LEVELS, LV_COLORS, LV_INK } from '../../core/config.js';
 import { loadBook } from '../../storage/book.js';
@@ -55,8 +55,8 @@ export function renderStats() {
   nb.innerHTML = near ? EYE : EYE_OFF;
   nb.title = t(near ? 'stat.nearHide' : 'stat.nearShow'); nb.setAttribute('aria-label', nb.title);
   nb.setAttribute('aria-pressed', String(near));
-  $('statPrev').hidden = state.statPage === 0;                   // 第 2 頁：左側外面有左箭頭
-  $('statNext').hidden = state.statPage >= all.length - 1;       // 第 1 頁：右側外面有右箭頭
+  $('statPrev').disabled = state.statPage === 0;                 // 沒有上一頁：箭頭仍顯示但不可點按
+  $('statNext').disabled = state.statPage >= all.length - 1;     // 沒有下一頁：同上
 }
 const statModal = $('statModal');
 const turn = d => { state.statPage = (state.statPage || 0) + d; renderStats(); };
@@ -66,7 +66,7 @@ $('statPrev').addEventListener('click', () => turn(-1));
 $('statNext').addEventListener('click', () => turn(1));
 window.addEventListener('keydown', e => {   // 統計視窗開著時：左右鍵換頁
   if (!statModal.classList.contains('open') || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
-  if ((e.key === 'ArrowLeft' && !$('statPrev').hidden) || (e.key === 'ArrowRight' && !$('statNext').hidden)) turn(e.key === 'ArrowLeft' ? -1 : 1);
+  if ((e.key === 'ArrowLeft' && !$('statPrev').disabled) || (e.key === 'ArrowRight' && !$('statNext').disabled)) turn(e.key === 'ArrowLeft' ? -1 : 1);
   e.preventDefault();
 });
 $('statClose').addEventListener('click', () => statModal.classList.remove('open'));

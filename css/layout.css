@@ -16,7 +16,9 @@
   .layout{grid-template-columns:minmax(0,1fr) 420px;align-items:stretch}
   .side{display:contents}
   .side .panel{margin-bottom:0}
-  .stage{grid-column:1;grid-row:1}
+  /* contain:size → 圖板區域不參與撐高這一列，列高只由拼圖盤決定，圖板區域高度因此等於拼圖盤區域高度
+     （圖板格子大小由 fitBoard 依此高度計算，見 render-board.js） */
+  .stage{grid-column:1;grid-row:1;contain:size}
   .tray-panel{grid-column:2;grid-row:1}
   .book-panel{grid-column:1/-1;grid-row:2}
 }

@@ -18,3 +18,22 @@ kbd{display:inline-block;min-width:46px;transition:background .08s,color .08s,tr
 .key{cursor:default;user-select:none}
 .key.lit kbd{background:var(--ink);color:var(--panel);border-color:var(--ink);border-bottom-width:2px;margin-bottom:3px;transform:translateY(3px)}
 .key.lit span{color:var(--ink)}
+/* 規則：三條並排，每條「文字 + 動畫」；動畫三張同尺寸、無外框，亮 / 暗主題各一份依主題切換 */
+.help .rulegrid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.help .rulegrid li{margin:0;font-size:13px;line-height:1.5;display:flex;flex-direction:column}
+.rulegif{margin:6px 0 0}
+.help .rulegrid li .rulegif{margin-top:auto;padding-top:6px}   /* 文字行數不同時，動畫仍上下對齊 */
+.rulegif img{display:block;width:100%;height:auto}
+.rulegif .g-d{display:none}
+/* 窄螢幕：單欄直排，動畫縮小為 80% 並置中；各項間距也縮小，讓視窗矮一點 */
+@media (max-width:560px){
+  .help{padding:2px 16px 12px}
+  .help .rulegrid{grid-template-columns:1fr;gap:8px;margin-left:-18px}   /* 抵消外層清單的縮排，動畫才會真正置中 */
+  .help .rulegrid li .rulegif{width:80%;margin:0 auto;padding-top:4px}
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .rulegif .g-l{display:none}
+  :root:not([data-theme="light"]) .rulegif .g-d{display:block}
+}
+:root[data-theme="dark"] .rulegif .g-l{display:none}
+:root[data-theme="dark"] .rulegif .g-d{display:block}
