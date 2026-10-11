@@ -51,7 +51,9 @@ export function fitBoard() {
     const wCS = getComputedStyle(els.wrap);
     availH = Math.max(120, els.wrap.clientHeight - parseFloat(wCS.paddingTop) - parseFloat(wCS.paddingBottom));
   } else availH = Math.max(300, viewportH() - 240);
-  const c = clamp(Math.floor(Math.min(availW / D.cols, availH / D.rows)), 14, 48);
+  // #board 為 content-box，外框 2px × 2 另外加在格子區之外：兩個方向都先扣掉 4px，否則會多出 2px 而冒出捲軸（灰色條）
+  const BORDER = 4;
+  const c = clamp(Math.floor(Math.min((availW - BORDER) / D.cols, (availH - BORDER) / D.rows)), 8, 48);   // 下限 8：Lv7（24 格寬）在窄手機上若硬撐到 14px 會超出寬度而冒出捲軸
   state.cell = c;
 
   els.board.setAttribute('viewBox', `0 0 ${D.cols} ${D.rows}`);

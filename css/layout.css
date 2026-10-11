@@ -26,5 +26,4 @@
 .panel>h2{margin:0;padding:0 16px;height:48px;font-size:15px;font-weight:700;background:var(--c);color:#2B2E4A;
   display:flex;flex-wrap:nowrap;justify-content:space-between;gap:8px;align-items:center}
 .panel .body{padding:12px 14px}
-@media (max-width:759px){.pn{display:block}.stage>h2,.tray-panel>h2{cursor:pointer;-webkit-tap-highlight-color:transparent}}
-.stage,.tray-panel{scroll-margin-top:8px}
+.pn{display:block}   /* 規則中的括號說明一律另起一行 */

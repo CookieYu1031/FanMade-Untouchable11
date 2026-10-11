@@ -3,6 +3,7 @@
 .hero{position:relative;margin:16px auto 12px;background:var(--blue);color:#2B2E4A;border-radius:22px;
   padding:20px 26px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .hero h1{margin:0;font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:-.01em;line-height:1.1}
+.hero h1.split .t2{display:block}   /* 標題壓到按鈕時，冒號後面的字換到下一行（見 render-levels.js 的 fitHeroTitle） */
 .hero p{margin:6px 0 0;font-size:15px}
 html[data-series] .hero{background:#4A4D5C;color:#fff}   /* 獨立關卡（大師挑戰、危險貨物）是不同系列的拼圖 */
 .hero-acts{position:absolute;right:14px;bottom:12px;display:flex;gap:8px}

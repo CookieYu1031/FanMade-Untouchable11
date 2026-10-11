@@ -27,22 +27,22 @@ function exactCells(L, book) {
     : L.lv <= 6
     ? `<div class="pbar"><i style="width:${n / L.total * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, L.total)}</span>`
     : `<div class="dots">${Array.from({ length: L.total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;
-  return `<td>${L.total == null ? '—' : L.total.toLocaleString()}</td><td>${n.toLocaleString()}</td><td><div class="pg">${prog}</div></td>`;
+  return `<td>${L.total == null ? '—' : L.total.toLocaleString()}</td><td>${n.toLocaleString()}</td><td class="c-prog"><div class="pg">${prog}</div></td>`;
 }
 // 近似解那一列的三格（文字為灰字，樣式見 .nr）
 function nearCells(L, book) {
   const tot = nearTotal(L), got = ((book.near || {})[L.lv] || []).length;
   if (tot == null) // 實際組數未知：只顯示收錄數，沒有進度條與 %
-    return `<td>—</td><td>${got.toLocaleString()}</td><td><div class="pg"><span class="pct">—</span></div></td>`;
+    return `<td>—</td><td>${got.toLocaleString()}</td><td class="c-prog"><div class="pg"><span class="pct">—</span></div></td>`;
   const n = Math.min(got, tot);
   return `<td>${tot.toLocaleString()}</td><td>${n.toLocaleString()}</td>`
-    + `<td><div class="pg"><div class="pbar"><i style="width:${n / tot * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, tot)}</span></div></td>`;
+    + `<td class="c-prog"><div class="pg"><div class="pbar"><i style="width:${n / tot * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, tot)}</span></div></td>`;
 }
 
 export function renderStats() {
   const book = loadBook(), near = !!state.statNear, all = pages();
   state.statPage = Math.max(0, Math.min(all.length - 1, state.statPage || 0));   // 關閉額外關卡後頁數可能超出範圍
-  const head = `<thead><tr><th>${t('stat.lv')}</th><th>${t(near ? 'stat.totalNear' : 'stat.total')}</th><th>${t('stat.got')}</th><th>${t('stat.progress')}</th></tr></thead>`;
+  const head = `<thead><tr><th>${t('stat.lv')}</th><th>${t(near ? 'stat.totalNear' : 'stat.total')}</th><th>${t('stat.got')}</th><th class="c-prog">${t('stat.progress')}</th></tr></thead>`;
   const tag = (L, span) => { const c = LV_COLORS[L.lv - 1]; return `<td${span > 1 ? ` rowspan="${span}"` : ''}><span class="lvtag" style="background:${c};color:${LV_INK[L.lv - 1]}">${lvTag(L)}</span></td>`; };
   const rows = all[state.statPage].map(L => {
     const st = `style="--c:${LV_COLORS[L.lv - 1]}"`;
@@ -50,8 +50,9 @@ export function renderStats() {
     return `<tr class="g1" ${st}>${tag(L, 2)}${exactCells(L, book)}</tr><tr class="nr" ${st}>${nearCells(L, book)}</tr>`;   // 關卡標籤佔兩列高度
   }).join('');
   $('statTable').innerHTML = `${head}<tbody>${rows}</tbody>`;
+  $('statTable').classList.toggle('more', near);   // 窄視窗：「收錄進度」欄預設隱藏，按下「顯示更多資訊」才出現（見 stats.css）
   $('statTitle').innerHTML = t('stat.title') + (all.length > 1 ? `<small>${state.statPage + 1} / ${all.length}</small>` : '');
-  const nb = $('statNearBtn');   // 近似解統計：睜眼 = 目前顯示，閉眼 = 目前隱藏（與解答冊的隱藏按鈕相同）
+  const nb = $('statNearBtn');   // 更多資訊（近似解列；窄視窗另含收錄進度欄）：睜眼 = 目前顯示，閉眼 = 目前隱藏（與解答冊的隱藏按鈕相同）
   nb.innerHTML = near ? EYE : EYE_OFF;
   nb.title = t(near ? 'stat.nearHide' : 'stat.nearShow'); nb.setAttribute('aria-label', nb.title);
   nb.setAttribute('aria-pressed', String(near));

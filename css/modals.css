@@ -10,6 +10,8 @@
 #helpModal .box,#specialModal .box{width:min(520px,100%)}
 .hsec h3{font-size:14px;margin:0 0 6px}
 .hsec p{margin:0;line-height:1.7}
+.hsec ul.splist{margin:0;padding-left:18px;line-height:1.7}
+.hsec ul.splist li{margin:4px 0}
 html[lang="en"] #helpModal .box{width:min(700px,100%)}
 #solTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 規則與資訊視窗：內容含動畫，較高時在視窗內捲動（標題列固定） */

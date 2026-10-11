@@ -6,7 +6,7 @@ import { $ } from '../dom.js';
 function renderSpecial() {
   const L = curLevel();
   if (!L.extra) return false;
-  $('specialBody').innerHTML = `<section class="hsec"><h3>${t('sp.desc.h' + L.lv)}</h3><p>${t('sp.desc.' + L.lv)}</p></section>`;
+  $('specialBody').innerHTML = `<section class="hsec"><h3>${t('sp.desc.h' + L.lv)}</h3><div>${t('sp.desc.' + L.lv)}</div></section>`;
   return true;
 }
 const specialModal = $('specialModal');

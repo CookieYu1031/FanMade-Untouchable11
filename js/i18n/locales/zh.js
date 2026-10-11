@@ -32,8 +32,7 @@ export default {
     // ── 操作說明視窗 ──
     'help.title':'操作說明',
     'help.l1':'拖曳拼圖以移動；點擊方框內的拼圖可選取它',
-    'help.l2':'選取或拖曳拼圖時，點按圖板左側工具列的按鈕，或是使用下列快捷鍵以改變拼圖狀態',
-    'help.l3':'窄視窗下，點擊拼圖盤頂欄以查看整個拼圖盤，點擊拼圖會自動放到圖板',
+    'help.l2':'拖曳拼圖時，點擊左側工具列按鈕(或快捷鍵)可改變拼圖狀態',
     'key.ccw':'左轉 90°',
     'key.cw':'右轉 90°',
     'key.flip':'鏡像',
@@ -70,8 +69,8 @@ export default {
     'stat.lv':'等級',
     'stat.total':'解答組數',
     'stat.totalNear':'<span class="tt">解答</span><span class="nt">(近似解)</span>',
-    'stat.nearShow':'顯示近似解統計',
-    'stat.nearHide':'隱藏近似解統計',
+    'stat.nearShow':'顯示更多資訊',
+    'stat.nearHide':'隱藏更多資訊',
     'stat.got':'收錄組數',
     'stat.progress':'收錄進度',
 
@@ -80,9 +79,9 @@ export default {
     'sp.desc.h9':'大師挑戰',
     'sp.desc.h10':'危險貨物',
     'sp.desc.h11':'危險貨物2',
-    'sp.desc.9':'Carl Hoff 基於《Untouchable 11》所設計之衍伸作，使用12x12圖板、11片拼圖，卻僅有2組正解',
-    'sp.desc.10':'Carl Hoff 所設計之作品，使用11x11圖板、9片拼圖，僅有1組唯一解，卻有3761組近似解(迷惑性更高)',
-    'sp.desc.11':'Carl Hoff 基於《危險貨物》所設計之作品，使用12*12圖板、9片拼圖(七格骨牌)，僅有1組唯一解，卻有26226組近似解(難度提升巨大)',
+    'sp.desc.9':'<ul class="splist"><li>Carl Hoff 基於《Untouchable 11》設計之衍伸作</li><li>使用12x12圖板、11片拼圖</li><li>僅有2組正解</li></ul>',
+    'sp.desc.10':'<ul class="splist"><li>Carl Hoff 所設計之作品</li><li>使用11x11圖板、9片拼圖</li><li>僅有1組唯一解，卻有3761組近似解</li></ul>',
+    'sp.desc.11':'<ul class="splist"><li>Carl Hoff 基於《危險貨物》設計之續作</li><li>使用12*12圖板、9片拼圖(七格骨牌)</li><li>一樣僅有1組唯一解，但近似解卻來到了誇張的26226組</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'重置版圖',

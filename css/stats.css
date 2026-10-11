@@ -21,5 +21,7 @@
 .stat th .nt{color:var(--muted);font-weight:500}
 .stat tr.g1 td[rowspan]{border-bottom:1px dashed var(--line);padding-bottom:10px}   /* 跨兩列的關卡標籤保留底線 */
 .stat tr.nr .pct{color:var(--muted)}
+/* 窄視窗（<760px）：收錄進度欄預設隱藏，按下「顯示更多資訊」（.more）才顯示；正常視窗不受影響 */
+@media (max-width:759px){.stat:not(.more) .c-prog{display:none}}
 #statModal{grid-template-columns:minmax(0,1fr)}   /* 窄螢幕時讓視窗不被表格撐寬，表格改在視窗內橫向捲動 */
 .statrow{justify-self:center}

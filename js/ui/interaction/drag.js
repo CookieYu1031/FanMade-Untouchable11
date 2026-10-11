@@ -8,12 +8,13 @@ import { miniSVG, cellRects } from '../svg.js';
 import { cellsOf } from '../../core/matrix.js';
 import { renderBoard } from '../render-board.js';
 import { renderTray } from '../render-tray.js';
-import { isNarrow, scrollToPanel } from '../responsive.js';
 
 // 滑鼠位置 -> 底板格座標（可為小數）
 function pointerToGrid(cx, cy) {
   const r = els.board.getBoundingClientRect(), D = dims();
-  return { u: (cx - r.left) / r.width * D.cols, v: (cy - r.top) / r.height * D.rows };
+  // 外框 2px 邊框不屬於格子區：扣掉邊框後再換算（SVG 為 content-box，內容區正好 = 格數 × 每格像素）
+  const bx = els.board.clientLeft, by = els.board.clientTop, w = els.board.clientWidth, h = els.board.clientHeight;
+  return { u: (cx - r.left - bx) / w * D.cols, v: (cy - r.top - by) / h * D.rows };
 }
 // 依指標位置算出吸附結果：以拼圖「中心」對準指標，四捨五入到整數格，再夾進底板內。
 // 指標不在底板上則回傳 null（代表放回拼圖盤）。
@@ -76,16 +77,9 @@ function onUp(e) {
   const d = state.drag; state.drag = null;
   if (!d) return;
   if (!d.moved) {
-    // 單純點擊：只有「窄視窗點拼圖盤的卡片」會拿起拼圖並跳到圖板（再點圖板放下）；
-    // 其他情況只是選取 —— 點方框內的拼圖＝選取它（可用工具列調整），點拼圖盤（寬視窗）＝不動作
-    if (d.fromTray && e.type !== 'pointercancel' && isNarrow()) {
-      startHold(d.id, e.clientX, e.clientY);
-      scrollToPanel(document.querySelector('.stage'));
-    }
-    else {
-      if (d.fromTray || e.type === 'pointercancel') state.selected = null;
-      renderBoard(); renderTray();
-    }
+    // 單純點擊：點方框內的拼圖＝選取它（可用工具列調整）；點拼圖盤的卡片＝不動作
+    if (d.fromTray || e.type === 'pointercancel') state.selected = null;
+    renderBoard(); renderTray();
     return;
   }
   finishPlace(d, e.clientX, e.clientY);
@@ -101,18 +95,6 @@ function finishPlace(d, x, y) {
   if (d.before && JSON.stringify(d.before) !== JSON.stringify(curPieces())) pushHistory(d.before);
   renderBoard(); renderTray();
   evaluate();
-}
-// 點擊吸附模式（僅窄視窗點拼圖盤觸發）：拼圖跟著手指 / 滑鼠走，再點一次放下（Esc 或右鍵取消）
-function startHold(id, x, y) {
-  const before = clonePieces(curPieces()); // 復原用：拿起之前的盤面
-  const p = getP(id);
-  p.placed = false;
-  state.selected = id; state.chain = null;
-  const d = state.drag = { id, fromTray:false, hold:true, sx:x, sy:y, cx:x, cy:y, moved:true, ghost:null, before };
-  d.ghost = document.createElement('div');
-  d.ghost.className = 'ghost';
-  document.body.appendChild(d.ghost);
-  updateGhost(); renderBoard(); renderTray(); movePreview();
 }
 // 取消吸附（Esc / 右鍵）：恢復成拿起之前的樣子（從方框拿起的拼圖會回到原位）
 export function cancelHold() {
