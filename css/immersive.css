@@ -1,0 +1,44 @@
+/* 沉浸模式：圖板放大到佔滿整個頁面，右下角圓點彈出小型拼圖盤（js/ui/immersive.js、js/ui/fan.js） */
+
+/* 開啟 / 關閉按鈕：兩種圖示依狀態切換 */
+#btnImmersive .i-off{display:none}
+html.immersive #btnImmersive .i-on{display:none}
+html.immersive #btnImmersive .i-off{display:block}
+
+/* 平時不顯示圓點與小型拼圖盤 */
+.fan,.fan-dot{display:none}
+
+html.immersive{overflow:hidden}
+/* 圖板區塊：蓋滿整個視窗（低於拖曳殘影 z=50 與各視窗 z=60） */
+html.immersive .stage{position:fixed;inset:0;z-index:45;margin:0;border:0;border-radius:0;contain:none}
+/* 標題列：名稱在左、按鈕在右；避開動態島 / 圓角 */
+html.immersive .stage>h2{flex:none;height:calc(48px + var(--sat));padding:var(--sat) calc(14px + var(--sar)) 0 calc(16px + var(--sal))}
+html.immersive .stage-body{padding:0 var(--sar) var(--sab) var(--sal)}
+/* 圖板區域：邊距縮小（左側的位置由 fitBoard 依工具列寬度設定） */
+html.immersive .board-wrap{padding:10px}
+/* 左側工具列：不分直橫向，一律貼著左緣、垂直置中 */
+html.immersive .ptools{position:absolute;z-index:5;left:var(--sal);top:50%;bottom:auto;transform:translateY(-50%);padding:8px 6px;box-shadow:none}
+/* 偵測到靈動島 / 挖孔 / 瀏海會遮到左緣時（js/ui/piece-tools.js 加上 html.tools-h）：工具列打橫，靠視窗左下 */
+html.immersive.tools-h .ptools{flex-direction:row;left:calc(var(--sal) + 10px);top:auto;bottom:calc(var(--sab) + 10px);transform:none;
+  padding:6px 8px;border:1px solid var(--line);border-radius:22px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+html.immersive.tools-h .psep{width:0;height:18px;margin:0 2px;border-top:0;border-left:2px solid var(--line)}
+
+/* ---- 右下角圓點（28px，中間不放圖示；周圍多一圈看不見的點擊範圍，方便手指按）---- */
+html.immersive .fan-dot{display:block;position:absolute;z-index:8;width:28px;height:28px;padding:0;border:0;border-radius:50%;
+  right:calc(18px + var(--sar));bottom:calc(18px + var(--sab));background:var(--lvc);
+  box-shadow:0 2px 8px rgba(0,0,0,.28);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:none}
+.fan-dot::after{content:"";position:absolute;inset:-10px;border-radius:50%}
+.fan-dot:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.fan-dot.open{background:var(--ink)}
+
+/* ---- 小型拼圖盤：圓點上方、靠右對齊；寬高由 js/ui/fan.js 依可用空間設定（內容沿用 tray.css 的 .trow / .card，沒有頂欄）---- */
+html.immersive .fan{display:block;position:absolute;z-index:7;right:calc(18px + var(--sar));bottom:calc(18px + var(--sab) + 28px + 14px);
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.28);
+  transform-origin:100% 100%;visibility:hidden;opacity:0;transform:scale(.85);
+  transition:transform .16s ease-out,opacity .14s ease-out,visibility 0s linear .16s}
+html.immersive .fan.open{visibility:visible;opacity:1;transform:none;transition-delay:0s}
+.fan .fan-body{padding:8px}
+.fan,.fan *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.fan .card{touch-action:none}
+@media (prefers-reduced-motion:reduce){html.immersive .fan{transition:none}}

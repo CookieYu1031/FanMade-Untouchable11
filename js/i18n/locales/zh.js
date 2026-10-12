@@ -9,12 +9,15 @@ export default {
     'tip.group':'選擇拼圖組合',
     'tip.stats':'統計',
     'tip.undo':'返回上一步（Z）',
-    'tip.reset':'重置版圖（Delete）',
+    'tip.reset':'重置版圖',
     'tip.ccw':'向左旋轉 90°（A）',
     'tip.cw':'向右旋轉 90°（D）',
     'tip.flip':'鏡像（S）',
     'tip.return':'將拼圖收回至拼圖盤（X）',
     'tip.close':'關閉',
+    'tip.immersive':'沉浸模式',
+    'tip.immersiveOff':'關閉沉浸模式（Esc）',
+    'tip.fan':'拼圖盤（空格鍵）',
 
     // ── 規則與資訊視窗 ──
     'info.title':'規則與資訊',
@@ -22,13 +25,13 @@ export default {
     'info.rule1':'將拼圖全部放入方框',
     'info.rule2':'拼圖可以左右旋轉、鏡像擺放',
     'info.rule3':'拼圖間彼此不可以互相觸碰<span class="pn">（包含重疊、邊觸碰、點觸碰）</span>',
-    'info.designer':'拼圖作者：',
+    'info.designer':'拼圖設計者：',
     'info.designerVal':'<a href="https://www.facebook.com/grabarchuk/" target="_blank" rel="noopener noreferrer">Peter Grabarchuk</a>、<a href="https://www.youtube.com/@Carl_Hoff" target="_blank" rel="noopener noreferrer">Carl Hoff</a>',
     'info.dev':'網頁開發者：',
     'info.devVal':'<a href="https://www.instagram.com/cookie_yu_1031/" target="_blank" rel="noopener noreferrer">Cookie Yu</a>',
     'info.ref':'參考資料：',
     'info.refVal':'<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>、<a href="https://www.gathering4gardner.org/g4g10gift/puzzles/Hoff_Carl-Untouchable_11.pdf" target="_blank" rel="noopener noreferrer">Master Challenge</a>、<a href="https://www.gathering4gardner.org/g4g15gift/ExchangeArchive-HazmatCargo2-G15-011-1.pdf" target="_blank" rel="noopener noreferrer">Hazmat Cargo2</a>',
-    'info.edu':'本網站僅供教育與學習使用',
+    'info.edu':'本網站為粉絲作品，僅作為學習與教育等非營利用途使用',
 
     // ── 操作說明視窗 ──
     'help.title':'操作說明',
@@ -39,7 +42,7 @@ export default {
     'key.flip':'鏡像',
     'key.return':'收回拼圖',
     'key.undo':'返回上一步',
-    'key.reset':'重置版圖',
+    'key.tray':'拼圖盤（沉浸模式）',
 
     // ── 拼圖盤 ──
     'tray.title':'拼圖盤',
@@ -89,7 +92,7 @@ export default {
     'sp.desc.9':'<ul class="splist"><li>Carl Hoff 基於《Untouchable 11》設計之衍伸作</li><li>使用12x12圖板、11片拼圖</li><li>僅有2組正解</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>Carl Hoff 所設計之作品</li><li>使用11x11圖板、9片拼圖</li><li>僅有1組唯一解，卻有3761組近似解</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>Carl Hoff 基於《危險貨物》設計之續作</li><li>使用12*12圖板、9片拼圖(七格骨牌)</li><li>一樣僅有1組唯一解，但近似解卻來到了誇張的26226組</li></ul>',
-    'sp.desc.12':'<ul class="splist"><li>基於《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》中的計算結果，設計的挑戰</li><li>使用12x12圖板、14組不同的拼圖組合</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可得一個皇冠</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、14組不同的拼圖組合</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可得一個皇冠</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'重置版圖',

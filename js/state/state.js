@@ -50,6 +50,7 @@ export const state = {
   trayCell: 20,        // 拼圖盤裡拼圖每格的像素大小（只依拼圖盤寬度決定，與底板無關）
   rotated: false,      // 底板轉成橫式顯示（整體旋轉 90°；啟動時由 applyMode 設為 true），盤面座標以目前顯示方向為準
   bookHidden: false,   // 解答冊是否隱藏
+  immersive: false,    // 沉浸模式：圖板放大到佔滿整個頁面（見 js/ui/immersive.js）
   chain: null,         // 連續同方向旋轉的紀錄 { id, dir, n }，其他操作會把它清掉
   hist: {},            // 每個難度（每一組）各自的「返回上一步」堆疊（最多 15 步，存盤面快照）
   wiping: false,       // 重置資料時為 true：避免離開頁面時又把盤面存回去

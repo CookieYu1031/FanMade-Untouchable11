@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Untouchable 11</title>
+<link rel="icon" href="data:,">
 <meta name="description" content="線上遊玩《Untouchable 11》與其衍伸作品">
 <meta property="og:title" content="Untouchable 11">
 <meta property="og:description" content="線上遊玩《Untouchable 11》與其衍伸作品">
@@ -29,14 +30,18 @@
 <link rel="stylesheet" href="css/settings.css">
 <link rel="stylesheet" href="css/stats.css">
 <link rel="stylesheet" href="css/group.css">
+<link rel="stylesheet" href="css/immersive.css">
 </head>
 <body>
 <div class="wrap">
   <header class="hero">
     <h1 id="heroTitle">Untouchable 11</h1>
     <div class="hero-acts">
-      <button class="ibtn" id="btnInfo" style="width:30px;height:30px" data-i18n-title="tip.info"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button>
-      <button class="ibtn" id="btnSettings" style="width:30px;height:30px" data-i18n-title="tip.settings"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <span class="fan-tag">Fan-made</span>
+      <div class="hero-btns">
+        <button class="ibtn" id="btnInfo" style="width:30px;height:30px" data-i18n-title="tip.info"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button>
+        <button class="ibtn" id="btnSettings" style="width:30px;height:30px" data-i18n-title="tip.settings"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
     </div>
   </header>
 
@@ -45,7 +50,8 @@
   <div class="layout">
     <section class="panel stage" style="--c:var(--lvc)">
       <h2><span id="levelTitle"></span><span class="h2-acts">
-          <button class="ibtn" id="btnSpecial" hidden style="width:30px;height:30px" data-i18n-title="tip.special"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg></button></span></h2>
+          <button class="ibtn" id="btnSpecial" hidden style="width:30px;height:30px" data-i18n-title="tip.special"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg></button>
+          <button class="ibtn" id="btnImmersive" style="width:30px;height:30px" data-i18n-title="tip.immersive" aria-pressed="false"><svg class="i-on" viewBox="0 0 24 24"><path d="M3 8V3h5"/><path d="M3 3l6 6"/><path d="M16 3h5v5"/><path d="M21 3l-6 6"/><path d="M3 16v5h5"/><path d="M3 21l6-6"/><path d="M21 16v5h-5"/><path d="M21 21l-6-6"/></svg><svg class="i-off" viewBox="0 0 24 24"><path d="M9 4v5H4"/><path d="M3 3l6 6"/><path d="M15 4v5h5"/><path d="M21 3l-6 6"/><path d="M9 20v-5H4"/><path d="M3 21l6-6"/><path d="M15 20v-5h5"/><path d="M21 21l-6-6"/></svg></button></span></h2>
       <div class="stage-body">
       <div class="ptools" id="pieceTools" role="toolbar">
     <button class="ibtn" data-act="ccw" data-i18n-title="tip.ccw"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
@@ -65,6 +71,9 @@
           </svg>
         </div>
       </div>
+      <!-- 沉浸模式專用：右下角圓點與小型拼圖盤（內容由 js/ui/fan.js 繪製；圓點中間不放圖示） -->
+      <div class="fan" id="fan"><div class="fan-body tray" id="fanBody"></div></div>
+      <button class="fan-dot" id="fanDot" type="button" aria-expanded="false" aria-controls="fan" data-i18n-title="tip.fan"></button>
     </section>
 
     <aside class="side">
@@ -109,7 +118,7 @@
           <div class="key" data-k="d"><kbd>D</kbd><span data-i18n="key.cw"></span></div>
           <div class="key" data-k="z"><kbd>Z</kbd><span data-i18n="key.undo"></span></div>
           <div class="key" data-k="x"><kbd>X</kbd><span data-i18n="key.return"></span></div>
-          <div class="key" data-k="Delete"><kbd>Delete</kbd><span data-i18n="key.reset"></span></div>
+          <div class="key" data-k=" "><kbd>Space</kbd><span data-i18n="key.tray"></span></div>
         </div>
       </section>
     </div>

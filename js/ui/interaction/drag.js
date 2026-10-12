@@ -26,7 +26,7 @@ function snapFromPointer(cx, cy, p) {
 }
 
 // ---- 拖曳 ----
-function startDrag(e, id, fromTray) {
+export function startDrag(e, id, fromTray) {
   if (e.button > 0) return;
   e.preventDefault();
   state.selected = id; state.chain = null;
@@ -147,7 +147,7 @@ window.addEventListener('contextmenu', e => {
     if (e.pointerType === 'touch' || d.touching != null) return;   // 觸控長按會跳出選單，不要因此取消
     cancelHold(); return;
   }
-  if (e.target.closest && e.target.closest('.card, .pc')) e.preventDefault();   // 長按拼圖不跳出系統選單
+  if (e.target.closest && e.target.closest('.card, .pc, .slice')) e.preventDefault();   // 長按拼圖不跳出系統選單
 });
 
 // ---- 事件綁定：拼圖盤 / 底板 ----

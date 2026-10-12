@@ -17,6 +17,7 @@ import './ui/keyboard.js';
 import './ui/interaction/drag.js';
 import './ui/interaction/transform.js';
 import './ui/interaction/undo.js';
+import './ui/immersive.js';
 import { showWelcomeOnce } from './ui/modals/info.js';
 import './ui/modals/help.js';
 import './ui/modals/special.js';

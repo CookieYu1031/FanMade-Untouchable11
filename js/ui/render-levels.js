@@ -7,7 +7,9 @@ import { $, els } from './dom.js';
 // 頁首標題：預設單行；若標題（含自動換行後）壓到右下角的「規則與資訊 / 設定」按鈕，
 // 就在冒號後換行（如「Untouchable 11:」/「Master Challenge」）。沒有冒號的標題維持原樣。
 export function fitHeroTitle() {
-  const h = $('heroTitle'), acts = document.querySelector('.hero-acts'), title = gameTitle(curLevel());
+  const L = curLevel();
+  if (!L) return;   // 設定檔尚未載入完成（字型載入或視窗縮放事件可能早於 boot）
+  const h = $('heroTitle'), acts = document.querySelector('.hero-acts'), title = gameTitle(L);
   const i = title.indexOf(': ');
   h.classList.remove('split');
   if (i < 0) { h.textContent = title; return; }

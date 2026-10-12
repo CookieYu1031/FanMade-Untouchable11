@@ -1,5 +1,24 @@
 # Untouchable 11
 
+> **粉絲作品聲明（Fan-made）**
+> 本專案為開發者 Cookie Yu 個人學習用途之非營利粉絲致敬作品，為非官方作品，未經原作者授權或背書，與原作者及實體發行商無任何商業合作關係。《Untouchable 11》及其衍伸作品之拼圖設計與名稱相關權利（如有）歸原作者 Peter Grabarchuk 與 Carl Hoff 所有，不在本專案授權範圍內。若有任何侵權疑慮，請透過 [GitHub Issues](https://github.com/CookieYu1031/untouchable11/issues) 聯絡開發者，將立即處理或移除。
+
+## 致謝與參考
+- 拼圖作者：[Peter Grabarchuk](https://www.facebook.com/grabarchuk/)、[Carl Hoff](https://www.youtube.com/@Carl_Hoff)
+- 網頁開發者：Cookie Yu
+- 參考資料：[Untouchable11（Gathering 4 Gardner 交換禮物）](https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf)，其餘參考資料見網站內「規則與資訊」
+
+## 授權
+本專案依內容分開授權，**不是單一授權**，範圍詳見 [NOTICE.md](NOTICE.md)：
+
+| 內容 | 授權 |
+|---|---|
+| 程式碼（`js/`、`index.html`、`firestore.rules`） | [MIT](LICENSE) |
+| 視覺設計與文字（`css/`、`assets/`、`data/colors.json`、`js/i18n/locales/`） | [CC BY-NC-SA 4.0](LICENSE-CONTENT.md)（姓名標示、非商業性、相同方式分享） |
+| 拼圖設計與名稱（含 `data/pieces.json`、`data/levels.json`） | **不在授權範圍內**，相關權利（如有）歸原作者 |
+
+本專案依現狀提供，不附任何明示或默示之擔保（詳見 [LICENSE](LICENSE)）。
+
 ## 結構
 - `index.html`：頁面結構（所有視窗的 HTML）
 - `assets/`：網頁縮圖（`thumbnail.png`，供社群分享預覽的 `og:image` 使用）
@@ -9,8 +28,8 @@
     - `lv` 是存檔用的固定編號（解答冊、盤面、雲端文件都以它記錄），新關卡一律接在最後；按鈕列與統計表的顯示順序由 `order` 決定（皇冠挑戰 lv 12 排在大師挑戰之後）
     - 有「拼圖組合」的關卡（皇冠挑戰）寫 `groups`：每組 `{key, pieces}`，各組的拼圖組成不可相同（解答冊靠盤面上出現的拼圖判斷解答屬於哪一組）；每組各自保留盤面與返回上一步紀錄；`crown: true` = 收錄進度以「每組一個皇冠」顯示
   - `colors.json`：色盤與「槽位數 → 顏色序」
-- `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、group）；載入順序見 index.html，順序會影響覆蓋關係
+- `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、group、immersive）；載入順序見 index.html，順序會影響覆蓋關係
 - `js/`：依功能分檔（ES modules），進入點 `main.js`
   - `core/` 設定載入、矩陣工具　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄
   - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（中、英、日）　`audio/` 音效　`cloud/` Google 登入與雲端同步
-  - `ui/` 繪製、互動（拖曳、旋轉）、各視窗、鍵盤
+  - `ui/` 繪製、互動（拖曳、旋轉）、各視窗、鍵盤、沉浸模式（`immersive.js` 切換、`fan.js` 繪製右下角圓點彈出的小型拼圖盤）

@@ -4,6 +4,7 @@ import { state, curPieces, curLevel, colorOf } from '../state/state.js';
 import { els } from './dom.js';
 import { miniSVG } from './svg.js';
 import { syncTools } from './piece-tools.js';
+import { renderFan } from './fan.js';
 
 // 決定拼圖盤拼圖大小時，至少要放得下幾片：六格骨牌 3 片；其他類別（七格骨牌，如危險貨物2）2 片（版面不限制每行片數）
 export const trayPerRow = (L = curLevel()) => (L.family || 'hexo') === 'hexo' ? 3 : 2;
@@ -48,4 +49,5 @@ export function renderTray() {
       return `<div class="card${sel ? ' sel' : ''}${p.placed ? ' placed' : ''}" data-id="${p.id}">${miniSVG(PIECE[p.id].matrix, state.trayCell, pal)}</div>`;
     }).join('') + `</div>`).join('');
   syncTools();
+  renderFan();   // 沉浸模式的小型拼圖盤（沒開啟時什麼都不做）
 }

@@ -9,12 +9,15 @@ export default {
     'tip.group':'Choose piece set',
     'tip.stats':'Statistics',
     'tip.undo':'Undo (Z)',
-    'tip.reset':'Reset board (Delete)',
+    'tip.reset':'Reset board',
     'tip.ccw':'Rotate left 90° (A)',
     'tip.cw':'Rotate right 90° (D)',
     'tip.flip':'Mirror (S)',
     'tip.return':'Return piece to tray (X)',
     'tip.close':'Close',
+    'tip.immersive':'Immersive mode',
+    'tip.immersiveOff':'Exit immersive mode (Esc)',
+    'tip.fan':'Piece tray (Space)',
 
     // ── 規則與資訊視窗 ──
     'info.title':'Rules & info',
@@ -28,7 +31,7 @@ export default {
     'info.devVal':'<a href="https://www.instagram.com/cookie_yu_1031/" target="_blank" rel="noopener noreferrer">Cookie Yu</a>',
     'info.ref':'References: ',
     'info.refVal':'<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>, <a href="https://www.gathering4gardner.org/g4g10gift/puzzles/Hoff_Carl-Untouchable_11.pdf" target="_blank" rel="noopener noreferrer">Master Challenge</a>, <a href="https://www.gathering4gardner.org/g4g15gift/ExchangeArchive-HazmatCargo2-G15-011-1.pdf" target="_blank" rel="noopener noreferrer">Hazmat Cargo2</a>',
-    'info.edu':'This website is for educational and learning purposes only',
+    'info.edu':'This website is a fan-made work, used only for non-profit purposes such as learning and education',
 
     // ── 操作說明視窗 ──
     'help.title':'How to play',
@@ -39,7 +42,7 @@ export default {
     'key.flip':'Mirror',
     'key.return':'Return piece',
     'key.undo':'Undo',
-    'key.reset':'Reset board',
+    'key.tray':'Piece tray (immersive)',
 
     // ── 拼圖盤 ──
     'tray.title':'Pieces',
@@ -89,7 +92,7 @@ export default {
     'sp.desc.9':'<ul class="splist"><li>A spin-off designed by Carl Hoff based on "Untouchable 11"</li><li>Uses a 12x12 board and 11 pieces</li><li>Only 2 solutions</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>A puzzle designed by Carl Hoff</li><li>Uses an 11x11 board and 9 pieces</li><li>Only 1 unique solution, yet 3,761 near solutions</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>A sequel designed by Carl Hoff based on "Hazmat Cargo"</li><li>Uses a 12*12 board and 9 pieces (heptominoes)</li><li>Again only 1 unique solution, but the near solutions soar to a staggering 26,226</li></ul>',
-    'sp.desc.12':'<ul class="splist"><li>A challenge designed from the calculation results in &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 14 different piece sets</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find earns a crown</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 14 different piece sets</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find earns a crown</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'Reset board',

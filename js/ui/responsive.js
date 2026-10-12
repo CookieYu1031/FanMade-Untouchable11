@@ -12,7 +12,7 @@ let lastW = window.innerWidth;
 window.addEventListener('resize', () => {
   if (state.drag && state.drag.moved) return;
   const w = window.innerWidth, widthSame = w === lastW; lastW = w;
-  if (widthSame && window.matchMedia('(max-width:759px) and (pointer:coarse)').matches) return;
+  if (widthSame && !state.immersive && window.matchMedia('(max-width:759px) and (pointer:coarse)').matches) return;
   if (applyMode()) refresh();
   else { fitBoard(); renderTray(); syncTools(); }
 });

@@ -1,7 +1,7 @@
 /* 底板 —— 格子大小計算與底板 SVG（格線、拼圖、違規警示、標題列） */
 import { PIECE } from '../core/config.js';
 import { t } from '../i18n/i18n.js';
-import { layoutTools } from './piece-tools.js';
+import { layoutTools, toolsReserveBottom } from './piece-tools.js';
 import { analyze } from '../game/analyze.js';
 import { schedulePersist } from '../storage/boards.js';
 import { updateUndo } from '../storage/history.js';
@@ -22,10 +22,19 @@ function viewportH() {
 }
 // 依視窗大小決定每格像素，並設定 SVG 尺寸（viewBox 以「格」為單位，所以座標都不需換算）
 export function fitBoard() {
-  const D = dims();
+  const D = dims(), imm = state.immersive;
   // 橫向視窗的工具列貼在圖板區域左邊框：圖板維持置中，左右各讓出工具列的寬度（+間隙），才不會被遮到
   const toolsW = layoutTools();
-  const availW = Math.max(240, Math.min(els.wrap.clientWidth - 30, els.wrap.clientWidth - 2 * (toolsW + 8) - 4));
+  // 沉浸模式：左右各讓出工具列的位置（圖板維持左右置中），上下邊緣僅留小邊距，圖板盡量放大
+  // 左右對稱地讓出工具列的寬度，圖板才會在整個頁面左右置中
+  // 工具列因靈動島 / 挖孔遮擋而橫放在左下時，改成在圖板下方讓出工具列的高度（toolsW = 0，左右不讓）
+  const reserveB = toolsReserveBottom();
+  els.wrap.style.paddingLeft = els.wrap.style.paddingRight = imm ? (reserveB ? '' : toolsW + 14 + 'px') : '';
+  els.wrap.style.paddingBottom = reserveB ? reserveB + 'px' : '';
+  const wCS0 = getComputedStyle(els.wrap);
+  const availW = imm
+    ? Math.max(120, els.wrap.clientWidth - parseFloat(wCS0.paddingLeft) - parseFloat(wCS0.paddingRight))
+    : Math.max(240, Math.min(els.wrap.clientWidth - 30, els.wrap.clientWidth - 2 * (toolsW + 8) - 4));
   // 圖板與拼圖盤並排（>=1180px）時：圖板區域高度 = 拼圖盤區域高度（見 layout.css 的 contain:size），圖板高度以此為上限
   // 並排條件（要與 css/layout.css 一致）：寬螢幕，或任何橫向視窗（寬 >= 600px）
   const sideBySide = window.matchMedia('(min-width:1180px), (orientation:landscape) and (min-width:600px)').matches;
@@ -42,7 +51,10 @@ export function fitBoard() {
   state.trayCell = tc;
 
   let availH;
-  if (sideBySide) {
+  if (imm) {
+    // 沉浸模式：圖板區域 = 整個視窗扣掉標題列，直接量目前實際高度
+    availH = Math.max(120, els.wrap.clientHeight - parseFloat(wCS0.paddingTop) - parseFloat(wCS0.paddingBottom));
+  } else if (sideBySide) {
     // 先用新的拼圖大小重畫拼圖盤，才量得到拼圖盤區域「實際」高度，再扣掉圖板區塊的上下內距
     renderTray();
     const wCS = getComputedStyle(els.wrap);
@@ -50,7 +62,7 @@ export function fitBoard() {
   } else availH = Math.max(300, viewportH() - 240);
   // #board 為 content-box，外框 2px × 2 另外加在格子區之外：兩個方向都先扣掉 4px，否則會多出 2px 而冒出捲軸（灰色條）
   const BORDER = 4;
-  const c = clamp(Math.floor(Math.min((availW - BORDER) / D.cols, (availH - BORDER) / D.rows)), 8, 48);   // 下限 8：Lv7（24 格寬）在窄手機上若硬撐到 14px 會超出寬度而冒出捲軸
+  const c = clamp(Math.floor(Math.min((availW - BORDER) / D.cols, (availH - BORDER) / D.rows)), 8, imm ? 160 : 48);   // 下限 8：Lv7（24 格寬）在窄手機上若硬撐到 14px 會超出寬度而冒出捲軸
   state.cell = c;
 
   els.board.setAttribute('viewBox', `0 0 ${D.cols} ${D.rows}`);
