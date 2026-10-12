@@ -6,6 +6,7 @@ export default {
     'tip.settings':'Settings',
     'tip.help':'How to play',
     'tip.special':'Level info',
+    'tip.group':'Choose piece set',
     'tip.stats':'Statistics',
     'tip.undo':'Undo (Z)',
     'tip.reset':'Reset board (Delete)',
@@ -43,6 +44,11 @@ export default {
     // ── 拼圖盤 ──
     'tray.title':'Pieces',
 
+    // ── 拼圖組合（皇冠挑戰） ──
+    'grp.title':'Piece sets',
+    'grp.tag':k => `Set ${k}`,
+    'grp.solved':'Solved',
+
     // ── 解答冊 ──
     'book.title':'Solutions',
     'book.count':(lv, n, m) => `<span class="bc-l">${lv}</span><span class="bc-r"><b>${m == null ? n : n + '/' + m}</b> collected</span>`,
@@ -79,9 +85,11 @@ export default {
     'sp.desc.h9':'Master Challenge',
     'sp.desc.h10':'Hazmat Cargo',
     'sp.desc.h11':'Hazmat Cargo 2',
+    'sp.desc.h12':'Crown Challenge',
     'sp.desc.9':'<ul class="splist"><li>A spin-off designed by Carl Hoff based on "Untouchable 11"</li><li>Uses a 12x12 board and 11 pieces</li><li>Only 2 solutions</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>A puzzle designed by Carl Hoff</li><li>Uses an 11x11 board and 9 pieces</li><li>Only 1 unique solution, yet 3,761 near solutions</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>A sequel designed by Carl Hoff based on "Hazmat Cargo"</li><li>Uses a 12*12 board and 9 pieces (heptominoes)</li><li>Again only 1 unique solution, but the near solutions soar to a staggering 26,226</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>A challenge designed from the calculation results in &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 14 different piece sets</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find earns a crown</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'Reset board',

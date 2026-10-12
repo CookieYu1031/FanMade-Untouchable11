@@ -2,12 +2,12 @@
  *   分頁：第 1 頁 = Lv1~8；第 2 頁 = 獨立關卡（大師挑戰、危險貨物…，需開啟額外關卡）
  *   換頁：視窗下方的左右箭頭（或鍵盤左右鍵），做法與解答檢視相同；沒有上（下）一頁時箭頭不可點按 */
 import { t } from '../../i18n/i18n.js';
-import { LEVELS, LV_COLORS, LV_INK } from '../../core/config.js';
+import { LEVEL_ORDER, LV_COLORS, LV_INK } from '../../core/config.js';
 import { loadBook } from '../../storage/book.js';
 import { settings } from '../../state/settings.js';
-import { state, lvTag, nearTotal } from '../../state/state.js';
+import { state, lvTag, nearTotal, solvedGroups } from '../../state/state.js';
 import { $ } from '../dom.js';
-import { EYE, EYE_OFF } from '../render-book.js';
+import { EYE, EYE_OFF, crownsHTML } from '../render-book.js';
 
 function fmtPct(n, total) {   // 無條件捨去到小數點後 2 位；不足 0.01% 顯示 0.00%
   const v = Math.min(100, n / total * 100);
@@ -15,15 +15,18 @@ function fmtPct(n, total) {   // 無條件捨去到小數點後 2 位；不足 0
 }
 // 分頁內容：第 1 頁 Lv1~8、第 2 頁獨立關卡（未開啟額外關卡時只有第 1 頁）
 const pages = () => {
-  const main = LEVELS.filter(L => !L.extra), ext = LEVELS.filter(L => L.extra);
+  const main = LEVEL_ORDER.filter(L => !L.extra), ext = LEVEL_ORDER.filter(L => L.extra);   // 依 levels.json 的 order 排列
   return settings.extra && ext.length ? [main, ext] : [main];
 };
 
 // 正解那一列的三格：解答組數、收錄組數、收錄進度
 function exactCells(L, book) {
-  const got = (book.levels[L.lv] || []).length;
+  const list = book.levels[L.lv] || [];
+  const solved = L.crown ? solvedGroups(L, list) : null;   // 皇冠挑戰：收錄組數 = 已解出幾種拼圖組合
+  const got = solved ? solved.size : list.length;
   const n = L.total == null ? got : Math.min(got, L.total);
-  const prog = L.total == null ? '<span class="pct">—</span>'     // 總組數未知：只顯示收錄數
+  const prog = solved ? crownsHTML(L, solved)              // 每種拼圖組合一個皇冠
+    : L.total == null ? '<span class="pct">—</span>'     // 總組數未知：只顯示收錄數
     : L.lv <= 6
     ? `<div class="pbar"><i style="width:${n / L.total * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, L.total)}</span>`
     : `<div class="dots">${Array.from({ length: L.total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;

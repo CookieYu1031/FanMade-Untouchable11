@@ -14,3 +14,6 @@ export function cellRects(cells, pal, opacity) {
   return cells.map(([x, y]) =>
     `<rect x="${x + .04}" y="${y + .04}" width=".92" height=".92" rx=".14" fill="${pal.fill}" stroke="${pal.edge}" stroke-width=".06"${opacity ? ` opacity="${opacity}"` : ''}/>`).join('');
 }
+
+// 皇冠符號（皇冠挑戰的收錄進度：每解出一組拼圖組合就點亮一個；顏色見 css/group.css 的 .crowns）
+export const CROWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.5 2 7l6 5 4-8 4 8 6-5-1 10.5z" stroke-linejoin="round"/><rect x="3" y="19.2" width="18" height="2.6" rx="1.2"/></svg>';

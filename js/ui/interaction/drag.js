@@ -2,7 +2,7 @@
 import { Sfx } from '../../audio/sfx.js';
 import { evaluate } from '../../game/solve.js';
 import { pushHistory } from '../../storage/history.js';
-import { state, curPieces, dims, getP, shapeOf, clamp, clonePieces, colorOf } from '../../state/state.js';
+import { state, curPieces, dims, getP, shapeOf, clamp, clonePieces, colorOf, boardKey } from '../../state/state.js';
 import { els } from '../dom.js';
 import { miniSVG, cellRects } from '../svg.js';
 import { cellsOf } from '../../core/matrix.js';
@@ -100,7 +100,7 @@ function finishPlace(d, x, y) {
 export function cancelHold() {
   const d = state.drag; if (!d || !d.hold) return;
   d.ghost.remove(); els.gPreview.innerHTML = '';
-  if (d.before) state.boards[state.level] = d.before;
+  if (d.before) state.boards[boardKey()] = d.before;
   state.drag = null; state.selected = null; state.chain = null;
   renderBoard(); renderTray();
 }

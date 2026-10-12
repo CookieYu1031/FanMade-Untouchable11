@@ -3,28 +3,37 @@ import { t } from '../i18n/i18n.js';
 import { Store, KEY_UI } from '../storage/store.js';
 import { rotateCW } from '../core/matrix.js';
 import { loadBook } from '../storage/book.js';
-import { state, curLevel, lvShort, nearTotal, colorOf, clamp } from '../state/state.js';
+import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups } from '../state/state.js';
 import { $, els } from './dom.js';
-import { cellRects } from './svg.js';
+import { cellRects, CROWN } from './svg.js';
 
 // 解答縮圖
 function sigSVG(sig) {
+  const L = curLevel(), grp = groupOfSig(L, sig);   // 顏色跟槽位掛鉤：其他組合的解答要用它自己那組的配色
   let g = sig.split('/').map(r => [...r]);
   if (state.rotated) g = rotateCW(g); // 跟盤面一樣用橫式顯示
   const rows = g.length, cols = g[0].length;
   const px = Math.max(4, Math.floor(Math.min(150 / cols, 110 / rows))); // 縮圖約塞進 150×110
   let r = '';
   g.forEach((row, y) => row.forEach((ch, x) => {
-    if (ch !== '.') r += `<rect x="${x}" y="${y}" width="1.03" height="1.03" fill="${colorOf(ch).fill}"/>`;
+    if (ch !== '.') r += `<rect x="${x}" y="${y}" width="1.03" height="1.03" fill="${colorOf(ch, L, grp).fill}"/>`;
   }));
   return `<svg viewBox="0 0 ${cols} ${rows}" width="${cols * px}" height="${rows * px}">${r}</svg>`;
 }
 const SVG_ATTR = 'viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
 export const EYE = `<svg ${SVG_ATTR}><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 export const EYE_OFF = `<svg ${SVG_ATTR}><path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.7A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>`;
+// 皇冠進度：每個拼圖組合一個皇冠，解出該組合的唯一解就點亮（書冊與統計表共用）
+export function crownsHTML(L, solved) {
+  return `<div class="crowns">${L.groups.map(g => `<i class="${solved.has(g.key) ? 'on' : ''}" title="${t('grp.tag', g.key)}">${CROWN}</i>`).join('')}</div>`;
+}
+// 縮圖；有拼圖組合的關卡，左上角標註這組解答使用的組合（如 A）
 function thumbsHTML(list, near) {
-  return [...list].reverse().slice(0, 60).map(it =>
-    `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}">${sigSVG(it.disp || it.sig)}</button>`).join('');
+  const L = curLevel();
+  return [...list].reverse().slice(0, 60).map(it => {
+    const gk = groupOfSig(L, it.sig);
+    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${gk ? '　' + t('grp.tag', gk) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag">${gk}</span>` : ''}</button>`;
+  }).join('');
 }
 export function renderBook() {
   const L = curLevel(), book = loadBook();
@@ -40,14 +49,16 @@ export function renderBook() {
   hb.setAttribute('aria-label', hb.title);
   hb.setAttribute('aria-pressed', String(hidden));
 
-  let info = `<div class="book-count">${t('book.count', lvShort(L), list.length.toLocaleString(), L.total == null ? null : L.total.toLocaleString())}</div>`, thumbs = '';
+  const solved = L.crown ? solvedGroups(L, list) : null;   // 皇冠挑戰：收錄數 = 已解出幾種拼圖組合（每組只有 1 組唯一解）
+  let info = `<div class="book-count">${t('book.count', lvShort(L), (solved ? solved.size : list.length).toLocaleString(), L.total == null ? null : L.total.toLocaleString())}</div>`, thumbs = '';
+  if (solved) info += crownsHTML(L, solved);
   if (hidden && list.length) info += `<p class="empty">${t('book.hidden')}</p>`;   // 只遮蔽「有收錄」的區塊；空的區塊照常顯示空白提示
   else if (!list.length) info += `<p class="empty">${t('book.empty')}</p>`;
   else thumbs = thumbsHTML(list, false);
   els.bookInfo.innerHTML = info; els.bookThumbs.innerHTML = thumbs;
   renderNear(L, book, hidden);
 }
-// 近似解區（只有 Lv8、危險貨物）：顯示在解答冊下方
+// 近似解區（有近似解的關卡）：顯示在解答冊下方
 function renderNear(L, book, hidden) {
   const zone = $('nearZone');
   if (!L.near) { zone.hidden = true; return; }
@@ -61,6 +72,7 @@ function renderNear(L, book, hidden) {
 }
 // 解答檢視（放大版，含格線與拼圖邊線；方向與盤面顯示一致）
 export function solutionSVG(sig, maxW, maxH) {
+  const L = curLevel(), grp = groupOfSig(L, sig);
   let g = sig.split('/').map(r => [...r]);
   if (state.rotated) g = rotateCW(g);
   const rows = g.length, cols = g[0].length;
@@ -70,7 +82,7 @@ export function solutionSVG(sig, maxW, maxH) {
   for (let y = 1; y < rows; y++) grid += `<line x1="0" y1="${y}" x2="${cols}" y2="${y}"/>`;
   let r = '';
   g.forEach((row, y) => row.forEach((ch, x) => {
-    if (ch !== '.') r += cellRects([[x, y]], colorOf(ch));
+    if (ch !== '.') r += cellRects([[x, y]], colorOf(ch, L, grp));
   }));
   return `<svg viewBox="0 0 ${cols} ${rows}" width="${cols * px}" height="${rows * px}" style="background:var(--board);border:2px solid var(--line);border-radius:3px;display:block"><g stroke="var(--gridline)" stroke-width=".05">${grid}</g>${r}</svg>`;
 }

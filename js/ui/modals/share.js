@@ -3,7 +3,7 @@ import { t, fmtTime, getLang } from '../../i18n/i18n.js';
 import { rotateCW } from '../../core/matrix.js';
 import { LV_COLORS, LV_INK } from '../../core/config.js';
 import { settings, effTheme } from '../../state/settings.js';
-import { state, lvLong, gameTitle, colorOf } from '../../state/state.js';
+import { state, lvLong, gameTitle, colorOf, groupOfSig, grpTag } from '../../state/state.js';
 import { $ } from '../dom.js';
 import { toast } from '../toast.js';
 
@@ -25,7 +25,8 @@ function drawShareCanvas(item, L, nick, near) {
   c.fillStyle = K.bg; c.fillRect(0, 0, W, H);
   c.fillStyle = LV_COLORS[L.lv - 1]; c.fillRect(0, 0, W, barH);          // 頂欄 = 難度顏色
   c.fillStyle = LV_INK[L.lv - 1]; c.textBaseline = 'middle';
-  const rt = `${lvLong(L)}  ${L.cols} × ${L.rows}${near ? '  ' + t('near.tag') : ''}`;
+  const grp = groupOfSig(L, item.sig), gt = grpTag(L, grp);   // 有拼圖組合的關卡：標註使用的組合，配色也用那一組的
+  const rt = `${lvLong(L)}${gt ? ' ' + gt : ''}  ${L.cols} × ${L.rows}${near ? '  ' + t('near.tag') : ''}`;
   c.font = `700 22px ${FONT}`; c.textAlign = 'right'; c.fillText(rt, W - padX, barH / 2);
   const rtW = c.measureText(rt).width, ttl = gameTitle(L);   // 標題較長時（額外難度）自動縮小字級
   let fs = 30; c.font = `900 ${fs}px ${FONT}`;
@@ -38,7 +39,7 @@ function drawShareCanvas(item, L, nick, near) {
   c.strokeStyle = K.line; c.lineWidth = 2; c.strokeRect(bx - 1, by - 1, bw + 2, bh + 2);
   g.forEach((row, y) => row.forEach((ch, x) => {                           // 拼圖方塊
     if (ch === '.') return;
-    const pal = colorOf(ch, L), r = cell * .14, px = bx + x * cell + cell * .04, py = by + y * cell + cell * .04, w = cell * .92;
+    const pal = colorOf(ch, L, grp), r = cell * .14, px = bx + x * cell + cell * .04, py = by + y * cell + cell * .04, w = cell * .92;
     c.beginPath(); c.moveTo(px + r, py);
     c.arcTo(px + w, py, px + w, py + w, r); c.arcTo(px + w, py + w, px, py + w, r);
     c.arcTo(px, py + w, px, py, r); c.arcTo(px, py, px + w, py, r); c.closePath();

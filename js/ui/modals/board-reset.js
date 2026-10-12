@@ -1,7 +1,7 @@
 /* 重置版圖確認視窗 */
 import { Sfx } from '../../audio/sfx.js';
 import { t } from '../../i18n/i18n.js';
-import { state, freshPieces } from '../../state/state.js';
+import { state, freshPieces, boardKey } from '../../state/state.js';
 import { updateUndo } from '../../storage/history.js';
 import { $ } from '../dom.js';
 import { toast } from '../toast.js';
@@ -15,8 +15,8 @@ export function askResetBoard() {
 }
 function doResetBoard() {
   brdModal.classList.remove('open');
-  state.boards[state.level] = freshPieces(state.level); state.selected = null; state.chain = null;
-  state.hist[state.level] = []; updateUndo();   // 重置後一併清除該等級「返回上一步」的暫存紀錄
+  state.boards[boardKey()] = freshPieces(state.level); state.selected = null; state.chain = null;   // 有拼圖組合的關卡：只重置目前這一組
+  state.hist[boardKey()] = []; updateUndo();   // 重置後一併清除該等級「返回上一步」的暫存紀錄
   renderBoard(); renderTray(); toast(t('toast.reset'));
   Sfx.clear();
 }

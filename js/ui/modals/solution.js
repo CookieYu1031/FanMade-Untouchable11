@@ -3,7 +3,7 @@ import { t, fmtTime } from '../../i18n/i18n.js';
 import { LV_COLORS, LV_INK } from '../../core/config.js';
 import { loadBook } from '../../storage/book.js';
 import { settings } from '../../state/settings.js';
-import { state, curLevel, lvLong } from '../../state/state.js';
+import { state, curLevel, lvLong, groupOfSig, grpTag } from '../../state/state.js';
 import { $, els } from '../dom.js';
 import { solutionSVG } from '../render-book.js';
 
@@ -13,7 +13,8 @@ function showSolution(list, idx, near) {
   const L = curLevel(), item = list[idx];
   state.viewItem = { item, L, near, list, idx };
   $('solBar').style.background = LV_COLORS[L.lv - 1]; $('solBar').style.color = LV_INK[L.lv - 1];
-  $('solTitle').textContent = t('sol.title', solHead(L), near);
+  const gt = grpTag(L, groupOfSig(L, item.sig));   // 有拼圖組合的關卡：標題標註這組解答使用的組合（如「A組」）
+  $('solTitle').textContent = t('sol.title', solHead(L) + (gt ? ' ' + gt : ''), near);
   $('solView').innerHTML = solutionSVG(item.disp || item.sig, Math.min(window.innerWidth - 96, 540), Math.max(240, window.innerHeight * 0.55));
   $('solTime').textContent = item.time ? fmtTime(item.time) : '';
   $('solNick').textContent = item.nick || settings.nick || t('anon');

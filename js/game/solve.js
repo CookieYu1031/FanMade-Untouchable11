@@ -6,7 +6,7 @@ import { analyze, isNear } from './analyze.js';
 import { gridOf, canonicalSig } from './signature.js';
 import { loadBook, saveBook, addSolution } from '../storage/book.js';
 import { settings } from '../state/settings.js';
-import { state, curLevel, curPieces, lvShort } from '../state/state.js';
+import { state, curLevel, curPieces, lvShort, curGroup, grpTag, solvedGroups } from '../state/state.js';
 import { toast } from '../ui/toast.js';
 import { renderBoard } from '../ui/render-board.js';
 import { renderLevels } from '../ui/render-levels.js';
@@ -33,8 +33,9 @@ export function evaluate() {
   const isNew = addSolution(book, L.lv, sig, null, disp, settings.nick);
   if (isNew) saveBook(book);
   renderLevels(); renderBook();
-  const n = (book.levels[L.lv] || []).length;
+  const list = book.levels[L.lv] || [], n = L.crown ? solvedGroups(L, list).size : list.length;   // 皇冠挑戰：第幾個皇冠
+  const gt = grpTag(L, curGroup(L));
   renderBoard();
-  toast(isNew ? t('toast.new', lvShort(L), n) : t('toast.dup'));
+  toast(isNew ? t('toast.new', lvShort(L) + (gt ? ' ' + gt : ''), n) : t('toast.dup'));
   if (isNew) Sfx.solve();
 }

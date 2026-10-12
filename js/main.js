@@ -3,7 +3,7 @@ import { loadConfig, LEVELS } from './core/config.js';
 import { setLang, applyI18n } from './i18n/i18n.js';
 import { Store, KEY_BOARDS, KEY_UI } from './storage/store.js';
 import { settings, applyTheme } from './state/settings.js';
-import { state, initState, applyMode, fromNative, curLevel } from './state/state.js';
+import { state, initState, applyMode, fromNative, curLevel, keyLv } from './state/state.js';
 import { sanitizeNative, persistBoards } from './storage/boards.js';
 import { legacyBoard } from './storage/legacy.js';
 import { refresh } from './ui/render.js';
@@ -20,6 +20,7 @@ import './ui/interaction/undo.js';
 import { showWelcomeOnce } from './ui/modals/info.js';
 import './ui/modals/help.js';
 import './ui/modals/special.js';
+import './ui/modals/group.js';
 import './ui/modals/solution.js';
 import './ui/modals/share.js';
 import './ui/modals/board-reset.js';
@@ -46,9 +47,11 @@ async function boot() {
   const savedBoards = Store.get(KEY_BOARDS, null);
   if (savedBoards && savedBoards.boards && typeof savedBoards.boards === 'object') {
     const legacyB = savedBoards.version !== 2;   // 舊版暫存盤面：換成新的拼圖代號
-    LEVELS.forEach(L => {
-      const b = savedBoards.boards[L.lv];
-      if (b) state.boards[L.lv] = fromNative(sanitizeNative(legacyB ? legacyBoard(b) : b, L.lv), L.lv);
+    const sg = savedBoards.group;                // 有拼圖組合的關卡，上次使用哪一組
+    if (sg && typeof sg === 'object') LEVELS.forEach(L => { if (L.groups && L.groups.some(g => g.key === sg[L.lv])) state.group[L.lv] = sg[L.lv]; });
+    Object.keys(state.boards).forEach(k => {     // 鍵：lv，或有拼圖組合的「lv:組合」
+      const b = savedBoards.boards[k];
+      if (b) state.boards[k] = fromNative(sanitizeNative(legacyB ? legacyBoard(b) : b, k), keyLv(k));
     });
     if (LEVELS[Number(savedBoards.level) - 1]) state.level = Number(savedBoards.level);
   }

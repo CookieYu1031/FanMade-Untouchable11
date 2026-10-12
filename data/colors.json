@@ -4,7 +4,7 @@
     "red": {"fill": "#F28B8B", "edge": "#DB6464"},
     "pink": {"fill": "#F9B8D2", "edge": "#E98BB3"},
     "orange": {"fill": "#F9B27A", "edge": "#E78D47"},
-    "brown": {"fill": "#C9A07A", "edge": "#A77C56"},
+    "cream": {"fill": "#FFF5C8", "edge": "#E2CF8C"},
     "yellow": {"fill": "#FBE08A", "edge": "#E3C24E"},
     "green": {"fill": "#86CF8E", "edge": "#5DB26A"},
     "lgreen": {"fill": "#D2F0B5", "edge": "#A6D080"},
@@ -20,7 +20,7 @@
   },
   "slotColors": {
     "9": ["red", "pink", "orange", "yellow", "green", "teal", "blue", "purple", "magenta"],
-    "11": ["red", "pink", "orange", "yellow", "green", "lgreen", "blue", "lblue", "teal", "purple", "magenta"],
-    "12": ["red", "pink", "brown", "orange", "yellow", "green", "lgreen", "blue", "lblue", "teal", "purple", "magenta"]
+    "11": ["red", "pink", "orange", "yellow", "green", "lgreen", "teal", "blue", "lblue", "purple", "magenta"],
+    "12": ["red", "pink", "orange", "yellow", "cream", "green", "lgreen", "teal", "blue", "lblue", "purple", "magenta"]
   }
 }

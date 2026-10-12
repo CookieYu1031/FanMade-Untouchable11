@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="css/modals.css">
 <link rel="stylesheet" href="css/settings.css">
 <link rel="stylesheet" href="css/stats.css">
+<link rel="stylesheet" href="css/group.css">
 </head>
 <body>
 <div class="wrap">
@@ -68,7 +69,7 @@
 
     <aside class="side">
       <section class="panel tray-panel" style="--c:var(--p6)">
-        <h2><span data-i18n="tray.title"></span><span class="h2-acts"><button class="ibtn" id="btnHelp" style="width:30px;height:30px" data-i18n-title="tip.help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></span></h2>
+        <h2><span data-i18n="tray.title"></span><span class="h2-acts"><button class="ibtn" id="btnGroup" hidden style="width:30px;height:30px" data-i18n-title="tip.group"><svg viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></button><button class="ibtn" id="btnHelp" style="width:30px;height:30px" data-i18n-title="tip.help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></span></h2>
         <div class="tray" id="tray"></div>
       </section>
 
@@ -121,6 +122,15 @@
       <h2 style="--c:var(--lvc);background:var(--lvc);color:var(--lvink,#2B2E4A)"><span data-i18n="sp.title"></span><button class="ibtn" id="specialClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
     <div class="help" id="specialBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="groupModal">
+  <div class="box">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--p6);background:var(--p6)"><span data-i18n="grp.title"></span><button class="ibtn" id="groupClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+    </div>
+    <div class="grpbody" id="groupBody"></div>
   </div>
 </div>
 

@@ -1,5 +1,5 @@
 /* 返回上一步 */
-import { state } from '../../state/state.js';
+import { state, boardKey } from '../../state/state.js';
 import { histOf } from '../../storage/history.js';
 import { toast } from '../toast.js';
 import { t } from '../../i18n/i18n.js';
@@ -11,7 +11,7 @@ export function undo() {
   if (state.drag) return;
   const h = histOf();
   if (!h.length) { toast(t('toast.noUndo')); return; }
-  state.boards[state.level] = h.pop();
+  state.boards[boardKey()] = h.pop();
   state.selected = null; state.chain = null;
   renderBoard(); renderTray();
 }

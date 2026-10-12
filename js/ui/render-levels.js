@@ -1,5 +1,5 @@
-/* 關卡選擇列（Lv1~8 一列；大師挑戰、危險貨物另起一列）與頁首標題 */
-import { LEVELS, LV_COLORS, LV_INK } from '../core/config.js';
+/* 關卡選擇列（Lv1~8 一列；大師挑戰、皇冠挑戰、危險貨物…另起一列）與頁首標題 */
+import { LEVEL_ORDER, LV_COLORS, LV_INK } from '../core/config.js';
 import { settings } from '../state/settings.js';
 import { state, curLevel, lvName, gameTitle } from '../state/state.js';
 import { $, els } from './dom.js';
@@ -32,10 +32,11 @@ export function renderLevels() {
   root.toggleAttribute('data-series', !!cur.extra);
   root.dataset.lv = cur.lv;   // 讓 CSS 能針對個別關卡微調（例如標題較長的危險貨物2）
   $('btnSpecial').hidden = !cur.extra;   // 獨立關卡才有「關卡資訊」按鈕（在圖板標題列）
+  $('btnGroup').hidden = !cur.groups;    // 有拼圖組合的關卡（皇冠挑戰）才有「選擇拼圖組合」按鈕（在拼圖盤標題列）
   fitHeroTitle(); document.title = gameTitle(cur);   // 額外難度會換標題
   const btn = l => `<button class="lv${l.lv === state.level ? ' on' : ''}" data-lv="${l.lv}" style="--c:${LV_COLORS[l.lv - 1]};color:${LV_INK[l.lv - 1]}">`
     + (l.extra ? `<b>${lvName(l)}</b>` : `<b>Lv${l.lv}</b><small>${lvName(l)}</small>`) + `</button>`;
-  const main = LEVELS.filter(l => !l.extra).map(btn).join('');
-  const ext = settings.extra ? LEVELS.filter(l => l.extra).map(btn).join('') : '';   // 獨立關卡另起一行
+  const main = LEVEL_ORDER.filter(l => !l.extra).map(btn).join('');   // 依 levels.json 的 order 排列（lv 是存檔編號，不一定等於顯示順序）
+  const ext = settings.extra ? LEVEL_ORDER.filter(l => l.extra).map(btn).join('') : '';   // 獨立關卡另起一行
   els.levels.innerHTML = `<div class="lvrow">${main}</div>` + (ext ? `<div class="lvrow ext">${ext}</div>` : '');
 }

@@ -6,6 +6,7 @@ export default {
     'tip.settings':'設定',
     'tip.help':'操作方法',
     'tip.special':'レベル情報',
+    'tip.group':'ピースの組み合わせを選ぶ',
     'tip.stats':'統計',
     'tip.undo':'一つ戻る（Z）',
     'tip.reset':'盤面をリセット（Delete）',
@@ -43,6 +44,11 @@ export default {
     // ── 拼圖盤 ──
     'tray.title':'ピース置き場',
 
+    // ── 拼圖組合（皇冠挑戰） ──
+    'grp.title':'ピースの組み合わせ',
+    'grp.tag':k => `${k}セット`,
+    'grp.solved':'解答済み',
+
     // ── 解答冊 ──
     'book.title':'解答集',
     'book.count':(lv, n, m) => `<span class="bc-l">${lv}</span><span class="bc-r">収録 <b>${m == null ? n : n + '/' + m}</b> 件</span>`,
@@ -79,9 +85,11 @@ export default {
     'sp.desc.h9':'名人挑戦',
     'sp.desc.h10':'危険貨物',
     'sp.desc.h11':'危険貨物2',
+    'sp.desc.h12':'王冠挑戦',
     'sp.desc.9':'<ul class="splist"><li>Carl Hoff が『Untouchable 11』をもとに設計した派生作品</li><li>12x12の盤面と11個のピースを使用</li><li>正解はわずか2通り</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>Carl Hoff が設計した作品</li><li>11x11の盤面と9個のピースを使用</li><li>唯一解は1通りだけですが、近似解は3761通り</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>Carl Hoff が『危険貨物』をもとに設計した続編</li><li>12*12の盤面と9個のピース（七連ミノ）を使用</li><li>こちらも唯一解は1通りだけですが、近似解はなんと26226通り</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の計算結果をもとに設計された挑戦</li><li>12x12の盤面と14通りのピースの組み合わせを使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに王冠を1つ獲得</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'盤面をリセット',

@@ -13,7 +13,8 @@ export const PIECE = {};           // 代號 → 拼圖物件（所有類別共�
 const FAMILIES = {};              // 類別代號（hexo、hepto…）→ { key, name, nameEn, cells, byNo, idOf }
 export const COLORS = {};          // 色名 → { fill, edge }
 export const SLOT_COLORS = {};     // 槽位數 → 色名陣列
-export const LEVELS = [];          // 關卡陣列（索引 = lv - 1）
+export const LEVELS = [];          // 關卡陣列（索引 = lv - 1；lv 是存檔用的固定編號）
+export const LEVEL_ORDER = [];     // 關卡「顯示順序」（按鈕列、統計表依此排列；由 levels.json 的 order 決定）
 export const LV_COLORS = [];       // 各關卡的代表色
 export const LV_INK = [];          // 各關卡色塊上的文字色
 export const CONFIG = { defaultTitle: 'Untouchable 11' };
@@ -73,27 +74,57 @@ function buildPieces(data) {
   });
 }
 
-/* ---- 關卡：槽位 → 拼圖號碼（任何組別的拼圖都可使用） ---- */
+/* ---- 關卡：槽位 → 拼圖號碼（任何組別的拼圖都可使用） ----
+ * 一般關卡：pieces = 各槽位的拼圖號碼。
+ * 有「拼圖組合」的關卡（皇冠挑戰）：寫 groups = [{ key, pieces }, …]；L.pieces / L.ids 預設為第一組，
+ *   實際使用哪一組由 state.group 決定（見 state.js 的 idsOf / curGroup）。 */
 function buildLevels(data) {
   const sets = data.slotSets || {};
   CONFIG.defaultTitle = data.defaultTitle || CONFIG.defaultTitle;
 
-  LEVELS.length = 0; LV_COLORS.length = 0; LV_INK.length = 0;
+  LEVELS.length = 0; LV_COLORS.length = 0; LV_INK.length = 0; LEVEL_ORDER.length = 0;
   data.levels.forEach((src, i) => {
     if (src.lv !== i + 1) throw new Error(`levels.json：第 ${i + 1} 關的 lv 應為 ${i + 1}`);
-    const nums = typeof src.pieces === 'string' ? sets[src.pieces] : src.pieces;
-    if (!Array.isArray(nums)) throw new Error(`levels.json：第 ${src.lv} 關的 pieces 設定無效`);
     const famKey = src.family || HEXO, fam = FAMILIES[famKey];   // 關卡使用哪一類拼圖（省略 = 六格骨牌）
     if (!fam) throw new Error(`levels.json：第 ${src.lv} 關的 family「${famKey}」不存在`);
-    nums.forEach(n => {
-      if (!fam.byNo[n]) throw new Error(`levels.json：第 ${src.lv} 關使用了不存在的 ${n} 號拼圖（${fam.name}）`);
-    });
-    if (new Set(nums).size !== nums.length) throw new Error(`levels.json：第 ${src.lv} 關的拼圖號碼重複`);
-    const L = { ...src, family: famKey, pieces: nums, ids: nums.map(fam.idOf).join('') };
+    const check = (raw, what) => {
+      const nums = typeof raw === 'string' ? sets[raw] : raw;
+      if (!Array.isArray(nums)) throw new Error(`levels.json：第 ${src.lv} 關${what}的 pieces 設定無效`);
+      nums.forEach(n => {
+        if (!fam.byNo[n]) throw new Error(`levels.json：第 ${src.lv} 關${what}使用了不存在的 ${n} 號拼圖（${fam.name}）`);
+      });
+      if (new Set(nums).size !== nums.length) throw new Error(`levels.json：第 ${src.lv} 關${what}的拼圖號碼重複`);
+      return nums;
+    };
+    let L;
+    if (Array.isArray(src.groups)) {
+      if (!src.groups.length) throw new Error(`levels.json：第 ${src.lv} 關的 groups 不可為空`);
+      const keys = new Set(), compo = new Set();
+      const groups = src.groups.map(g => {
+        if (!g || typeof g.key !== 'string' || !g.key || keys.has(g.key)) throw new Error(`levels.json：第 ${src.lv} 關的組合代號缺少或重複`);
+        keys.add(g.key);
+        const nums = check(g.pieces, `組合 ${g.key} `);
+        const ids = nums.map(fam.idOf).join('');
+        const sig = [...ids].sort().join('');
+        // 解答冊靠「盤面上有哪些拼圖」判斷解答屬於哪一組，所以各組的拼圖組成不能相同
+        if (compo.has(sig)) throw new Error(`levels.json：第 ${src.lv} 關的組合 ${g.key} 與其他組合使用相同的拼圖`);
+        compo.add(sig);
+        return { key: g.key, pieces: nums, ids };
+      });
+      L = { ...src, family: famKey, groups, pieces: groups[0].pieces, ids: groups[0].ids };
+    } else {
+      const nums = check(src.pieces, '');
+      L = { ...src, family: famKey, pieces: nums, ids: nums.map(fam.idOf).join('') };
+    }
     LEVELS.push(L);
     LV_COLORS.push(src.color);
     LV_INK.push(src.ink || '#2B2E4A');
   });
+  // 顯示順序：預設 = lv 順序；levels.json 的 order 可以把新關卡排到中間（必須剛好列出每一關一次）
+  const order = Array.isArray(data.order) ? data.order : LEVELS.map(L => L.lv);
+  if (order.length !== LEVELS.length || new Set(order).size !== order.length || order.some(lv => !LEVELS[lv - 1]))
+    throw new Error('levels.json：order 必須剛好列出每一關的 lv 一次');
+  order.forEach(lv => LEVEL_ORDER.push(LEVELS[lv - 1]));
 }
 
 function buildColors(data) {

@@ -3,17 +3,18 @@
 /* ============ 版面 ============ */
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-bottom:36px}
 /* 窄螢幕（<760px）：單欄堆疊（底板一律橫式） */
-/* 中寬螢幕（760~1179px）：底板在上，拼圖盤在下方，其餘面板並排 */
-@media (min-width:760px) and (max-width:1179px){
+/* 中寬直向螢幕（760~1179px）：底板在上，拼圖盤在下方，其餘面板並排 */
+@media (min-width:760px) and (max-width:1179px) and (orientation:portrait){
   .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
   .side .panel{margin-bottom:0}
   .side .panel{grid-column:1/-1}
 }
-/* 寬螢幕（>=1180px）：底板在左，拼圖盤與其他面板在右側 */
-@media (min-width:1180px){
+/* 寬螢幕（>=1180px）或任何橫向視窗（寬 >= 600px）：底板在左，拼圖盤在右（高度與圖板區域相同，一個視窗看完），解答冊在下方整排
+   （條件要與 render-board.js 的 sideBySide 一致） */
+@media (min-width:1180px), (orientation:landscape) and (min-width:600px){
   /* 第一列：底板（左）與拼圖盤（右）等高；第二列：解答冊獨佔整排。
      用 display:contents 讓 aside 裡的面板直接成為 layout 的格子 */
-  .layout{grid-template-columns:minmax(0,1fr) 420px;align-items:stretch}
+  .layout{grid-template-columns:minmax(0,1fr) clamp(280px,36vw,420px);align-items:stretch}
   .side{display:contents}
   .side .panel{margin-bottom:0}
   /* contain:size → 圖板區域不參與撐高這一列，列高只由拼圖盤決定，圖板區域高度因此等於拼圖盤區域高度
@@ -27,3 +28,13 @@
   display:flex;flex-wrap:nowrap;justify-content:space-between;gap:8px;align-items:center}
 .panel .body{padding:12px 14px}
 .pn{display:block}   /* 規則中的括號說明一律另起一行 */
+/* 橫向且高度不足（手機橫放、矮視窗）：頁首與關卡列壓縮，讓圖板與拼圖盤盡量在一個視窗內看完 */
+@media (orientation:landscape) and (max-height:560px){
+  .hero{margin:8px auto 8px;padding:10px 18px;border-radius:16px}
+  .hero h1{font-size:clamp(20px,3.4vw,28px)}
+  .hero-acts{bottom:8px}
+  .levels{margin-bottom:8px}
+  .lv{padding:4px 2px;font-size:13px}.lv b,.lv small{font-size:13px}
+  .lvrow.ext{margin-top:6px}
+  .panel>h2{height:40px}
+}
