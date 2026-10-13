@@ -72,7 +72,7 @@ export default {
     // ── 解答檢視視窗 / 分享 ──
     'sol.title':(head, near) => `${head}  ${near ? 'Near solution' : 'Solution'}`,
     'share':'Share',
-    'share.credit':'Puzzle designers: Peter Grabarchuk, Carl Hoff    Web developer: Cookie Yu',
+    'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'Share image created',
     'share.fail':'Could not create the image',
     'anon':'Anonymous',
@@ -112,6 +112,8 @@ export default {
     'theme.light':'Light',
     'theme.dark':'Dark',
     'set.vol':'Volume',
+    'set.music':'Music',
+    'set.sfx':'SFX',
     'set.extra':'Enable extra levels',
     'set.extraDesc':'Show spin-off works & special levels',
 

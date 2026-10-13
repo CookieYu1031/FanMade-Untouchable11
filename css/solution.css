@@ -15,7 +15,11 @@
 }
 .navbtn:focus-visible{outline:3px solid #fff;outline-offset:2px}
 #solIdx{font-variant-numeric:tabular-nums}
-.solmeta{display:flex;justify-content:space-between;gap:12px;padding:0 18px 14px;font-size:13px;color:var(--muted)}
+/* 時間（左）、頁面/總頁（正中央）、暱稱（右）：兩側等寬，中間欄才會真正置中 */
+.solmeta{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:baseline;gap:12px;padding:0 18px 14px;font-size:13px;color:var(--muted)}
+.solmeta #solTime{justify-self:start}
+.solmeta #solIdx{justify-self:center;text-align:center}
+.solmeta #solNick{justify-self:end;text-align:right;overflow-wrap:anywhere}
 .solmeta b{color:var(--ink)}
 .sharebtn{display:inline-flex;gap:8px;align-items:center;border:0;border-radius:999px;padding:9px 18px;background:var(--panel);
   color:var(--ink);font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(20,22,40,.25)}

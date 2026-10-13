@@ -14,7 +14,8 @@
 .ibtn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .h2-acts{display:flex;gap:6px;align-items:center}
 .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{border:0;background:var(--bg);padding:6px 16px;cursor:pointer}
+.seg button{border:0;background:var(--bg);padding:6px 16px;cursor:pointer;display:grid;place-items:center}
+.srow .seg button{padding:0 16px}
 .seg button.on{background:var(--ink);color:var(--panel);font-weight:700}
 .seg button svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #toast{position:fixed;left:50%;bottom:calc(22px + var(--sab));transform:translateX(-50%) translateY(20px);

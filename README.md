@@ -30,6 +30,7 @@
   - `colors.json`：色盤與「槽位數 → 顏色序」
 - `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、group、immersive）；載入順序見 index.html，順序會影響覆蓋關係
 - `js/`：依功能分檔（ES modules），進入點 `main.js`
+  - 音效（`js/audio/sfx.js`）與背景音樂（`js/audio/music.js`）都是 Web Audio 即時合成，沒有使用任何音檔或他人作品，因此沒有音樂版權問題
   - `core/` 設定載入、矩陣工具　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄
   - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（中、英、日）　`audio/` 音效　`cloud/` Google 登入與雲端同步
   - `ui/` 繪製、互動（拖曳、旋轉）、各視窗、鍵盤、沉浸模式（`immersive.js` 切換、`fan.js` 繪製右下角圓點彈出的小型拼圖盤）

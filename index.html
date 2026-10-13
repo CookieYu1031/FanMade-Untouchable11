@@ -270,10 +270,13 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
         <div class="sgrp sgrp-vol sgrp-lang"><label for="selLang" data-i18n="set.lang"></label><div class="selwrap"><select id="selLang" class="sel"><option value="zh">中文</option><option value="en">English</option><option value="ja">日本語</option></select></div></div>
       </div>
       <div class="srow srow2">
-        <div class="sgrp"><span data-i18n="set.theme"></span><div class="seg" id="segTheme"><button data-theme="light" data-i18n-title="theme.light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button data-theme="dark" data-i18n-title="theme.dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></div></div>
-        <div class="sgrp sgrp-vol"><span data-i18n="set.vol"></span><div class="vol"><b id="volNum"></b><div class="vslider"><input type="range" id="volRange" min="0" max="10" step="1" data-nosound aria-label="Volume"><div class="vticks" id="volTicks"></div></div></div></div>
+        <div class="sgrp sgrp-v"><span data-i18n="set.music"></span><div class="vol"><b id="musicNum"></b><div class="vslider"><input type="range" id="musicRange" min="0" max="10" step="1" data-nosound aria-label="Music volume"></div></div></div>
+        <div class="sgrp sgrp-vol sgrp-v"><span data-i18n="set.sfx"></span><div class="vol"><b id="volNum"></b><div class="vslider"><input type="range" id="volRange" min="0" max="10" step="1" data-nosound aria-label="Sound effects volume"></div></div></div>
       </div>
-      <div class="srow"><span><span data-i18n="set.extra"></span><small class="sub" data-i18n="set.extraDesc"></small></span><button class="switch" id="swExtra" role="switch" aria-checked="false" data-i18n-title="set.extra"><i></i></button></div>
+      <div class="srow srow2">
+        <div class="sgrp"><span data-i18n="set.theme"></span><div class="seg" id="segTheme"><button data-theme="light" data-i18n-title="theme.light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button data-theme="dark" data-i18n-title="theme.dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></div></div>
+        <div class="sgrp sgrp-vol sgrp-extra"><span><span data-i18n="set.extra"></span><small class="sub" data-i18n="set.extraDesc"></small></span><button class="switch" id="swExtra" role="switch" aria-checked="false" data-i18n-title="set.extra"><i></i></button></div>
+      </div>
     </div>
     <div class="dzone">
       <div class="srow srow-reset"><span><span data-i18n="reset.title"></span><small class="sub" data-i18n="reset.desc"></small></span><button class="btn danger" id="resetOpen" data-i18n="reset.btn"></button></div>

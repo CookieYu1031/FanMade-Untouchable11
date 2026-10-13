@@ -9,6 +9,7 @@ import { legacyBoard } from './storage/legacy.js';
 import { refresh } from './ui/render.js';
 import { initCloud } from './cloud/sync.js';
 import { hideLoader } from './ui/loader.js';
+import './audio/music.js';   // 背景音樂（使用者第一次操作後開始播放）
 
 // 以下模組載入時會綁定各自負責的事件
 import './audio/sfx-bindings.js';

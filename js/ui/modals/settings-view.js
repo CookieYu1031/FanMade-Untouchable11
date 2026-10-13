@@ -1,4 +1,4 @@
-/* 設定視窗的畫面同步（語言、背景、獨立關卡開關、音量） */
+/* 設定視窗的畫面同步（語言、背景、獨立關卡開關、音樂 / 音效音量） */
 import { getLang } from '../../i18n/i18n.js';
 import { settings, effTheme } from '../../state/settings.js';
 import { $ } from '../dom.js';
@@ -11,13 +11,15 @@ export function renderSettings() {
   $('swExtra').setAttribute('aria-checked', String(!!settings.extra));
   renderVol();
 }
+// 兩條音量滑桿（音樂 / 音效）共用的畫面同步：0~10 段，每段 10%
+function renderSlider(prefix, range, val) {
+  const r = $(range);
+  r.value = val;
+  r.style.setProperty('--fill', `calc(9px + (100% - 18px) * ${val / 10})`);
+  r.setAttribute('aria-valuetext', val * 10 + '%');
+  $(prefix + 'Num').textContent = val * 10 + '%';
+}
 export function renderVol() {
-  const tk = $('volTicks');
-  if (!tk.children.length) tk.innerHTML = Array.from({ length: 11 }, () => '<span></span>').join('');
-  [...tk.children].forEach((el, i) => el.classList.toggle('on', i === settings.vol));
-  const r = $('volRange');
-  r.value = settings.vol;
-  r.style.setProperty('--fill', `calc(9px + (100% - 18px) * ${settings.vol / 10})`);
-  r.setAttribute('aria-valuetext', settings.vol * 10 + '%');
-  $('volNum').textContent = settings.vol * 10 + '%';
+  renderSlider('vol', 'volRange', settings.vol);             // 音效
+  renderSlider('music', 'musicRange', settings.musicVol);    // 音樂
 }

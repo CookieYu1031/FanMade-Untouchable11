@@ -1,6 +1,7 @@
-/* 設定視窗：暱稱、語言、背景、音量、額外關卡（帳戶與重置資料在各自的模組） */
+/* 設定視窗：暱稱、語言、音樂 / 音效音量、背景、額外關卡（帳戶與重置資料在各自的模組） */
 import { setLang, applyI18n } from '../../i18n/i18n.js';
 import { Sfx } from '../../audio/sfx.js';
+import { Music } from '../../audio/music.js';
 import { settings, saveSettings, applyTheme } from '../../state/settings.js';
 import { curLevel } from '../../state/state.js';
 import { $ } from '../dom.js';
@@ -28,4 +29,5 @@ $('segTheme').addEventListener('click', e => {
   settings.theme = b.dataset.theme; saveSettings(); applyTheme(); renderSettings();
 });
 $('volRange').addEventListener('input', e => { settings.vol = Number(e.target.value); saveSettings(); renderVol(); });
+$('musicRange').addEventListener('input', e => { settings.musicVol = Number(e.target.value); saveSettings(); renderVol(); Music.sync(); });   // 音樂音量（0 = 關閉）
 $('volRange').addEventListener('change', () => Sfx.click());   // 放開時播一聲，讓人聽到目前音量

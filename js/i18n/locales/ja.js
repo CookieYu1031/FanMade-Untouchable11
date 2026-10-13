@@ -72,7 +72,7 @@ export default {
     // ── 解答檢視視窗 / 分享 ──
     'sol.title':(head, near) => `${head}　${near ? '近似解' : '解答'}`,
     'share':'シェア',
-    'share.credit':'パズル作者：Peter Grabarchuk、Carl Hoff    サイト制作：Cookie Yu',
+    'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'シェア用画像を作成しました',
     'share.fail':'画像を作成できませんでした',
     'anon':'匿名プレイヤー',
@@ -112,6 +112,8 @@ export default {
     'theme.light':'明',
     'theme.dark':'暗',
     'set.vol':'音量',
+    'set.music':'音楽',
+    'set.sfx':'効果音',
     'set.extra':'追加レベルを有効にする',
     'set.extraDesc':'派生作品・特別レベルを表示',
 

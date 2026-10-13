@@ -72,7 +72,7 @@ export default {
     // ── 解答檢視視窗 / 分享 ──
     'sol.title':(head, near) => `${head}　${near ? '近似解' : '解答'}`,
     'share':'分享',
-    'share.credit':'拼圖設計者：Peter Grabarchuk、Carl Hoff    網頁開發者：Cookie Yu',
+    'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'已產生分享圖片',
     'share.fail':'無法產生圖片',
     'anon':'匿名玩家',
@@ -112,6 +112,8 @@ export default {
     'theme.light':'亮',
     'theme.dark':'暗',
     'set.vol':'音量',
+    'set.music':'音樂',
+    'set.sfx':'音效',
     'set.extra':'啟用額外關卡',
     'set.extraDesc':'顯示延伸作品&特殊關卡',
 

@@ -23,5 +23,6 @@ export function applyI18n() {
   document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   document.querySelectorAll('[data-i18n-title]').forEach(el => { const v = t(el.dataset.i18nTitle); el.title = v; el.setAttribute('aria-label', v); });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.dispatchEvent(new Event('i18n'));   // 通知動態產生的內容（如帳戶列）重畫成新語言
 }
 export const fmtTime = ts => new Date(ts).toLocaleString(LOCALE[LANG], { hour12:false });

@@ -2,29 +2,28 @@
 .setbody{padding:4px 18px 0}
 .srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;min-height:68px;border-bottom:1px dashed var(--line)}   /* 各列等高（文字換行時才會變高） */
 .srow label,.srow>span{font-weight:700;font-size:14px}
-#nickInput{text-align:right;width:min(240px,60%);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:7px 10px;font:inherit}
+#nickInput{text-align:right;width:min(240px,60%);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 10px;font:inherit}
+/* 暱稱輸入框、語言選單、背景亮暗切換：同高（36px） */
+#nickInput,.sel,.srow .seg{height:36px;box-sizing:border-box}
 /* 語言下拉選單 */
 /* 語言下拉選單：與暱稱輸入框同風格（圓角、底色、邊線），箭頭用自繪線條並與右邊框留出距離 */
 .selwrap{position:relative;flex:1 1 0;min-width:0;max-width:150px;margin-left:auto}
 .selwrap::after{content:"";position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
-.sel{-webkit-appearance:none;appearance:none;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:7px 34px 7px 12px;font:inherit;cursor:pointer;color-scheme:light dark}
+.sel{-webkit-appearance:none;appearance:none;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 34px 0 12px;font:inherit;cursor:pointer;color-scheme:light dark}
 .sel:hover{border-color:var(--ink)}
 .sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .sdesc{padding:2px 18px 0;font-size:12.5px;color:var(--muted);white-space:pre-line}
 /* 音量、收錄進度表、手機跳轉按鈕 */
 .vol{display:flex;align-items:center;gap:12px}
-#volNum{font-size:13px;font-weight:700;min-width:42px;text-align:right}
+.vol b{font-size:13px;font-weight:700;min-width:42px;text-align:right}
 .vslider{width:150px}
-#volRange{-webkit-appearance:none;appearance:none;width:100%;height:22px;margin:0;background:transparent;cursor:pointer;display:block}
-#volRange::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(to right,var(--ink) var(--fill,50%),var(--line) var(--fill,50%))}
-#volRange::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);margin-top:-6px;box-sizing:border-box}
-#volRange::-moz-range-track{height:6px;border-radius:999px;background:var(--line)}
-#volRange::-moz-range-progress{height:6px;border-radius:999px;background:var(--ink)}
-#volRange::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);box-sizing:border-box}
-#volRange:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:6px}
-.vticks{display:flex;justify-content:space-between;padding:0 9px;margin-top:-3px;pointer-events:none}
-.vticks span{width:1px;height:6px;background:var(--muted)}
-.vticks span.on{background:var(--ink);height:8px}
+.vslider input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:22px;margin:0;background:transparent;cursor:pointer;display:block}
+.vslider input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:999px;background:linear-gradient(to right,var(--ink) var(--fill,50%),var(--line) var(--fill,50%))}
+.vslider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);margin-top:-6px;box-sizing:border-box}
+.vslider input[type=range]::-moz-range-track{height:6px;border-radius:999px;background:var(--line)}
+.vslider input[type=range]::-moz-range-progress{height:6px;border-radius:999px;background:var(--ink)}
+.vslider input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);box-sizing:border-box}
+.vslider input[type=range]:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:6px}
 /* 設定：重置資料 */
 .dzone{margin-top:14px;border-top:1px dashed var(--line)}
 .dzone .srow{border-bottom:0;padding:12px 18px}
@@ -35,16 +34,21 @@
 /* 額外難度：深色頂欄用淺色字、設定列、開關、近似解區 */
 .srow2{gap:0}
 .srow2 .sgrp:first-child{padding-right:16px}
-.sgrp-vol{padding-left:16px;border-left:1px solid var(--line)}
+.sgrp-vol{position:relative;padding-left:16px}   /* 右半格：與左半格之間有分隔線（用固定高度的偽元素畫，三行才會一樣高，不受各格內容高度影響） */
+.sgrp-vol::before{content:"";position:absolute;left:0;top:50%;height:48px;width:1px;transform:translateY(-50%);background:var(--line)}
 .sgrp{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1 1 0;min-width:0}
 .sgrp>span,.sgrp>label{font-weight:700;font-size:14px;white-space:nowrap}
 /* 暱稱、語言列：與「背景、音量」列相同，同一行分兩格（等寬、中間分隔線） */
 .sgrp-nick #nickInput{flex:1 1 0;min-width:0;width:auto}
-.sgrp-vol{justify-content:space-between}
-.sgrp-vol .vol{flex:1;min-width:0;justify-content:flex-end;gap:8px}
-.sgrp-vol .vslider{width:auto;flex:1 1 60px;min-width:60px;max-width:150px}
-.sgrp-vol #volNum{min-width:38px}
-@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:6px 9px}.sgrp-nick #nickInput{padding:6px 6px;font-size:13px}.sel{padding:6px 30px 6px 8px;font-size:13px}.selwrap::after{right:12px}}
+.sgrp .vol{flex:1;min-width:0;justify-content:flex-end;gap:8px}
+.sgrp .vslider{width:auto;flex:1 1 60px;min-width:60px;max-width:150px}
+.sgrp .vol b{flex:none;width:42px;min-width:0;text-align:right;white-space:nowrap}   /* 固定寬度：不論 0% 或 100%，兩條滑桿長度都相同 */
+/* 窄螢幕：音樂 / 音效改成「標籤在上、滑桿在下」，半格寬度才放得下 */
+@media (max-width:460px){.sgrp-v{flex-direction:column;align-items:stretch;gap:2px}.sgrp-v .vol{justify-content:flex-start}.sgrp-v .vslider{max-width:none}}
+@media (max-width:360px){.sgrp-extra{flex-direction:column;align-items:flex-start;gap:6px}}
+.sgrp-extra>span{white-space:normal;line-height:1.35}
+.sgrp-extra .sub{line-height:1.3}
+@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:0 9px}.sgrp-nick #nickInput{padding:0 6px;font-size:13px}.sel{padding:0 30px 0 8px;font-size:13px}.selwrap::after{right:12px}.sgrp .vol{gap:4px}.sgrp .vol b{width:38px;font-size:12px}.sgrp .vslider{min-width:48px}}
 .srow .sub{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
 
 /* 帳戶列：未登入顯示說明與登入按鈕；已登入顯示頭像、名稱、同步狀態與登出 */
@@ -56,9 +60,12 @@
 .acct-txt small{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .acct-txt small.err{color:#F0364B}
 .acct-txt small button{border:0;background:none;padding:0 0 0 6px;text-decoration:underline;cursor:pointer;color:inherit;font-size:inherit}
-.btn.gbtn{display:inline-flex;align-items:center;gap:8px;flex:none;font-weight:700}
-.btn.gbtn svg{width:18px;height:18px}
-.srow-acct>.btn{flex:none}
+.btn.gbtn{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;min-width:0;max-width:62%;font-weight:700;padding-left:12px;padding-right:12px}   /* 文字放不下時由 account.js 縮小字級 */
+.btn.gbtn svg{width:18px;height:18px;flex:none}
+.btn.gbtn .gtxt{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap;line-height:1.2}
+.btn.gbtn .gtxt.wrap{white-space:normal;text-align:left}   /* 縮到最小字級仍放不下才換行 */
+.srow-acct .acct-txt{flex:1 1 0}
+.srow-acct>.btn:not(.gbtn){flex:none}
 /* 重置資料：勾選要清除的內容 */
 .rchecks{padding:12px 18px 0;display:grid;gap:10px}
 .rchk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px}

@@ -79,7 +79,7 @@ let mirror = new Map();     // 雲端目前的文件內容（id -> JSON）
 const pending = new Set();  // 待上傳：'book' | 'settings'
 let timer = null, chain = Promise.resolve();
 const setSync = patch => Store.set(KEY_SYNC, { ...(Store.get(KEY_SYNC, {}) || {}), ...patch });
-const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme || '', extra: !!settings.extra, vol: settings.vol });
+const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme || '', extra: !!settings.extra, vol: settings.vol, musicVol: settings.musicVol });
 function schedule(what) {
   if (!cloud.user || !ready) return;
   pending.add(what); setSync({ dirty: true });
