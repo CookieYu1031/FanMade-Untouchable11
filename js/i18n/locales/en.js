@@ -1,4 +1,5 @@
 /* English strings (level names live in data/levels.json) */
+import { grpLabel } from '../../core/roman.js';
 
 export default {
     // ── 共通 / ヘッダー・ツールチップ ──
@@ -49,7 +50,8 @@ export default {
 
     // ── 拼圖組合（皇冠挑戰） ──
     'grp.title':'Piece sets',
-    'grp.tag':k => `Set ${k}`,
+    'grp.tag':k => `Set ${grpLabel(k)}`,
+    'grp.n':n => `${n} pcs`,
     'grp.solved':'Solved',
 
     // ── 解答冊 ──
@@ -60,6 +62,8 @@ export default {
     'book.hidden':'Solutions hidden',
     'book.empty':'No solutions yet (collected automatically). Click a thumbnail to view.',
     'book.view':'View this solution',
+    'book.more':'Show the rest',
+    'book.less':'Collapse',
     'near.tag':'Near solution',
     'near.count':(n, m, note) => `<span class="bc-l">Near solutions<small class="bc-note">${note}</small></span><span class="bc-r"><b>${m == null ? n : n + '/' + m}</b> collected</span>`,
     'near.empty':'No near solutions yet (collected automatically)',

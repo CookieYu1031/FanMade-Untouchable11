@@ -1,9 +1,18 @@
 /* 解答冊、縮圖、近似解區 */
 /* ============ 存檔槽 / 解答冊 ============ */
-.book-thumbs{display:flex;flex-wrap:wrap;gap:8px;max-height:260px;overflow:auto;margin-top:10px}
-.thumb{border:1px solid var(--line);background:var(--board);border-radius:8px;padding:0;cursor:pointer;
-  width:164px;height:124px;display:grid;place-items:center}
-.thumb svg{display:block}
+/* 縮圖區：縮圖（.tl）在左；一行放不下時，右側出現「>」按鈕（.tmore），收合時只顯示第一行，展開後顯示全部（最高 260px，超出捲動） */
+.book-thumbs{display:flex;align-items:flex-start;gap:8px;margin-top:10px}
+.book-thumbs .tl{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:8px;overflow:hidden}
+.book-thumbs.open .tl{max-height:260px;overflow:auto}
+.tmore{flex:none;width:30px;padding:0;display:grid;place-items:center;border:1px solid var(--line);background:var(--board);border-radius:8px;cursor:pointer;color:var(--muted)}
+.tmore[hidden]{display:none}
+.tmore:hover{border-color:var(--ink);color:var(--ink)}
+.tmore svg{transition:transform .15s}
+.book-thumbs.open .tmore svg{transform:rotate(180deg)}
+/* 縮圖固定 164×124；窄螢幕時縮小（長寬比不變），一行至少放 2 個 */
+.thumb{flex:none;border:1px solid var(--line);background:var(--board);border-radius:8px;padding:0;cursor:pointer;
+  width:164px;max-width:calc(50% - 4px);aspect-ratio:164/124;display:grid;place-items:center}
+.thumb svg{display:block;max-width:92%;max-height:92%;height:auto}
 .thumb:hover{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
 .empty{color:var(--muted);font-size:13px;margin:6px 0 0}
 .book-count{display:flex;justify-content:space-between;align-items:baseline;gap:12px}

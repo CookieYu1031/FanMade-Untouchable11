@@ -6,6 +6,7 @@ import { loadBook } from '../storage/book.js';
 import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups } from '../state/state.js';
 import { $, els } from './dom.js';
 import { cellRects, CROWN } from './svg.js';
+import { grpLabel } from '../core/roman.js';
 
 // 解答縮圖
 function sigSVG(sig) {
@@ -27,14 +28,46 @@ export const EYE_OFF = `<svg ${SVG_ATTR}><path d="M3 3l18 18"/><path d="M10.6 6.
 export function crownsHTML(L, solved) {
   return `<div class="crowns">${L.groups.map(g => `<i class="${solved.has(g.key) ? 'on' : ''}" title="${t('grp.tag', g.key)}">${CROWN}</i>`).join('')}</div>`;
 }
+// 解答 / 近似解的顯示順序：玩家最新解出的在最左側（依收錄時間新→舊；時間相同則後收錄的在前）。縮圖與解答檢視共用
+export const newestFirst = list => list.map((it, i) => [it, i]).sort((a, b) => (b[0].time || 0) - (a[0].time || 0) || b[1] - a[1]).map(x => x[0]);
 // 縮圖；有拼圖組合的關卡，左上角標註這組解答使用的組合（如 A）
+// 縮圖區：縮圖在左（.tl），一行放不下時，最右側出現「>」按鈕收合 / 展開其餘的縮圖（fitThumbs 負責判斷）
+const MORE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
 function thumbsHTML(list, near) {
   const L = curLevel();
-  return [...list].reverse().slice(0, 60).map(it => {
+  const items = newestFirst(list).slice(0, 60).map(it => {
     const gk = groupOfSig(L, it.sig);
-    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${gk ? '　' + t('grp.tag', gk) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag">${gk}</span>` : ''}</button>`;
+    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${gk ? '　' + t('grp.tag', gk) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag">${grpLabel(gk)}</span>` : ''}</button>`;
   }).join('');
+  return `<div class="tl">${items}</div><button class="tmore" type="button" hidden>${MORE}</button>`;
 }
+// 展開狀態（只記在記憶體；預設收合成一行）
+const open = { book: false, near: false };
+// 決定縮圖區是否需要「>」：先拿掉按鈕量，全部都放得進第一行就不需要；放不下才顯示按鈕（縮圖區變窄），收合時高度鎖在一行
+function fitThumbs(box, key) {
+  const tl = box.querySelector('.tl'), btn = box.querySelector('.tmore');
+  if (!tl || !btn) return;
+  const kids = [...tl.children]; if (!kids.length) return;
+  tl.style.height = ''; btn.hidden = true; box.classList.remove('has-more');
+  const top = kids[0].offsetTop, fits = kids.every(c => c.offsetTop === top);
+  if (fits) { box.classList.remove('open'); kids.forEach(c => c.removeAttribute('tabindex')); return; }
+  btn.hidden = false; box.classList.add('has-more');
+  const rowH = kids[0].offsetHeight, isOpen = open[key];
+  box.classList.toggle('open', isOpen);
+  btn.style.height = rowH + 'px';
+  btn.setAttribute('aria-expanded', String(isOpen));
+  btn.title = t(isOpen ? 'book.less' : 'book.more'); btn.setAttribute('aria-label', btn.title);
+  if (!isOpen) tl.style.height = rowH + 'px';
+  const t0 = kids[0].offsetTop;
+  kids.forEach(c => { if (!isOpen && c.offsetTop > t0) c.tabIndex = -1; else c.removeAttribute('tabindex'); });   // 收合時被藏起來的縮圖不要被 Tab 選到
+}
+function fitAll() { fitThumbs(els.bookThumbs, 'book'); fitThumbs($('nearThumbs'), 'near'); }
+let fitRaf = 0;
+window.addEventListener('resize', () => { cancelAnimationFrame(fitRaf); fitRaf = requestAnimationFrame(fitAll); });
+[['book', els.bookThumbs], ['near', $('nearThumbs')]].forEach(([key, box]) => box.addEventListener('click', e => {
+  if (!e.target.closest('.tmore')) return;
+  open[key] = !open[key]; fitThumbs(box, key);
+}));
 export function renderBook() {
   const L = curLevel(), book = loadBook();
   const list = book.levels[L.lv] || [];
@@ -57,6 +90,7 @@ export function renderBook() {
   else thumbs = thumbsHTML(list, false);
   els.bookInfo.innerHTML = info; els.bookThumbs.innerHTML = thumbs;
   renderNear(L, book, hidden);
+  fitAll();
 }
 // 近似解區（有近似解的關卡）：顯示在解答冊下方
 function renderNear(L, book, hidden) {

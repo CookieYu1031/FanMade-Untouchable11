@@ -8,6 +8,7 @@ import { sanitizeNative, persistBoards } from './storage/boards.js';
 import { legacyBoard } from './storage/legacy.js';
 import { refresh } from './ui/render.js';
 import { initCloud } from './cloud/sync.js';
+import { hideLoader } from './ui/loader.js';
 
 // 以下模組載入時會綁定各自負責的事件
 import './audio/sfx-bindings.js';
@@ -33,6 +34,7 @@ import './ui/modals/scroll-lock.js';
 
 function showLoadError(err) {
   console.error(err);
+  hideLoader(true);
   const box = document.getElementById('loadError');
   box.hidden = false;
   box.querySelector('pre').textContent = String(err && err.message || err);
@@ -59,6 +61,7 @@ async function boot() {
   if (curLevel().extra && !settings.extra) state.level = 8;
   window.addEventListener('pagehide', persistBoards);
   refresh();
+  hideLoader();   // 第一次繪製完成：收起載入畫面（至少顯示 2 秒）
   showWelcomeOnce();
   initCloud();   // 曾登入過才會載入 Firebase 並還原登入狀態
 }

@@ -4,7 +4,7 @@
 #groupModal .box{width:min(520px,100%)}
 .grpbody{padding:16px 18px 14px}
 .grow{display:flex;align-items:center;gap:14px}
-.grow .gn{flex:none;width:34px;text-align:center;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.grow .gn{flex:none;width:46px;white-space:nowrap;text-align:center;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
 .gbtns{flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
 .gbtn{border:0;border-radius:999px;padding:8px 0;font-size:16px;font-weight:700;line-height:1.3;background:var(--bg);color:var(--ink);cursor:pointer}
 .gbtn:hover{box-shadow:inset 0 0 0 2px var(--ink)}
@@ -16,7 +16,7 @@
 .gsep{border:0;border-top:1px solid var(--line);margin:12px 0}
 @media (max-width:420px){
   .grpbody{padding:14px 12px 12px}
-  .grow{gap:6px}.grow .gn{width:26px;font-size:16px}
+  .grow{gap:6px}.grow .gn{width:40px;font-size:16px}
   .gbtns{gap:4px}
 }
 
@@ -35,6 +35,6 @@
 .crowns path,.crowns rect{fill:var(--bg);stroke:var(--line);stroke-width:1.4}
 .crowns i.on path,.crowns i.on rect{fill:#F7C948;stroke:#D79B12}
 .book-count+.crowns{margin-top:8px}
-/* 統計表：兩排各 7 個（上排 = 11 片的 A~G，下排 = 12 片的 a~g） */
+/* 統計表：兩排各 7 個（上排 = 11 片的 Ⅰ~Ⅶ，下排 = 12 片的 ⅰ~ⅶ） */
 .pg .crowns{display:grid;grid-template-columns:repeat(7,max-content);gap:3px 4px}
 .pg .crowns i{width:16px;height:16px}

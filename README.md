@@ -20,8 +20,8 @@
 本專案依現狀提供，不附任何明示或默示之擔保（詳見 [LICENSE](LICENSE)）。
 
 ## 結構
-- `index.html`：頁面結構（所有視窗的 HTML）
-- `assets/`：網頁縮圖（`thumbnail.png`，供社群分享預覽的 `og:image` 使用）
+- `index.html`：頁面結構（所有視窗的 HTML），以及內嵌的載入畫面（`#loader`；由 `js/ui/loader.js` 在第一次繪製完成後收起）
+- `assets/`：網頁縮圖（`thumbnail.png`，供社群分享預覽的 `og:image` 使用）、網站圖示（`icon.svg`，及 `icon-32.png`、`icon-192.png`；第 12 號拼圖的轉向版、透明背景）
 - `data/`：設定檔
   - `pieces.json`：35 種六格骨牌（1~21 號「常用組」、22~35 號「非常用組」），啟動時會驗證每片都是 6 格；`extraFamilies` 放其他類別的拼圖（目前有 9 種七格骨牌，代號為 a~i，驗證每片都是 7 格）
   - `levels.json`：關卡（尺寸、解答數、各槽位放哪一號拼圖）、拼圖盤順序；關卡可使用任一組的拼圖（以 `family` 指定拼圖類別，省略 = 六格骨牌）

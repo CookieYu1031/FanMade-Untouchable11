@@ -1,4 +1,5 @@
 /* 中文字串（關卡名稱在 data/levels.json） */
+import { grpLabel } from '../../core/roman.js';
 
 export default {
     // ── 共通 / ヘッダー・ツールチップ ──
@@ -49,7 +50,8 @@ export default {
 
     // ── 拼圖組合（皇冠挑戰） ──
     'grp.title':'拼圖組合',
-    'grp.tag':k => `${k}組`,
+    'grp.tag':k => `${grpLabel(k)}組`,
+    'grp.n':n => `${n}片`,
     'grp.solved':'已解出',
 
     // ── 解答冊 ──
@@ -60,6 +62,8 @@ export default {
     'book.hidden':'解答已隱藏',
     'book.empty':'還沒有解答(會自動收錄)，點擊縮圖以查看',
     'book.view':'查看這組解答',
+    'book.more':'顯示其餘解答',
+    'book.less':'收合',
     'near.tag':'近似解',
     'near.count':(n, m, note) => `<span class="bc-l">近似解<small class="bc-note">${note}</small></span><span class="bc-r">已收錄 <b>${m == null ? n : n + '/' + m}</b> 組</span>`,
     'near.empty':'還沒有近似解(會自動收錄)',

@@ -1,4 +1,4 @@
-/* 「拼圖組合」視窗：皇冠挑戰有 14 種拼圖組合（11 片：A~G、12 片：a~g），每種都有 1 組唯一解。
+/* 「拼圖組合」視窗：皇冠挑戰有 14 種拼圖組合（11 片：Ⅰ~Ⅶ、12 片：ⅰ~ⅶ；內部代號仍是 A~G、a~g），每種都有 1 組唯一解。
  *   在拼圖盤標題列的按鈕開啟；已解出唯一解的組合按鈕是黃底、字母換成皇冠；目前使用的組合有外框。
  *   切換組合時，每一組的盤面與「返回上一步」紀錄各自保留（見 state.js 的 boardKey）。 */
 import { t } from '../../i18n/i18n.js';
@@ -7,6 +7,7 @@ import { state, curLevel, curGroup, solvedGroups } from '../../state/state.js';
 import { $ } from '../dom.js';
 import { refresh } from '../render.js';
 import { CROWN } from '../svg.js';
+import { grpLabel } from '../../core/roman.js';
 
 const groupModal = $('groupModal');
 
@@ -14,10 +15,10 @@ function renderGroups() {
   const L = curLevel(), cur = curGroup(L), done = solvedGroups(L, loadBook().levels[L.lv] || []);
   const sizes = [...new Set(L.groups.map(g => g.ids.length))];   // 每組幾片拼圖（11、12），各一排
   $('groupBody').innerHTML = sizes.map(n =>
-    `<div class="grow"><span class="gn">${n}</span><div class="gbtns">`
+    `<div class="grow"><span class="gn">${t('grp.n', n)}</span><div class="gbtns">`
     + L.groups.filter(g => g.ids.length === n).map(g => {
       const ok = done.has(g.key);
-      return `<button type="button" class="gbtn${g.key === cur ? ' on' : ''}${ok ? ' done' : ''}" data-g="${g.key}" aria-pressed="${g.key === cur}" aria-label="${t('grp.tag', g.key)}" title="${t('grp.tag', g.key)}${ok ? '　' + t('grp.solved') : ''}">${ok ? CROWN : g.key}</button>`;
+      return `<button type="button" class="gbtn${g.key === cur ? ' on' : ''}${ok ? ' done' : ''}" data-g="${g.key}" aria-pressed="${g.key === cur}" aria-label="${t('grp.tag', g.key)}" title="${t('grp.tag', g.key)}${ok ? '　' + t('grp.solved') : ''}">${ok ? CROWN : grpLabel(g.key)}</button>`;
     }).join('')
     + `</div></div>`).join('<hr class="gsep">');
 }

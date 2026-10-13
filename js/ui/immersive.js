@@ -26,43 +26,35 @@ function placeGroupBtn() {
   else helpBtn.parentNode.insertBefore(grpBtn, helpBtn);
 }
 
-// 直向視窗進入沉浸模式時，嘗試強制橫向：需先進入全螢幕再鎖定方向（Android Chrome 等支援；iOS Safari 不支援，會直接略過）
-let lockedLandscape = false, enteredFs = false;
-function lockLandscape() {
-  if (window.innerHeight <= window.innerWidth) return;
-  const so = screen.orientation, de = document.documentElement;
-  if (!so || !so.lock) return;
-  const doLock = () => so.lock('landscape').then(() => { lockedLandscape = true; }).catch(() => {});
-  if (document.fullscreenElement) { doLock(); return; }
-  if (!de.requestFullscreen) { doLock(); return; }
-  de.requestFullscreen({ navigationUI: 'hide' }).then(() => { enteredFs = true; return doLock(); }).catch(() => {});
+// 直向視窗不提供沉浸模式（按鈕在 css/immersive.css 以 orientation:portrait 隱藏，這裡再擋一次，避免其他入口誤開）：
+// 沉浸模式中從橫向轉成直向，會自動離開沉浸模式（拖曳中則等放開手指後再離開，才不會中斷拖曳）
+const portraitMQ = window.matchMedia('(orientation:portrait)');
+function leaveIfPortrait() {
+  if (!state.immersive || !portraitMQ.matches) return;
+  if (state.drag) {
+    const again = () => { window.removeEventListener('pointerup', again); window.removeEventListener('pointercancel', again); setTimeout(leaveIfPortrait, 0); };
+    window.addEventListener('pointerup', again); window.addEventListener('pointercancel', again);
+    return;
+  }
+  exitImmersive();
 }
-function unlockLandscape() {
-  try { if (lockedLandscape && screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (_) {}
-  lockedLandscape = false;
-  if (enteredFs && document.fullscreenElement) document.exitFullscreen().catch(() => {});
-  enteredFs = false;
-}
-// 使用者用系統手勢離開全螢幕：方向鎖定同時解除，沉浸模式本身保留
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) { lockedLandscape = false; enteredFs = false; }
-});
+portraitMQ.addEventListener('change', leaveIfPortrait);
 
 // 切換後重新計算圖板大小並重畫
 function relayout() { fitBoard(); renderBoard(); renderTray(); }
 
 export function enterImmersive() {
-  if (state.immersive || state.drag) return;
+  if (state.immersive || state.drag || portraitMQ.matches) return;
   state.immersive = true;
   root.classList.add('immersive');
-  setFanOpen(false); syncButton(); placeGroupBtn(); lockLandscape(); relayout();
+  setFanOpen(false); syncButton(); placeGroupBtn(); relayout();
 }
 export function exitImmersive() {
   if (!state.immersive || state.drag) return;
   setFanOpen(false);
   state.immersive = false;
   root.classList.remove('immersive');
-  syncButton(); placeGroupBtn(); unlockLandscape(); relayout();
+  syncButton(); placeGroupBtn(); relayout();
 }
 // 空格鍵 / 圓點：換出或收起小型拼圖盤（只在沉浸模式有效；拖曳中不處理）
 export function toggleFan() {

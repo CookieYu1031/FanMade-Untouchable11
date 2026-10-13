@@ -11,7 +11,7 @@ export function syncTools() {
 // 工具列位置依視窗方向決定（樣式見 board.css）：
 //   直向視窗（不論寬窄）→ 固定在視窗左側邊（常駐，不佔圖板區域）
 //   橫向視窗 → 貼著圖板區域的左側邊框、垂直置中；此時圖板區塊高度不得小於工具列高度，圖板寬度也要讓出工具列的位置
-//   沉浸模式 → 預設貼左緣垂直置中；偵測到靈動島 / 挖孔 / 瀏海會遮到左緣時，改成打橫靠視窗左下（html.tools-h）
+//   沉浸模式 → 預設貼左緣垂直置中；手機（isPhoneLike），或偵測到靈動島 / 挖孔 / 瀏海會遮到左緣時，改成打橫靠視窗左下（html.tools-h）
 const portraitMQ = window.matchMedia('(orientation:portrait)');
 
 // 偵測螢幕上的遮擋物（靈動島、挖孔鏡頭、瀏海）：網頁唯一能取得的資訊是 env(safe-area-inset-*)（index.html 已設 viewport-fit=cover），
@@ -35,11 +35,25 @@ export function cutoutBlocksTools() {
   const stage = els.tools.parentElement.parentElement, bar = stage.querySelector(':scope > h2');
   return i.top > 0 && bar && els.tools.getBoundingClientRect().top < bar.getBoundingClientRect().bottom;
 }
+// 是否為手機（打橫時鏡頭多半在左右短邊的中間，會擋到貼左緣的工具列）：
+//   網頁讀不到實際機型（iOS Safari 完全沒有；Android Chrome 的 userAgentData.model 只有型號代碼，還得自備機型對照表），
+//   也讀不到 Android 上的挖孔位置（env(safe-area-inset-*) 在 Android Chrome 多半是 0），所以改用「裝置類型」判斷：
+//   觸控裝置，且（iPhone / iPod，或螢幕短邊 < 600 CSS px 且不是 userAgentData 標示的非行動裝置）。平板（iPad 等）不算。
+let phone = null;
+export function isPhoneLike() {
+  if (phone !== null) return phone;
+  const ua = navigator.userAgentData, s = navigator.userAgent || '';
+  if (!window.matchMedia('(pointer:coarse)').matches) phone = false;
+  else if (/iPhone|iPod/.test(s)) phone = true;
+  else if (ua && ua.mobile === false) phone = false;
+  else phone = Math.min(screen.width, screen.height) < 600;
+  return phone;
+}
 // 沉浸模式：決定工具列直放（左緣置中）或橫放（左下）。先切回直放再量，結果才不會被上一次的狀態影響
 function updateToolsOrient() {
   const root = document.documentElement;
   root.classList.remove('tools-h');
-  if (state.immersive && cutoutBlocksTools()) root.classList.add('tools-h');
+  if (state.immersive && (isPhoneLike() || cutoutBlocksTools())) root.classList.add('tools-h');
 }
 export const toolsHorizontal = () => document.documentElement.classList.contains('tools-h');
 

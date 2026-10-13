@@ -1,4 +1,5 @@
 /* 日本語の文字列（レベル名は data/levels.json） */
+import { grpLabel } from '../../core/roman.js';
 
 export default {
     // ── 共通 / ヘッダー・ツールチップ ──
@@ -49,7 +50,8 @@ export default {
 
     // ── 拼圖組合（皇冠挑戰） ──
     'grp.title':'ピースの組み合わせ',
-    'grp.tag':k => `${k}セット`,
+    'grp.tag':k => `${grpLabel(k)}セット`,
+    'grp.n':n => `${n}ピース`,
     'grp.solved':'解答済み',
 
     // ── 解答冊 ──
@@ -60,6 +62,8 @@ export default {
     'book.hidden':'解答は非表示です',
     'book.empty':'まだ解答がありません（自動で収録されます）。サムネイルをクリックすると表示できます',
     'book.view':'この解答を見る',
+    'book.more':'残りを表示',
+    'book.less':'たたむ',
     'near.tag':'近似解',
     'near.count':(n, m, note) => `<span class="bc-l">近似解<small class="bc-note">${note}</small></span><span class="bc-r">収録 <b>${m == null ? n : n + '/' + m}</b> 件</span>`,
     'near.empty':'近似解はまだありません（自動で収録されます）',

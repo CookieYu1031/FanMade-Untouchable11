@@ -5,7 +5,7 @@ import { loadBook } from '../../storage/book.js';
 import { settings } from '../../state/settings.js';
 import { state, curLevel, lvLong, groupOfSig, grpTag } from '../../state/state.js';
 import { $, els } from '../dom.js';
-import { solutionSVG } from '../render-book.js';
+import { solutionSVG, newestFirst } from '../render-book.js';
 
 export const solModal = $('solModal');
 const solHead = L => L.title || lvLong(L);
@@ -31,7 +31,7 @@ export function stepSolution(d) {
 }
 function openSolution(b) {
   const L = curLevel(), near = !!b.dataset.near, bk = loadBook();
-  const list = [...(near ? ((bk.near || {})[L.lv] || []) : (bk.levels[L.lv] || []))].reverse();   // 順序與縮圖相同（新→舊）
+  const list = newestFirst(near ? ((bk.near || {})[L.lv] || []) : (bk.levels[L.lv] || []));   // 順序與縮圖相同（新→舊）
   const idx = list.findIndex(it => it.sig === b.dataset.key);
   if (idx < 0) return;
   showSolution(list, idx, near);

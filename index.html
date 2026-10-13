@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Untouchable 11</title>
-<link rel="icon" href="data:,">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg">
 <meta name="description" content="線上遊玩《Untouchable 11》與其衍伸作品">
 <meta property="og:title" content="Untouchable 11">
 <meta property="og:description" content="線上遊玩《Untouchable 11》與其衍伸作品">
@@ -15,7 +17,54 @@
 <meta property="og:image:height" content="661">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<!-- 網頁字型改成非阻塞載入（先用系統字型顯示，載入後再換字型），避免 Google Fonts 較慢時整頁空白；載入完成後通知頁面重新量測標題 -->
+<script>
+function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ window.dispatchEvent(new Event('resize')); }); }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all';u11FontsLoaded()">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet"></noscript>
+<!-- 載入畫面（#loader）：樣式與內容全部內嵌，不依賴其他 CSS / JS；由 js/ui/loader.js 在第一次繪製完成後收起 -->
+<style>
+#loader{--ld-bg:#F3F5FB;--ld-ink:#2B2E4A;--ld-mut:#6B6F8F;--ld-blue:#A9CFF7;
+  position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:var(--ld-bg);color:var(--ld-ink);text-align:center;box-sizing:border-box;
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55;
+  transition:opacity .28s ease-out,visibility 0s linear .28s}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #loader{--ld-bg:#1B1D32;--ld-mut:#A3A8CC}}
+:root[data-theme="dark"] #loader{--ld-bg:#1B1D32;--ld-mut:#A3A8CC}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none}
+#loader *{box-sizing:border-box}
+/* 與頁首相同的色塊標題 */
+#loader .ld-hero{max-width:min(92vw,520px);background:var(--ld-blue);color:#2B2E4A;border-radius:22px;padding:20px 28px;display:flex;flex-direction:column;align-items:center;gap:10px}
+#loader .ld-hero h1{margin:0;font-size:clamp(28px,7vw,46px);font-weight:900;letter-spacing:-.01em;line-height:1.1}
+#loader .ld-tag{font-size:11px;font-weight:700;letter-spacing:.04em;line-height:1;padding:3px 9px;border-radius:999px;border:1.5px solid currentColor;opacity:.78;white-space:nowrap}
+/* 第 12 號拼圖（轉向版）：六個方塊依序彈出，循環播放 */
+#loader .ld-piece{width:68px;height:90px;overflow:visible}
+#loader .ld-piece rect{fill:#F28B8B;stroke:#DB6464;stroke-width:.06;transform-box:fill-box;transform-origin:center;
+  animation:ld-pop 1.5s ease-in-out infinite;animation-delay:calc(var(--i) * .13s)}
+@keyframes ld-pop{0%,60%,100%{transform:scale(.55);opacity:.25}25%,40%{transform:scale(1);opacity:1}}
+#loader .ld-text{margin:0;font-size:15px;font-weight:500;color:var(--ld-mut);min-height:1.55em}
+#loader .ld-reload{margin-top:-10px;padding:8px 20px;border:0;border-radius:999px;background:var(--ld-blue);color:#2B2E4A;font:inherit;font-weight:700;cursor:pointer}
+@media (prefers-reduced-motion:reduce){#loader{transition:none}#loader .ld-piece rect{animation:none;opacity:1;transform:none}}
+@media (orientation:landscape) and (max-height:480px){#loader{flex-direction:row;gap:28px;flex-wrap:wrap}#loader .ld-piece{width:51px;height:68px}}
+</style>
+<script>
+// 載入畫面的文字語言與主題：頁面 JS 還沒載入前，先直接讀本機設定（讀不到就跟隨系統）
+(function(){
+  var set = {};
+  try { set = JSON.parse(localStorage.getItem('untouchable11.settings.v1')) || {}; } catch (e) {}
+  if (set.theme === 'light' || set.theme === 'dark') document.documentElement.setAttribute('data-theme', set.theme);
+  var l = String(set.lang || navigator.language || 'zh').toLowerCase(), k = l.indexOf('ja') === 0 ? 'ja' : l.indexOf('en') === 0 ? 'en' : 'zh';
+  var T = {
+    zh: { load:'載入中…', slow:'網路較慢，仍在載入，請稍候…', fail:'載入時間比預期久，請檢查網路連線後重新整理頁面。', reload:'重新整理' },
+    en: { load:'Loading…', slow:'Slow connection, still loading…', fail:'Loading is taking longer than expected. Please check your connection and reload.', reload:'Reload' },
+    ja: { load:'読み込み中…', slow:'回線が遅いようです。読み込みを続けています…', fail:'読み込みに時間がかかっています。接続を確認して再読み込みしてください。', reload:'再読み込み' }
+  }[k];
+  document.documentElement.lang = k === 'zh' ? 'zh-Hant' : k;
+  window.__u11Loader = T;
+})();
+</script>
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/hero.css">
@@ -33,6 +82,13 @@
 <link rel="stylesheet" href="css/immersive.css">
 </head>
 <body>
+<div id="loader" role="status" aria-live="polite">
+  <div class="ld-hero"><h1>Untouchable 11</h1><span class="ld-tag">Fan-made</span></div>
+  <svg class="ld-piece" viewBox="0 0 3 4" aria-hidden="true"><rect style="--i:0" x="2.04" y="0.04" width=".92" height=".92" rx=".14"/><rect style="--i:1" x="0.04" y="1.04" width=".92" height=".92" rx=".14"/><rect style="--i:2" x="1.04" y="1.04" width=".92" height=".92" rx=".14"/><rect style="--i:3" x="2.04" y="1.04" width=".92" height=".92" rx=".14"/><rect style="--i:4" x="1.04" y="2.04" width=".92" height=".92" rx=".14"/><rect style="--i:5" x="1.04" y="3.04" width=".92" height=".92" rx=".14"/></svg>
+  <p class="ld-text" id="ldText"></p>
+  <button class="ld-reload" id="ldReload" type="button" hidden></button>
+</div>
+<script>window.__u11T0 = performance.now();</script>
 <div class="wrap">
   <header class="hero">
     <h1 id="heroTitle">Untouchable 11</h1>
@@ -294,8 +350,23 @@
 
 <script>
 // 直接用 file:// 開啟時，瀏覽器會擋下 ES 模組（main.js 不會執行），這裡先顯示說明
-if (location.protocol === 'file:') document.getElementById('loadError').hidden = false;
+if (location.protocol === 'file:') { document.getElementById('loadError').hidden = false; var ld = document.getElementById('loader'); if (ld) ld.remove(); }
 </script>
 <script type="module" src="js/main.js"></script>
+<script>
+// 載入畫面的文字與保險機制（要放在 main.js 的 <script> 之後，才抓得到該元素）：久候提示 → 逾時 / 模組載入失敗時改顯示失敗訊息與「重新整理」按鈕（正常載入完成後由 js/ui/loader.js 收起畫面）
+(function(){
+  var box = document.getElementById('loader'), txt = document.getElementById('ldText'), btn = document.getElementById('ldReload'), T = window.__u11Loader;
+  if (!box || !T) return;
+  var alive = function(){ return box.isConnected && !box.classList.contains('hide'); };
+  txt.textContent = T.load; btn.textContent = T.reload;
+  btn.addEventListener('click', function(){ location.reload(); });
+  var fail = function(){ if (!alive()) return; txt.textContent = T.fail; btn.hidden = false; };
+  setTimeout(function(){ if (alive() && btn.hidden) txt.textContent = T.slow; }, 6000);
+  setTimeout(fail, 20000);
+  window.addEventListener('error', function(e){ if (e instanceof ErrorEvent) fail(); });
+  document.querySelector('script[type="module"]').addEventListener('error', fail);
+})();
+</script>
 </body>
 </html>
