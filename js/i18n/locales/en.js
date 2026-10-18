@@ -18,6 +18,7 @@ export default {
     'tip.close':'Close',
     'tip.immersive':'Immersive mode',
     'tip.immersiveOff':'Exit immersive mode (Esc)',
+    'tip.rotateHint':'Rotate your device to landscape (tap to exit immersive mode)',
     'tip.fan':'Piece tray (Space)',
 
     // ── 規則與資訊視窗 ──
@@ -75,6 +76,13 @@ export default {
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'Share image created',
     'share.fail':'Could not create the image',
+    'share.title':'Share image',
+    'share.send':'Share…',
+    'share.download':'Download image',
+    'share.copy':'Copy image',
+    'share.saved':'Image downloaded',
+    'share.copied':'Image copied',
+    'share.copyFail':'Could not copy the image — please download it instead',
     'anon':'Anonymous',
 
     // ── 統計視窗 ──

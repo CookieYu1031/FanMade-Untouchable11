@@ -18,6 +18,7 @@ export default {
     'tip.close':'閉じる',
     'tip.immersive':'没入モード',
     'tip.immersiveOff':'没入モードを終了（Esc）',
+    'tip.rotateHint':'デバイスを横向きにしてください（タップで没入モードを終了）',
     'tip.fan':'ピース盤（スペースキー）',
 
     // ── 規則與資訊視窗 ──
@@ -75,6 +76,13 @@ export default {
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'シェア用画像を作成しました',
     'share.fail':'画像を作成できませんでした',
+    'share.title':'画像をシェア',
+    'share.send':'シェア…',
+    'share.download':'画像をダウンロード',
+    'share.copy':'画像をコピー',
+    'share.saved':'画像をダウンロードしました',
+    'share.copied':'画像をコピーしました',
+    'share.copyFail':'画像をコピーできません。ダウンロードをご利用ください',
     'anon':'匿名プレイヤー',
 
     // ── 統計視窗 ──

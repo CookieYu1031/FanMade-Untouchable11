@@ -23,6 +23,7 @@ export const isFanOpen = () => open;
 export function setFanOpen(v) {
   v = !!v && state.immersive;
   open = v;
+  if (v) $('fan').classList.remove('instant');
   $('fan').classList.toggle('open', v);
   const dot = $('fanDot');
   dot.classList.toggle('open', v);
@@ -32,7 +33,7 @@ export function setFanOpen(v) {
 
 export function renderFan() {
   if (!open || !state.immersive) return;
-  if (state.drag && state.drag.moved) { setFanOpen(false); return; }   // 拖出拼圖後收起（DOM 保留，不影響進行中的拖曳）
+  if (state.drag && state.drag.moved) { $('fan').classList.add('instant'); setFanOpen(false); return; }   // 拖出拼圖後立刻收起（不播縮小動畫，內容與大小都不變；DOM 保留，不影響進行中的拖曳）
   const fan = $('fan'), dot = $('fanDot'), stage = fan.parentElement;
   const sr = stage.getBoundingClientRect(), dr = dot.getBoundingClientRect();
   const bar = stage.querySelector(':scope > h2');

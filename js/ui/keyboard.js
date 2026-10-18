@@ -12,6 +12,7 @@ window.addEventListener('keydown', e => {
     if (isFanOpen()) setFanOpen(false); else exitImmersive();
     return;
   }
+  if (e.key === 'Escape' && document.getElementById('shareModal').classList.contains('open')) { document.getElementById('shareClose').click(); return; }   // 分享視窗疊在解答視窗上：Esc 只關最上層
   if (e.key === 'Escape') { document.querySelectorAll('.modal.open:not([data-lock])').forEach(m => m.classList.remove('open')); return; }
   if (solModal.classList.contains('open') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {   // 解答檢視：左右鍵切換
     stepSolution(e.key === 'ArrowLeft' ? -1 : 1); e.preventDefault(); return;

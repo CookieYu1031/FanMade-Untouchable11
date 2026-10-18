@@ -1,4 +1,4 @@
-/* 分享圖片：把解答、完成時間、暱稱、製作者資訊畫成 PNG 下載（依設定的亮 / 暗背景、一律橫式） */
+/* 分享圖片：把解答、完成時間、暱稱、製作者資訊畫成 PNG（依設定的亮 / 暗背景、一律橫式），在分享視窗預覽後，依裝置分享 / 下載 / 複製 */
 import { t, fmtTime, getLang } from '../../i18n/i18n.js';
 import { rotateCW } from '../../core/matrix.js';
 import { LV_COLORS, LV_INK } from '../../core/config.js';
@@ -50,20 +50,65 @@ function drawShareCanvas(item, L, nick, near) {
   c.font = `500 15px ${FONT}`; c.fillStyle = K.faint; c.textAlign = 'center'; c.fillText(t('share.credit'), W / 2, my + 38);              // 製作者資訊
   return cv;
 }
+// ---- 分享視窗：預覽圖片 + 依裝置提供不同操作 ----
+//   行動裝置（觸控為主要輸入、且瀏覽器支援「分享檔案」）→「分享…」：開啟系統分享選單，讓玩家自己挑要分享到哪裡；另保留「下載圖片」
+//   電腦 → 「下載圖片」「複製圖片」（瀏覽器支援圖片剪貼簿時才顯示複製）
+const shareModal = $('shareModal'), shareImg = $('shareImg'), btnSend = $('shareSend'), btnDl = $('shareDl'), btnCopy = $('shareCopy');
+let cur = null;   // { blob, file, name, url, title }
+
+const isMobile = () => {
+  const ua = navigator.userAgentData;
+  if (ua && typeof ua.mobile === 'boolean' && ua.mobile) return true;
+  return window.matchMedia('(pointer:coarse)').matches && !window.matchMedia('(hover:hover) and (pointer:fine)').matches;   // 觸控為主（含 iPad），排除接了滑鼠的電腦
+};
+const canShareFile = f => { try { return !!(navigator.share && navigator.canShare && navigator.canShare({ files: [f] })); } catch (e) { return false; } };
+const canCopyImage = () => !!(navigator.clipboard && navigator.clipboard.write && window.ClipboardItem && window.isSecureContext);
+
+function closeShare() {
+  shareModal.classList.remove('open');
+  if (cur) { URL.revokeObjectURL(cur.url); cur = null; }
+  shareImg.removeAttribute('src');
+}
+$('shareClose').addEventListener('click', closeShare);
+shareModal.addEventListener('click', e => { if (e.target === shareModal) closeShare(); });
+
+function fileName(v) {
+  const d = new Date(v.item.time || Date.now()), p2 = n => String(n).padStart(2, '0');
+  return `untouchable11_L${v.L.lv}${v.near ? '_near' : ''}_${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}.png`;
+}
+
+btnDl.addEventListener('click', () => {
+  if (!cur) return;
+  const a = document.createElement('a'); a.href = cur.url; a.download = cur.name; a.click();
+  toast(t('share.saved'));
+});
+btnCopy.addEventListener('click', async () => {
+  if (!cur) return;
+  try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': cur.blob })]); toast(t('share.copied')); }
+  catch (e) { toast(t('share.copyFail')); }
+});
+btnSend.addEventListener('click', async () => {
+  if (!cur) return;
+  try { await navigator.share({ files: [cur.file], title: cur.title, text: t('share.credit') }); }
+  catch (e) { if (e && e.name !== 'AbortError') toast(t('share.fail')); }   // AbortError = 玩家自己關掉分享選單，不算錯誤
+});
+
 $('solShare').addEventListener('click', async () => {
   const v = state.viewItem; if (!v) return;
   try {
     if (document.fonts && document.fonts.ready) await document.fonts.ready;
     const cv = drawShareCanvas(v.item, v.L, v.item.nick || settings.nick || t('anon'), v.near);
-    cv.toBlob(blob => {
-      if (!blob) { toast(t('share.fail')); return; }
-      const d = new Date(v.item.time || Date.now()), p2 = n => String(n).padStart(2, '0');
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `untouchable11_L${v.L.lv}${v.near ? '_near' : ''}_${d.getFullYear()}${p2(d.getMonth() + 1)}${p2(d.getDate())}-${p2(d.getHours())}${p2(d.getMinutes())}${p2(d.getSeconds())}.png`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      toast(t('share.done'));
-    }, 'image/png');
+    const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
+    if (!blob) { toast(t('share.fail')); return; }
+    if (cur) URL.revokeObjectURL(cur.url);
+    const name = fileName(v), file = new File([blob], name, { type: 'image/png' });
+    cur = { blob, file, name, url: URL.createObjectURL(blob), title: gameTitle(v.L) };
+    shareImg.src = cur.url;
+    const mobile = isMobile();
+    btnSend.hidden = !(mobile && canShareFile(file));
+    btnCopy.hidden = !(!mobile && canCopyImage());
+    btnSend.classList.toggle('main', !btnSend.hidden);
+    btnDl.classList.toggle('main', btnSend.hidden);   // 沒有「分享」時，「下載圖片」是主要按鈕
+    shareModal.classList.add('open');
   } catch (e) { toast(t('share.fail')); }
 });

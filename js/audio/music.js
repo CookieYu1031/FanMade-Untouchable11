@@ -3,7 +3,9 @@
  *   和弦進行：Cmaj7 → Am7 → Fmaj7 → G6 → Cmaj7 → Em7 → Dm7 → G6（8 小節為一輪，無限循環）。
  *   循環對齊：每個聲部都以「小節」為單位、在小節線上換和弦，尾音收在下一小節開頭附近；留白與力度用固定種子產生，每一輪（8 小節）完全相同。
  *   低音：低音根音與墊底和弦音都是單純的正弦波、不經過殘響，音高比原本高一個八度；每小節分成 2 個音、每個 2 拍（原本是 4 拍長音）。
- *   瀏覽器規定要使用者操作過才能出聲，所以第一次點擊 / 按鍵後才開始；分頁在背景時暫停。音量見 settings.musicVol（0 = 關閉）。 */
+ *   背景播放：切到別的分頁 / 視窗也繼續播放（輸出同時接到 <audio> 元素讓瀏覽器視為媒體播放；背景時計時器變慢，所以預排 4 個小節）。
+ *   自動開始：載入頁面後就嘗試播放；瀏覽器若擋下（多數瀏覽器規定要使用者操作過才能出聲），畫面上第一次點擊 / 觸碰 / 按鍵時立刻接著開始。
+ *   音量見 settings.musicVol（0 = 關閉）。 */
 import { settings } from '../state/settings.js';
 
 const BPM = 66, BEAT = 60 / BPM, BAR = BEAT * 4, EIGHTH = BEAT / 2, AHEAD = 3;   // AHEAD：往前排程幾秒（分頁被節流時也不會斷）
@@ -29,12 +31,17 @@ const FEEL = (() => {
 })();
 
 export const Music = (() => {
-  let ctx = null, out = null, bus = null, timer = 0, nextBar = 0, barIdx = 0, unlocked = false;
+  let ctx = null, out = null, bus = null, timer = 0, nextBar = 0, barIdx = 0, media = null, mediaOk = false, mediaBusy = false, mdNode = null;
 
   function build() {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
     ctx = new AC();
     out = ctx.createGain(); out.gain.value = 0; out.connect(ctx.destination);
+    if ('mediaSession' in navigator) { try { navigator.mediaSession.metadata = new MediaMetadata({ title: 'Untouchable 11', artist: 'BGM' }); } catch (e) {} }
+    ctx.onstatechange = () => {
+      if (ctx.state === 'running') routeMedia();
+      else if (wanted()) ctx.resume().catch(() => {});             // 被系統中斷（來電、切換 App）後自動恢復
+    };
     bus = ctx.createGain(); bus.connect(out);                       // 乾聲
     const rev = ctx.createConvolver(), wet = ctx.createGain(); wet.gain.value = 0.38;
     const len = Math.floor(ctx.sampleRate * 2.6), ir = ctx.createBuffer(2, len, ctx.sampleRate);
@@ -42,6 +49,19 @@ export const Music = (() => {
     const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = REV_HP; hp.Q.value = 0.7;   // 低頻不進殘響
     rev.buffer = ir; bus.connect(hp); hp.connect(rev); rev.connect(wet); wet.connect(out);   // 殘響
     return true;
+  }
+  // 背景播放：把輸出同時接到一個 <audio> 元素（MediaStream），瀏覽器會把它當成「媒體播放」，切到別的分頁 / 視窗 / 鎖屏時不會被暫停；
+  // 元素成功開始播放後才把直接輸出切掉（避免重複出聲）；被擋下（還沒有使用者操作）就維持直接輸出，下次有操作再試
+  function routeMedia() {
+    if (!ctx || mediaOk || mediaBusy || !ctx.createMediaStreamDestination || !window.Audio) return;
+    try {
+      if (!mdNode) { mdNode = ctx.createMediaStreamDestination(); out.connect(mdNode); }
+      const a = new Audio(); a.srcObject = mdNode.stream; a.setAttribute('playsinline', '');
+      const p = a.play(); if (!p || !p.then) return;
+      mediaBusy = true;
+      p.then(() => { media = a; mediaOk = true; mediaBusy = false; try { out.disconnect(ctx.destination); } catch (e) {} })
+       .catch(() => { mediaBusy = false; });
+    } catch (e) { mediaBusy = false; }
   }
   function env(g, t0, peak, att, hold, rel) {
     g.gain.setValueAtTime(0.0001, t0);
@@ -80,33 +100,46 @@ export const Music = (() => {
       pluck(pool[k % pool.length], t0 + n * EIGHTH, feel[n].vel, t0 + BAR);
     });
   }
-  function tick() { while (nextBar < ctx.currentTime + AHEAD) { playBar(barIdx++, nextBar); nextBar += BAR; } }
+  // 背景分頁的計時器會被瀏覽器放慢（最慢可到每分鐘一次），所以不在前景時一次排得更遠（約 4 個小節），聲音才不會斷
+  function tick() { const ahead = document.hidden ? Math.max(AHEAD, BAR * 4) : AHEAD; while (nextBar < ctx.currentTime + ahead) { playBar(barIdx++, nextBar); nextBar += BAR; } }
   function gainNow() { return Math.pow(settings.musicVol / 10, 1.6) * 0.55; }
 
-  // 依目前狀態（是否已解鎖、音量是否 > 0、分頁是否在前景）決定要播放還是暫停
+  const wanted = () => settings.musicVol > 0;                      // 不因為分頁在背景而暫停：只看音量是否 > 0
+  // 依目前狀態（音量是否 > 0）決定要播放還是暫停。AudioContext 被瀏覽器擋下（尚無使用者操作）時時間不會前進，
+  // 排好的小節會等到解鎖後從頭開始播，所以載入後就可以先排程。
   function sync() {
-    if (!unlocked) return;
-    const want = settings.musicVol > 0 && !document.hidden;
+    const want = wanted();
     if (want) {
       if (!ctx && !build()) return;
-      if (ctx.state === 'suspended') ctx.resume();
+      if (ctx.state !== 'running') ctx.resume().catch(() => {});
+      else routeMedia();
+      if (media && media.paused) media.play().catch(() => {});
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
       out.gain.setTargetAtTime(gainNow(), ctx.currentTime, 0.08);
       if (!timer) { nextBar = Math.max(nextBar, ctx.currentTime + 0.15); tick(); timer = setInterval(tick, 400); }
     } else if (ctx) {
       if (timer) { clearInterval(timer); timer = 0; }
       out.gain.setTargetAtTime(0, ctx.currentTime, 0.08);
-      setTimeout(() => { if (!timer && ctx.state === 'running') ctx.suspend(); }, 400);
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+      setTimeout(() => { if (!timer && ctx.state === 'running') { ctx.suspend(); if (media) media.pause(); } }, 400);
     }
   }
-  // 第一次使用者操作後解鎖（瀏覽器的自動播放限制）
+  // 使用者操作後解鎖（瀏覽器的自動播放限制）：每次操作都再試一次，直到 AudioContext 真的開始運轉才移除監聽
+  //（只聽第一個事件不夠：例如 iOS 的 pointerdown 不算有效操作，要等 touchend / click）
+  const GESTURES = ['pointerdown', 'pointerup', 'click', 'touchend', 'keydown'];
   const unlock = () => {
-    ['pointerdown', 'keydown', 'touchend'].forEach(e => window.removeEventListener(e, unlock, true));
-    unlocked = true;
-    if (settings.musicVol > 0 && !ctx) build();                     // 必須在手勢裡建立 / 恢復 AudioContext（iOS）
-    if (ctx && ctx.state === 'suspended') ctx.resume();
     sync();
+    if (!ctx) return;
+    ctx.resume().then(() => {
+      if (ctx.state !== 'running') return;
+      routeMedia();
+      GESTURES.forEach(e => window.removeEventListener(e, unlock, true));
+    }).catch(() => {});
   };
-  ['pointerdown', 'keydown', 'touchend'].forEach(e => window.addEventListener(e, unlock, true));
+  GESTURES.forEach(e => window.addEventListener(e, unlock, true));
+  // 載入後直接嘗試播放（等設定讀完；被瀏覽器擋下時，上面的操作監聽會在第一次點擊時接手）
+  setTimeout(sync, 0);
+  window.addEventListener('load', sync);
   document.addEventListener('visibilitychange', sync);
   return { sync };
 })();

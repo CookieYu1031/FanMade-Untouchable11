@@ -132,6 +132,9 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
       <button class="fan-dot" id="fanDot" type="button" aria-expanded="false" aria-controls="fan" data-i18n-title="tip.fan"></button>
     </section>
 
+    <!-- 沉浸模式 + 直向窄視窗：純色底 + 「請轉為橫向」動畫（js/ui/immersive.js 控制顯示；亮 / 暗主題圖片切換沿用 css/help.css 的 .rulegif） -->
+    <div id="rotateHint" hidden role="img" data-i18n-title="tip.rotateHint"><figure class="rulegif"><img class="g-l" src="assets/rotate-device.gif" width="240" height="240" alt=""><img class="g-d" src="assets/rotate-device-dark.gif" width="240" height="240" alt=""></figure></div>
+
     <aside class="side">
       <section class="panel tray-panel" style="--c:var(--p6)">
         <h2><span data-i18n="tray.title"></span><span class="h2-acts"><button class="ibtn" id="btnGroup" hidden style="width:30px;height:30px" data-i18n-title="tip.group"><svg viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></button><button class="ibtn" id="btnHelp" style="width:30px;height:30px" data-i18n-title="tip.help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></span></h2>
@@ -236,7 +239,22 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
         <button class="navbtn" id="solPrev" type="button" disabled data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
         <button class="navbtn" id="solNext" type="button" disabled data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
-      <button class="sharebtn" id="solShare"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg><span data-i18n="share"></span></button>
+      <button class="sharebtn" id="solShare"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/></svg><span data-i18n="share"></span></button>
+    </div>
+  </div>
+</div>
+
+<!-- 分享視窗：預覽即將分享的圖片；行動裝置（支援系統分享）→ 「分享」；電腦 → 「下載圖片」「複製圖片」（js/ui/modals/share.js） -->
+<div class="modal" id="shareModal">
+  <div class="box">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--mint);background:var(--mint)"><span data-i18n="share.title"></span><button class="ibtn" id="shareClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+    </div>
+    <div class="sharepv"><img id="shareImg" alt=""></div>
+    <div class="sharebar">
+      <button class="btn main" id="shareSend" hidden data-nosound data-i18n="share.send"></button>
+      <button class="btn" id="shareDl" data-i18n="share.download"></button>
+      <button class="btn" id="shareCopy" hidden data-i18n="share.copy"></button>
     </div>
   </div>
 </div>

@@ -1,7 +1,8 @@
 /* 沉浸模式：圖板放大到佔滿整個頁面，右下角圓點彈出小型拼圖盤（js/ui/immersive.js、js/ui/fan.js） */
 
-/* 直向視窗不提供沉浸模式：隱藏開啟按鈕（js/ui/immersive.js 也會擋住，且沉浸模式中轉成直向會自動離開） */
-@media (orientation:portrait){#btnImmersive{display:none}}
+/* 直向視窗也能開啟沉浸模式；但視窗太窄的直向（手機直拿）會蓋上「請將裝置轉為橫向」的提示（js/ui/immersive.js 控制顯示） */
+#rotateHint{position:fixed;inset:0;z-index:55;display:grid;place-items:center;background:var(--bg);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#rotateHint .rulegif{width:min(62vw,240px);margin:0}
 
 /* 開啟 / 關閉按鈕：兩種圖示依狀態切換 */
 #btnImmersive .i-off{display:none}
@@ -21,9 +22,10 @@ html.immersive .stage-body{padding:0 var(--sar) var(--sab) var(--sal)}
 html.immersive .board-wrap{padding:10px}
 /* 左側工具列：不分直橫向，一律貼著左緣、垂直置中 */
 html.immersive .ptools{position:absolute;z-index:5;left:var(--sal);top:50%;bottom:auto;transform:translateY(-50%);padding:8px 6px;box-shadow:none}
-/* 手機，或偵測到靈動島 / 挖孔 / 瀏海會遮到左緣時（js/ui/piece-tools.js 加上 html.tools-h）：工具列打橫，靠視窗左下；圖板在下方讓出工具列的高度（render-board.js 的 fitBoard） */
-html.immersive.tools-h .ptools{flex-direction:row;left:calc(var(--sal) + 10px);top:auto;bottom:calc(var(--sab) + 10px);transform:none;
-  padding:6px 8px;border:1px solid var(--line);border-radius:22px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+/* 手機（長或寬其中一邊 < 600px）且橫向時（js/ui/piece-tools.js 加上 html.tools-h）：工具列打橫，緊貼視窗下緣、靠左（像直向時緊貼左緣一樣，只有上方兩角是圓的）；
+   圖板在下方讓出工具列的高度（render-board.js 的 fitBoard） */
+html.immersive.tools-h .ptools{flex-direction:row;left:calc(var(--sal) + 10px);top:auto;bottom:0;transform:none;
+  padding:6px 8px calc(6px + var(--sab));border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;box-shadow:0 -2px 8px rgba(0,0,0,.18)}
 html.immersive.tools-h .psep{width:0;height:18px;margin:0 2px;border-top:0;border-left:2px solid var(--line)}
 
 /* ---- 右下角圓點（28px，中間不放圖示；周圍多一圈看不見的點擊範圍，方便手指按）---- */
@@ -41,6 +43,8 @@ html.immersive .fan{display:block;position:absolute;z-index:7;right:calc(18px + 
   transform-origin:100% 100%;visibility:hidden;opacity:0;transform:scale(.85);
   transition:transform .16s ease-out,opacity .14s ease-out,visibility 0s linear .16s}
 html.immersive .fan.open{visibility:visible;opacity:1;transform:none;transition-delay:0s}
+/* 拖出拼圖時立刻收起：不播放縮小 / 位移動畫（拼圖大小與位置在消失前都不變） */
+html.immersive .fan.instant{transition:none;transform:none}
 .fan .fan-body{padding:8px}
 .fan,.fan *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .fan .card{touch-action:none}

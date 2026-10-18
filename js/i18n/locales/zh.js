@@ -18,6 +18,7 @@ export default {
     'tip.close':'關閉',
     'tip.immersive':'沉浸模式',
     'tip.immersiveOff':'關閉沉浸模式（Esc）',
+    'tip.rotateHint':'請將裝置轉為橫向（點一下離開沉浸模式）',
     'tip.fan':'拼圖盤（空格鍵）',
 
     // ── 規則與資訊視窗 ──
@@ -75,6 +76,13 @@ export default {
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'已產生分享圖片',
     'share.fail':'無法產生圖片',
+    'share.title':'分享圖片',
+    'share.send':'分享…',
+    'share.download':'下載圖片',
+    'share.copy':'複製圖片',
+    'share.saved':'已下載圖片',
+    'share.copied':'已複製圖片',
+    'share.copyFail':'無法複製圖片，請改用下載',
     'anon':'匿名玩家',
 
     // ── 統計視窗 ──
