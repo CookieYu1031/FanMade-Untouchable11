@@ -31,8 +31,8 @@ resetConfirm.addEventListener('click', async () => {
   const [cache, set, sol, near] = checks.map(c => c.checked);
   resetConfirm.disabled = true;
   // 已登入：先清雲端（失敗就中止，本機也不動，避免兩邊不一致）
-  if (cloud.user && (set || sol || near)) {
-    try { await clearCloud({ settings: set, exact: sol, near }); }
+  if (cloud.user && (cache || set || sol || near)) {   // 清理快取 = 清掉遊玩中的盤面，雲端上的盤面一併清除，否則重新整理後又會被同步回來
+    try { await clearCloud({ settings: set, exact: sol, near, boards: cache }); }
     catch (e) { console.error(e); toast(t('toast.cloudFail')); sync(); return; }
   }
   if (!cache) persistBoards();   // 不清快取：先把目前盤面存好，重新整理後才接得回來

@@ -73,16 +73,11 @@ export default {
     // ── 解答檢視視窗 / 分享 ──
     'sol.title':(head, near) => `${head}  ${near ? 'Near solution' : 'Solution'}`,
     'share':'Share',
+    'download':'Download',
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'Share image created',
     'share.fail':'Could not create the image',
-    'share.title':'Share image',
-    'share.send':'Share…',
-    'share.download':'Download image',
-    'share.copy':'Copy image',
     'share.saved':'Image downloaded',
-    'share.copied':'Image copied',
-    'share.copyFail':'Could not copy the image — please download it instead',
     'anon':'Anonymous',
 
     // ── 統計視窗 ──
@@ -127,7 +122,7 @@ export default {
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'Account',
-    'acct.hint':'Sign in to sync your settings and solutions to the cloud automatically',
+    'acct.hint':'Sign in to sync your settings, solutions and in-progress boards to the cloud automatically',
     'acct.google':'Sign in with Google',
     'acct.logout':'Sign out',
     'acct.syncing':'Syncing…',

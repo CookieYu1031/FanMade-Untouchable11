@@ -2,7 +2,7 @@
 import { t, setLang, applyI18n } from '../../i18n/i18n.js';
 import { cloud, onCloud, setHandlers, signIn, signOut, retry } from '../../cloud/sync.js';
 import { Store } from '../../storage/store.js';
-import { cancelPersist } from '../../storage/boards.js';
+import { cancelPersist, restoreBoards } from '../../storage/boards.js';
 import { settings, applyTheme } from '../../state/settings.js';
 import { state, curLevel } from '../../state/state.js';
 import { $ } from '../dom.js';
@@ -76,7 +76,9 @@ function askMerge(c) {
   });
 }
 // 雲端資料套用到本機後：重新套用語言 / 背景並重繪
-function applied() {
+// info.boards = 雲端盤面已寫入本機；info.level = 一併切到雲端記錄的關卡（登入時才會；回到分頁時的檢查不會切關）
+function applied(info = {}) {
+  if (info.boards) restoreBoards({ level: !!info.level });
   setLang(settings.lang); applyTheme(); applyI18n(); Music.sync();   // 雲端設定可能含不同的音樂音量
   if (curLevel().extra && !settings.extra) state.level = 8;
   state.selected = null; state.chain = null;

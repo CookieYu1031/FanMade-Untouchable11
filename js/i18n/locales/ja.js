@@ -73,16 +73,11 @@ export default {
     // ── 解答檢視視窗 / 分享 ──
     'sol.title':(head, near) => `${head}　${near ? '近似解' : '解答'}`,
     'share':'シェア',
+    'download':'ダウンロード',
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'シェア用画像を作成しました',
     'share.fail':'画像を作成できませんでした',
-    'share.title':'画像をシェア',
-    'share.send':'シェア…',
-    'share.download':'画像をダウンロード',
-    'share.copy':'画像をコピー',
     'share.saved':'画像をダウンロードしました',
-    'share.copied':'画像をコピーしました',
-    'share.copyFail':'画像をコピーできません。ダウンロードをご利用ください',
     'anon':'匿名プレイヤー',
 
     // ── 統計視窗 ──
@@ -127,7 +122,7 @@ export default {
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'アカウント',
-    'acct.hint':'ログインすると、設定と解答が自動でクラウドに同期されます',
+    'acct.hint':'ログインすると、設定・解答・各ステージの進行状況が自動でクラウドに同期されます',
     'acct.google':'Googleでログイン',
     'acct.logout':'ログアウト',
     'acct.syncing':'同期中…',

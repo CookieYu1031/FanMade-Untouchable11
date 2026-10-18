@@ -1,15 +1,21 @@
 /* 雲端同步（Firebase Auth + Firestore）
  * 資料結構（每位使用者只能讀寫自己的 users/{uid}/…，見 firestore.rules）：
  *   users/{uid}/data/settings   設定（暱稱、語言、背景、音量、額外關卡）
- *   users/{uid}/data/meta       { rev }  最後更新時間；裝置比對 rev 沒變就不必重讀整本解答冊
+ *   users/{uid}/data/meta       { rev, brev }  rev = 設定 / 解答冊最後更新時間、brev = 盤面最後更新時間；裝置比對沒變就不必重讀
+ *   users/{uid}/data/boards     { level, group, lt, boards:{ 鍵: { t, p:[拼圖…] } } }  各關未完成的盤面（t = 最後變更時間，換裝置時以較晚的為準）
  *   users/{uid}/book/{s|n}{lv}_{k}   解答（s）/ 近似解（n），每 CHUNK 組一個文件（避免超過單一文件 1MiB 上限）
- * 本機 localStorage 是快取：登入期間所有寫入同時存本機與雲端（去抖動、只寫有變動的文件）。*/
+ * 本機 localStorage 是快取：登入期間所有寫入同時存本機與雲端（去抖動、只寫有變動的文件）。
+ * 盤面同步：玩家每動一次拼圖只寫本機；「有變動」且「停手超過 BOARD_DELAY（3 秒）」才上傳，而且只送有變動的盤面；
+ *   沒有變動就不會有任何網路動作（掛機不會一直同步）。分頁被切到背景時，若還有沒傳的變動會立刻補傳一次。*/
 import { FIREBASE_CONFIG, SDK_BASE } from './config.js';
-import { Store, Hooks, KEY_SYNC, KEY_REDIRECT, KEY_BOOK } from '../storage/store.js';
+import { Store, Hooks, KEY_SYNC, KEY_REDIRECT, KEY_BOOK, KEY_BOARDS } from '../storage/store.js';
 import { loadBook } from '../storage/book.js';
+import { readBoardsStore, persistBoards } from '../storage/boards.js';
 import { settings, sanitizeSettings, saveSettingsLocal } from '../state/settings.js';
 
 const CHUNK = 400, DELAY = 1500, RETRY = 15000;
+const BOARD_DELAY = 3000;     // 盤面：停手超過 3 秒才上傳
+const FOCUS_GAP = 30000;      // 回到分頁時檢查雲端是否有別台裝置的新進度：至少間隔 30 秒
 
 // ---- 對外狀態 ----
 export const cloud = { user: null, status: 'out' };   // status: out | syncing | ok | error
@@ -74,6 +80,37 @@ const countBook = b => ({
   near: Object.values(b.near || {}).reduce((n, l) => n + (l ? l.length : 0), 0),
 });
 
+// ---- 盤面 <-> 文件 ----
+const canon = v => Array.isArray(v) ? '[' + v.map(canon).join(',') + ']'
+  : (v && typeof v === 'object') ? '{' + Object.keys(v).sort().map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}'
+  : JSON.stringify(v);   // 鍵排序後再轉字串：Firestore 讀回的欄位順序與寫入時不同，比對才不會誤判
+const normPiece = q => (q && typeof q.id === 'string' && q.id.length <= 2) ? {
+  id: q.id, rot: Number.isInteger(q.rot) ? q.rot : 0, flip: !!q.flip, placed: !!q.placed,
+  x: Number.isInteger(q.x) ? q.x : 0, y: Number.isInteger(q.y) ? q.y : 0 } : null;
+const normBoard = e => (e && Number.isFinite(e.t) && Array.isArray(e.p) && e.p.length <= 20)
+  ? { t: e.t, p: e.p.map(normPiece).filter(Boolean) } : null;
+const isFresh = p => p.every(q => !q.placed && !q.rot && !q.flip);   // 完全沒動過的盤面
+const metaOf = o => canon({ level: o.level || 1, group: o.group || {}, lt: o.lt || 0 });
+const localBoards = () => {   // 本機盤面整理成 { 鍵: {t,p} }
+  const lb = readBoardsStore(), out = {};
+  for (const k of Object.keys(lb.boards)) { const e = normBoard({ t: lb.times[k] || 0, p: lb.boards[k] }); if (e) out[k] = e; }
+  return { lb, boards: out };
+};
+let bmirror = new Map();    // 雲端目前的盤面（鍵 -> canon 字串）
+let bmetaMirror = '';       // 雲端目前記錄的 level / group / lt
+function setBoardMirror(boards, meta) { bmirror = new Map(Object.keys(boards).map(k => [k, canon(boards[k])])); bmetaMirror = metaOf(meta); }
+// 本機與雲端的差異：只有真的不同的盤面才要上傳（雲端沒有、本機又沒動過的盤面不傳）
+function boardDiff() {
+  const { lb, boards } = localBoards(), diff = {};
+  for (const k of Object.keys(boards)) {
+    const c = canon(boards[k]), m = bmirror.get(k);
+    if (m === c || (m === undefined && isFresh(boards[k].p))) continue;
+    diff[k] = boards[k];
+  }
+  const metaDiff = metaOf(lb) !== bmetaMirror && lb.lt > 0;
+  return Object.keys(diff).length || metaDiff ? { lb, diff } : null;
+}
+
 // ---- 寫入（去抖動 + 只送有變動的文件）----
 let mirror = new Map();     // 雲端目前的文件內容（id -> JSON）
 const pending = new Set();  // 待上傳：'book' | 'settings'
@@ -101,7 +138,7 @@ async function doPush() {
       for (const id of mirror.keys()) if (!docs.has(id)) { batch.delete(fs.doc(db, 'users', uid, 'book', id)); next.delete(id); }
     }
     if (what.includes('settings')) batch.set(fs.doc(db, 'users', uid, 'data', 'settings'), settingsPayload());
-    batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { rev });
+    batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { rev }, { merge: true });   // merge：不能蓋掉盤面的 brev
     await batch.commit();
     mirror = next; setSync({ uid, rev, dirty: pending.size > 0 });
     if (!pending.size) setStatus('ok');
@@ -114,6 +151,53 @@ async function doPush() {
     return false;
   }
 }
+
+// ---- 盤面上傳：停手 BOARD_DELAY 才送、只送有變動的盤面 ----
+let bTimer = null, bWaiting = false, reconciling = false;
+function scheduleBoards() {
+  const st = Store.get(KEY_SYNC, null);
+  if (st && st.uid) setSync({ bdirty: true });             // 曾登入過：記下「有盤面還沒上傳」，離線 / 登出狀態下的變動下次登入才不會漏
+  if (!cloud.user || !ready) return;
+  bWaiting = true;
+  clearTimeout(bTimer); bTimer = setTimeout(flushBoards, BOARD_DELAY);   // 每次變動都重新計時 = 持續操作中不會上傳
+}
+Hooks.boards = scheduleBoards;
+
+async function pushBoards() {
+  if (!cloud.user || !ready) return true;
+  if (reconciling) { bWaiting = true; clearTimeout(bTimer); bTimer = setTimeout(flushBoards, 1000); return true; }
+  const d = boardDiff();
+  if (!d) {   // 沒有任何變動：不送出任何請求
+    if (!bWaiting) setSync({ bdirty: false });
+    if (cloud.status === 'error' && !pending.size && !bWaiting) setStatus('ok');
+    return true;
+  }
+  setStatus('syncing');
+  try {
+    const { fs, db } = await loadSdk(), uid = cloud.user.uid, batch = fs.writeBatch(db), brev = Date.now();
+    batch.set(fs.doc(db, 'users', uid, 'data', 'boards'), { level: d.lb.level, group: d.lb.group, lt: d.lb.lt, boards: d.diff }, { merge: true });   // merge：只更新有變動的盤面
+    batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { brev }, { merge: true });
+    await batch.commit();
+    for (const k of Object.keys(d.diff)) bmirror.set(k, canon(d.diff[k]));
+    bmetaMirror = metaOf(d.lb);
+    setSync({ uid, brev, bdirty: bWaiting });
+    if (!pending.size && !bWaiting) setStatus('ok');
+    return true;
+  } catch (e) {
+    console.error('cloud boards push failed', e);
+    setStatus('error'); bWaiting = true;
+    clearTimeout(bTimer); bTimer = setTimeout(flushBoards, RETRY);
+    return false;
+  }
+}
+function flushBoards() {
+  clearTimeout(bTimer); bWaiting = false;
+  chain = chain.then(pushBoards);
+  return chain;
+}
+// 設定 / 解答冊與盤面一併立刻上傳；回傳是否全部成功
+const flushAll = async () => { const a = await flush(); const b = await flushBoards(); return a && b; };
+
 // 立刻上傳待處理的變更；回傳是否全部成功
 function flush() {
   clearTimeout(timer);
@@ -122,14 +206,8 @@ function flush() {
 }
 
 // ---- 登入後的對帳 ----
-async function reconcile(user) {
-  const { fs, db } = await loadSdk(), uid = user.uid;
-  const prev = Store.get(KEY_SYNC, null), same = !!(prev && prev.uid === uid);
-  const metaSnap = await fs.getDoc(fs.doc(db, 'users', uid, 'data', 'meta'));
-  const cloudRev = metaSnap.exists() ? (metaSnap.data().rev || 0) : 0;
-  const local = loadBook();
-  if (same && !prev.dirty && cloudRev && prev.rev === cloudRev) { mirror = bookToDocs(local); return; }   // 沒有變動：不必再讀其他文件
-
+// 設定 / 解答冊
+async function reconcileBook({ fs, db, uid, prev, same, cloudRev, local }) {
   const [bs, ss] = await Promise.all([fs.getDocs(fs.collection(db, 'users', uid, 'book')), fs.getDoc(fs.doc(db, 'users', uid, 'data', 'settings'))]);
   const cloudBook = docsToBook(bs.docs.map(d => d.data()));
   mirror = bookToDocs(cloudBook);
@@ -143,20 +221,89 @@ async function reconcile(user) {
   else if (!merge) Object.assign(settings, sanitizeSettings({}));   // 不合併：本機設定一併捨棄
   saveSettingsLocal(); Store.set(KEY_BOOK, book);
   setSync({ uid, rev: cloudRev, dirty: false });
-  ready = true;
   if (JSON.stringify([...bookToDocs(book)]) !== JSON.stringify([...mirror])) pending.add('book');
   if (!cs && merge) pending.add('settings');
-  handlers.applied();
-  if (pending.size) { setSync({ dirty: true }); await flush(); }
+  return merge;
+}
+// 盤面：每個盤面取「較晚變更」的那一份；回傳 { applied, level }（level = 是否採用雲端記錄的關卡）
+async function reconcileBoards({ fs, db, uid, merge, pullLevel, cloudBrev }) {
+  persistBoards();   // 先把畫面上最新的盤面寫進本機存檔，時間戳才準
+  const snap = await fs.getDoc(fs.doc(db, 'users', uid, 'data', 'boards'));
+  const cd = snap.exists() ? snap.data() : {}, raw = (cd.boards && typeof cd.boards === 'object') ? cd.boards : {};
+  const cloudB = {};
+  for (const k of Object.keys(raw)) { const e = normBoard(raw[k]); if (e) cloudB[k] = e; }
+  const cloudMeta = { level: cd.level, group: (cd.group && typeof cd.group === 'object') ? cd.group : {}, lt: Number.isFinite(cd.lt) ? cd.lt : 0 };
+  setBoardMirror(cloudB, cloudMeta);
+
+  const { lb, boards: localB } = merge ? localBoards() : { lb: { level: 1, group: {}, times: {}, lt: 0 }, boards: {} };   // 不合併：本機盤面捨棄
+  const outBoards = {}, outTimes = {};
+  for (const k of new Set([...Object.keys(cloudB), ...Object.keys(localB)])) {
+    const c = cloudB[k], l = localB[k];
+    const e = (c && (!l || c.t > l.t)) ? c : l;
+    outBoards[k] = e.p; outTimes[k] = e.t;
+  }
+  let level = lb.level, group = lb.group, lt = lb.lt, takeLevel = false;
+  if (cloudMeta.lt > lb.lt && Number.isInteger(cloudMeta.level)) {
+    group = { ...lb.group, ...cloudMeta.group }; lt = cloudMeta.lt;
+    if (pullLevel) { level = cloudMeta.level; takeLevel = true; }
+  }
+  Store.set(KEY_BOARDS, { version: 2, level, group, boards: outBoards, times: outTimes, lt });
+  setSync({ uid, brev: cloudBrev, bdirty: false });
+  return { applied: true, level: takeLevel };
+}
+// opts.focus = 回到分頁時的檢查：不切換關卡、沒有變動就只讀一份 meta
+async function reconcile(user, opts = {}) {
+  const { fs, db } = await loadSdk(), uid = user.uid;
+  const prev = Store.get(KEY_SYNC, null), same = !!(prev && prev.uid === uid);
+  const metaSnap = await fs.getDoc(fs.doc(db, 'users', uid, 'data', 'meta'));
+  const md = metaSnap.exists() ? metaSnap.data() : {}, cloudRev = md.rev || 0, cloudBrev = md.brev || 0;
+  const local = loadBook();
+  const bookSame = same && !prev.dirty && cloudRev && prev.rev === cloudRev;
+  const boardsSame = same && !prev.bdirty && cloudBrev && (prev.brev || 0) === cloudBrev;   // 雲端還沒有盤面（cloudBrev = 0）時一律對帳，才能把本機既有的進度傳上去
+  if (bookSame && boardsSame) {   // 沒有任何變動：不必再讀其他文件
+    mirror = bookToDocs(local);
+    persistBoards();
+    const { lb, boards } = localBoards(); setBoardMirror(boards, lb);
+    return;
+  }
+  let merge = true, boardsInfo = { applied: false, level: false };
+  if (bookSame) mirror = bookToDocs(local); else merge = await reconcileBook({ fs, db, uid, prev, same, cloudRev, local });
+  if (!boardsSame) boardsInfo = await reconcileBoards({ fs, db, uid, merge, pullLevel: !opts.focus, cloudBrev });
+  else { persistBoards(); const { lb, boards } = localBoards(); setBoardMirror(boards, lb); }
+  ready = true;
+  handlers.applied({ boards: boardsInfo.applied, level: boardsInfo.level });
+  const jobs = [];
+  if (pending.size) { setSync({ dirty: true }); jobs.push(flush()); }
+  if (boardDiff()) { setSync({ bdirty: true }); jobs.push(flushBoards()); }   // 本機有比雲端新的盤面（離線時玩的、或登入前玩的）
+  await Promise.all(jobs);
 }
 async function onUser(user) {
-  ready = false; pending.clear(); clearTimeout(timer);
+  ready = false; pending.clear(); clearTimeout(timer); clearTimeout(bTimer); bWaiting = false;
   if (!user) { cloud.user = null; setStatus('out'); return; }
   cloud.user = user; setStatus('syncing');
-  try { await reconcile(user); ready = true; if (!pending.size) setStatus('ok'); }
+  reconciling = true;
+  try { await reconcile(user); ready = true; if (!pending.size && !bWaiting) setStatus('ok'); }
   catch (e) { console.error('cloud sync failed', e); setStatus('error'); handlers.notify('acct.syncFail'); }
+  finally { reconciling = false; }
 }
 export const retry = () => cloud.user && onUser(cloud.user);
+
+// 分頁切到背景：若還有沒傳的盤面變動就立刻補傳（玩家已經離開，不必再等 3 秒；沒變動就什麼都不做）
+// 分頁回到前景：檢查雲端是否有別台裝置的新進度（只讀一份 meta；至少間隔 FOCUS_GAP），避免放著的舊分頁之後把新進度蓋掉
+let lastFocusCheck = 0;
+document.addEventListener('visibilitychange', async () => {
+  if (!cloud.user || !ready) return;
+  if (document.visibilityState === 'hidden') {
+    persistBoards();
+    if (bWaiting) flushBoards();
+    return;
+  }
+  const now = Date.now();
+  if (reconciling || bWaiting || pending.size || now - lastFocusCheck < FOCUS_GAP) return;
+  lastFocusCheck = now; reconciling = true;
+  try { await reconcile(cloud.user, { focus: true }); } catch (e) { console.error('cloud refresh failed', e); }
+  finally { reconciling = false; }
+});
 
 async function listen() {
   if (listening) return; listening = true;
@@ -182,22 +329,24 @@ export async function signIn() {
 }
 // 登出：先把待上傳的送完（失敗就不登出，避免遺失紀錄）
 export async function signOut() {
-  if (!(await flush()) || pending.size) return false;
+  if (!(await flushAll()) || pending.size || bWaiting) return false;
   const { au, auth } = await loadSdk();
   await au.signOut(auth);
   return true;
 }
 // 清除雲端資料（重置資料用）。失敗會丟出例外
-export async function clearCloud({ settings: s, exact, near }) {
+export async function clearCloud({ settings: s, exact, near, boards }) {
   if (!cloud.user) return;
-  pending.clear(); clearTimeout(timer); await chain;
+  pending.clear(); clearTimeout(timer); clearTimeout(bTimer); bWaiting = false; await chain;
   const { fs, db } = await loadSdk(), uid = cloud.user.uid, batch = fs.writeBatch(db), rev = Date.now();
   if (s) batch.delete(fs.doc(db, 'users', uid, 'data', 'settings'));
   if (exact || near) {
     const snap = await fs.getDocs(fs.collection(db, 'users', uid, 'book'));
     snap.docs.forEach(d => { if ((d.id[0] === 's' && exact) || (d.id[0] === 'n' && near)) { batch.delete(d.ref); mirror.delete(d.id); } });
   }
-  batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { rev });
+  if (boards) batch.delete(fs.doc(db, 'users', uid, 'data', 'boards'));
+  batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), boards ? { rev, brev: rev } : { rev }, { merge: true });
   await batch.commit();
-  setSync({ uid, rev, dirty: false });
+  if (boards) { bmirror = new Map(); bmetaMirror = ''; }
+  setSync(boards ? { uid, rev, brev: rev, dirty: false, bdirty: false } : { uid, rev, dirty: false });
 }

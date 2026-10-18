@@ -1,11 +1,10 @@
 /* 進入點：載入設定檔 → 還原存檔 → 綁定介面 → 第一次繪製 */
-import { loadConfig, LEVELS } from './core/config.js';
+import { loadConfig } from './core/config.js';
 import { setLang, applyI18n } from './i18n/i18n.js';
-import { Store, KEY_BOARDS, KEY_UI } from './storage/store.js';
+import { Store, KEY_UI } from './storage/store.js';
 import { settings, applyTheme } from './state/settings.js';
-import { state, initState, applyMode, fromNative, curLevel, keyLv } from './state/state.js';
-import { sanitizeNative, persistBoards } from './storage/boards.js';
-import { legacyBoard } from './storage/legacy.js';
+import { state, initState, applyMode, curLevel } from './state/state.js';
+import { restoreBoards, persistBoards } from './storage/boards.js';
 import { refresh } from './ui/render.js';
 import { initCloud } from './cloud/sync.js';
 import { hideLoader } from './ui/loader.js';
@@ -47,18 +46,7 @@ async function boot() {
   state.bookHidden = !!(Store.get(KEY_UI, {}).hidden);
   setLang(settings.lang); applyTheme(); applyI18n();
   applyMode();
-  // 還原上次各關卡的盤面與所在關卡（自動暫存）
-  const savedBoards = Store.get(KEY_BOARDS, null);
-  if (savedBoards && savedBoards.boards && typeof savedBoards.boards === 'object') {
-    const legacyB = savedBoards.version !== 2;   // 舊版暫存盤面：換成新的拼圖代號
-    const sg = savedBoards.group;                // 有拼圖組合的關卡，上次使用哪一組
-    if (sg && typeof sg === 'object') LEVELS.forEach(L => { if (L.groups && L.groups.some(g => g.key === sg[L.lv])) state.group[L.lv] = sg[L.lv]; });
-    Object.keys(state.boards).forEach(k => {     // 鍵：lv，或有拼圖組合的「lv:組合」
-      const b = savedBoards.boards[k];
-      if (b) state.boards[k] = fromNative(sanitizeNative(legacyB ? legacyBoard(b) : b, k), keyLv(k));
-    });
-    if (LEVELS[Number(savedBoards.level) - 1]) state.level = Number(savedBoards.level);
-  }
+  restoreBoards();   // 還原上次各關卡的盤面與所在關卡（自動暫存；已登入者之後會再與雲端對帳）
   if (curLevel().extra && !settings.extra) state.level = 8;
   window.addEventListener('pagehide', persistBoards);
   refresh();

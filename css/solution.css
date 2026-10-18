@@ -1,4 +1,4 @@
-/* 解答檢視視窗與分享按鈕 */
+/* 解答檢視視窗與分享 / 下載按鈕（行動裝置顯示「分享」，電腦顯示「下載」） */
 .solwrap{width:min(640px,100%);display:flex;flex-direction:column;gap:12px}
 .solwrap .box{width:100%}
 /* 底部操作列：← → 並排置中、分享按鈕靠右；沒有上（下）一頁時箭頭仍顯示，但不可點按（灰階樣式同 .ibtn:disabled） */
@@ -25,10 +25,3 @@
   color:var(--ink);font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(20,22,40,.25)}
 .sharebtn:hover{box-shadow:0 6px 16px rgba(20,22,40,.25),inset 0 0 0 2px var(--ink)}
 .sharebtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-/* 分享視窗：圖片預覽 + 操作按鈕（行動裝置：分享；電腦：下載、複製）；視窗矮（手機橫放）時內容在視窗內捲動 */
-#shareModal .box{width:min(520px,100%);max-height:100%;overflow:auto}
-.sharepv{padding:14px 14px 0}
-.sharepv img{display:block;margin:0 auto;max-width:100%;max-height:min(56vh,420px);width:auto;height:auto;border-radius:10px;border:1px solid var(--line);background:var(--board)}
-.sharebar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:14px}
-.sharebar .btn{flex:0 1 auto;min-width:0;padding:9px 16px;font-weight:700}
-@media (max-width:560px){.sharebar .btn{flex:1 1 100%}}   /* 窄螢幕：按鈕各佔一整列，好按 */

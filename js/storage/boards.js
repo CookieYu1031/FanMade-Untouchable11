@@ -1,14 +1,53 @@
-/* 各關卡盤面的自動暫存與讀回檢查 */
-import { Store, KEY_BOARDS } from './store.js';
+/* 各關卡盤面的自動暫存與讀回檢查
+ * 本機存檔格式：{ version:2, level, group, boards:{鍵:拼圖陣列}, times:{鍵:最後變更時間}, lt:關卡 / 組合最後變更時間 }
+ *   times / lt 供雲端同步比對：換裝置登入時，每個盤面以「較晚變更」的那一份為準（見 cloud/sync.js） */
+import { Store, Hooks, KEY_BOARDS } from './store.js';
 import { LEVELS } from '../core/config.js';
-import { state, toNative, freshPieces, absCells, keyLv, keyGrp } from '../state/state.js';
+import { state, toNative, fromNative, freshPieces, absCells, keyLv, keyGrp } from '../state/state.js';
+import { legacyBoard } from './legacy.js';
 
 // 盤面的鍵：一般關卡 = lv；有拼圖組合的關卡 = 「lv:組合代號」（見 state.js 的 boardKey）；group = 各關卡目前使用的組合
 const nativeBoards = () => Object.fromEntries(Object.keys(state.boards).map(k => [k, toNative(state.boards[k], keyLv(k))]));
-export function persistBoards() { if (state.wiping) return; Store.set(KEY_BOARDS, { version:2, level:state.level, group:{ ...state.group }, boards:nativeBoards() }); }
+
+// 上一次存檔時各盤面的內容（字串）：只有「真的變動」的盤面才會更新時間、通知雲端；重繪、縮放視窗等沒有改變盤面的動作一律不算
+const lastSig = {};
+let lastMeta = '';
+const levelSig = () => JSON.stringify([state.level, state.group]);
+function seedSig() {
+  const nb = nativeBoards();
+  Object.keys(nb).forEach(k => { lastSig[k] = JSON.stringify(nb[k]); });
+  lastMeta = levelSig();
+}
+
+// 讀取本機存檔（雲端同步用）
+export function readBoardsStore() {
+  const s = Store.get(KEY_BOARDS, null) || {};
+  return {
+    level: Number.isInteger(s.level) ? s.level : 1,
+    group: (s.group && typeof s.group === 'object') ? s.group : {},
+    boards: (s.boards && typeof s.boards === 'object') ? s.boards : {},
+    times: (s.times && typeof s.times === 'object') ? s.times : {},
+    lt: Number.isFinite(s.lt) ? s.lt : 0,
+  };
+}
+
+export function persistBoards() {
+  if (state.wiping) return;
+  const prev = readBoardsStore(), times = { ...prev.times }, nb = nativeBoards(), now = Date.now();
+  let lt = prev.lt, changed = false;
+  for (const k of Object.keys(nb)) {
+    const sig = JSON.stringify(nb[k]);
+    if (lastSig[k] !== sig) { lastSig[k] = sig; times[k] = now; lt = now; changed = true; }
+  }
+  const m = levelSig();
+  if (m !== lastMeta) { lastMeta = m; lt = now; changed = true; }
+  Store.set(KEY_BOARDS, { version:2, level:state.level, group:{ ...state.group }, boards:nb, times, lt });
+  if (changed && Hooks.boards) Hooks.boards();   // 通知雲端同步（它會等玩家停手 3 秒才真正上傳）
+}
 let persistTimer = null;
 export function schedulePersist() { clearTimeout(persistTimer); persistTimer = setTimeout(persistBoards, 250); }
 export const cancelPersist = () => clearTimeout(persistTimer);
+
 // 讀進來的資料一律檢查：格式、旋轉值、座標是否在底板內，不合格的拼圖回到拼圖盤
 export function sanitizeNative(arr, key) {
   const lv = keyLv(key), L = LEVELS[lv - 1], out = freshPieces(lv, keyGrp(key));
@@ -24,4 +63,22 @@ export function sanitizeNative(arr, key) {
     Object.assign(p, q);
   });
   return out;
+}
+
+// 從本機存檔還原各關盤面（開機時、以及雲端資料套用到本機後呼叫）
+//   level = true 時一併切到存檔記錄的關卡；存檔裡沒有的盤面視為全新（例如選擇「不合併」而捨棄本機紀錄）
+export function restoreBoards({ level = true } = {}) {
+  const sb = Store.get(KEY_BOARDS, null);
+  if (sb && sb.boards && typeof sb.boards === 'object') {
+    const legacyB = sb.version !== 2;   // 舊版暫存盤面：換成新的拼圖代號
+    const sg = sb.group;                // 有拼圖組合的關卡，上次使用哪一組
+    if (sg && typeof sg === 'object') LEVELS.forEach(L => { if (L.groups && L.groups.some(g => g.key === sg[L.lv])) state.group[L.lv] = sg[L.lv]; });
+    Object.keys(state.boards).forEach(k => {     // 鍵：lv，或有拼圖組合的「lv:組合」
+      const b = sb.boards[k];
+      const next = b ? fromNative(sanitizeNative(legacyB ? legacyBoard(b) : b, k), keyLv(k)) : freshPieces(keyLv(k), keyGrp(k));
+      if (JSON.stringify(next) !== JSON.stringify(state.boards[k])) { state.boards[k] = next; state.hist[k] = []; }   // 盤面被換掉：舊的「返回上一步」紀錄作廢
+    });
+    if (level && LEVELS[Number(sb.level) - 1]) state.level = Number(sb.level);
+  }
+  seedSig();
 }

@@ -73,16 +73,11 @@ export default {
     // ── 解答檢視視窗 / 分享 ──
     'sol.title':(head, near) => `${head}　${near ? '近似解' : '解答'}`,
     'share':'分享',
+    'download':'下載',
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
     'share.done':'已產生分享圖片',
     'share.fail':'無法產生圖片',
-    'share.title':'分享圖片',
-    'share.send':'分享…',
-    'share.download':'下載圖片',
-    'share.copy':'複製圖片',
     'share.saved':'已下載圖片',
-    'share.copied':'已複製圖片',
-    'share.copyFail':'無法複製圖片，請改用下載',
     'anon':'匿名玩家',
 
     // ── 統計視窗 ──
@@ -127,7 +122,7 @@ export default {
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'帳戶',
-    'acct.hint':'登入後，設定與解答會自動同步到雲端',
+    'acct.hint':'登入後，設定、解答與各關進度會自動同步到雲端',
     'acct.google':'使用 Google 登入',
     'acct.logout':'登出',
     'acct.syncing':'同步中…',

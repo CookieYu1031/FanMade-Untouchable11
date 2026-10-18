@@ -5,7 +5,9 @@ service cloud.firestore {
     match /users/{uid}/data/{doc} {
       allow read, delete: if request.auth != null && request.auth.uid == uid;
       allow create, update: if request.auth != null && request.auth.uid == uid
-                            && (doc == 'settings' || doc == 'meta');
+                            && (doc == 'settings' || doc == 'meta' || doc == 'boards')
+                            // 盤面文件：boards 必須是 map，且最多 60 個盤面（目前約 12 個）
+                            && (doc != 'boards' || (request.resource.data.boards is map && request.resource.data.boards.size() <= 60));
     }
     match /users/{uid}/book/{doc} {
       allow read, delete: if request.auth != null && request.auth.uid == uid;
