@@ -1,6 +1,6 @@
 /* 解答冊 —— 收錄數、縮圖、近似解區，以及放大檢視用的解答 SVG */
 import { t } from '../i18n/i18n.js';
-import { Store, KEY_UI } from '../storage/store.js';
+import { settings, saveSettings } from '../state/settings.js';
 import { rotateCW } from '../core/matrix.js';
 import { loadBook } from '../storage/book.js';
 import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups } from '../state/state.js';
@@ -74,7 +74,7 @@ export function renderBook() {
   // 隱藏符號按鈕：睜眼 = 目前顯示解答，閉眼 = 目前已遮蔽
   // 這個關卡完全沒有解答（含近似解）時，停用隱藏按鈕，也不套用「隱藏」狀態（沒東西可藏）
   const hasAny = list.length > 0 || (!!L.near && ((book.near && book.near[L.lv]) || []).length > 0);
-  const hidden = state.bookHidden && hasAny;
+  const hidden = settings.hideBook && hasAny;
   const hb = $('btnHide');
   hb.disabled = !hasAny;   // 沒有解答時停用（與「返回上一步」相同的灰階樣式），而不是消失
   hb.innerHTML = hidden ? EYE_OFF : EYE;
@@ -121,9 +121,9 @@ export function solutionSVG(sig, maxW, maxH) {
   return `<svg viewBox="0 0 ${cols} ${rows}" width="${cols * px}" height="${rows * px}" style="background:var(--board);border:2px solid var(--line);border-radius:3px;display:block"><g stroke="var(--gridline)" stroke-width=".05">${grid}</g>${r}</svg>`;
 }
 
-// 隱藏 / 顯示解答：不論目前有沒有收錄解答都可以切換，並記住選擇
+// 隱藏 / 顯示解答：不論目前有沒有收錄解答都可以切換，並記在設定裡（登入時同步到雲端）
 $('btnHide').addEventListener('click', () => {
-  state.bookHidden = !state.bookHidden;
-  Store.set(KEY_UI, { ...Store.get(KEY_UI, {}), hidden: state.bookHidden });
+  settings.hideBook = !settings.hideBook;
+  saveSettings();   // 寫入設定（登入時會同步到雲端）
   renderBook();
 });

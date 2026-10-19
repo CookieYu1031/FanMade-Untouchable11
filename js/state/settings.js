@@ -1,4 +1,4 @@
-/* 設定 —— 暱稱、語言、背景、獨立關卡開關、音效 / 音樂音量（登入時會同步到雲端） */
+/* 設定 —— 暱稱、語言、背景、獨立關卡開關、近似解顯示、解答冊隱藏、音效 / 音樂音量（登入時會同步到雲端） */
 import { Store, Hooks, KEY_SET } from '../storage/store.js';
 import { normLang } from '../i18n/i18n.js';
 
@@ -8,6 +8,8 @@ export const sanitizeSettings = (s = {}) => ({
   lang: normLang(s.lang),
   theme: s.theme === 'light' || s.theme === 'dark' ? s.theme : null, // null = 跟隨系統
   extra: s.extra === true,   // 是否啟用獨立關卡（大師挑戰、危險貨物）
+  near: s.near === true,     // 統計：是否顯示近似解（更多資訊）
+  hideBook: s.hideBook === true, // 解答冊：是否隱藏解答
   vol: Number.isInteger(s.vol) && s.vol >= 0 && s.vol <= 10 ? s.vol : 5, // 音效音量：0~10 段，每段 10%
   musicVol: Number.isInteger(s.musicVol) && s.musicVol >= 0 && s.musicVol <= 10 ? s.musicVol : 4, // 音樂音量：0~10 段（0 = 關閉音樂）
 });

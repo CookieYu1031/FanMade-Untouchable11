@@ -1,7 +1,6 @@
 /* 進入點：載入設定檔 → 還原存檔 → 綁定介面 → 第一次繪製 */
 import { loadConfig } from './core/config.js';
 import { setLang, applyI18n } from './i18n/i18n.js';
-import { Store, KEY_UI } from './storage/store.js';
 import { settings, applyTheme } from './state/settings.js';
 import { state, initState, applyMode, curLevel } from './state/state.js';
 import { restoreBoards, persistBoards } from './storage/boards.js';
@@ -29,7 +28,7 @@ import './ui/modals/board-reset.js';
 import './ui/modals/settings.js';
 import './ui/modals/account.js';
 import './ui/modals/stats.js';
-import './ui/modals/reset-data.js';
+import './ui/modals/rank.js';
 import './ui/modals/scroll-lock.js';
 
 function showLoadError(err) {
@@ -43,7 +42,6 @@ function showLoadError(err) {
 async function boot() {
   try { await loadConfig(); } catch (err) { showLoadError(err); return; }
   initState();
-  state.bookHidden = !!(Store.get(KEY_UI, {}).hidden);
   setLang(settings.lang); applyTheme(); applyI18n();
   applyMode();
   restoreBoards();   // 還原上次各關卡的盤面與所在關卡（自動暫存；已登入者之後會再與雲端對帳）

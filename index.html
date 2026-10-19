@@ -79,6 +79,7 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
 <link rel="stylesheet" href="css/settings.css">
 <link rel="stylesheet" href="css/stats.css">
 <link rel="stylesheet" href="css/group.css">
+<link rel="stylesheet" href="css/rank.css">
 <link rel="stylesheet" href="css/immersive.css">
 </head>
 <body>
@@ -158,6 +159,11 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
 
 <div id="toast" role="status" aria-live="polite"></div>
 
+<!-- 排行榜按鈕：工具列形式，從視窗右側邊界靠近底部延伸出來（沉浸模式隱藏；樣式見 css/rank.css） -->
+<div class="rtools" id="rankTools" role="toolbar">
+  <button class="ibtn" id="btnRank" type="button" data-i18n-title="tip.rank"><svg viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-1.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98 1.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></button>
+</div>
+
 <div class="modal" id="helpModal">
   <div class="box">
     <div class="panel" style="margin:0;border:0;border-radius:0">
@@ -232,11 +238,12 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
         <h2 id="solBar" style="--c:var(--p4);background:var(--p4)"><span id="solTitle"></span><button class="ibtn" id="solClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
       </div>
       <div id="solView" style="padding:16px;display:grid;place-items:center;overflow:auto;max-height:calc(100vh - 240px)"></div>
-      <div class="solmeta"><span id="solTime"></span><span id="solIdx"></span><b id="solNick"></b></div>
+      <div class="solmeta"><span id="solTime"></span><b id="solNick"></b></div>
     </div>
         <div class="navbar">
       <div class="navgrp">
         <button class="navbtn" id="solPrev" type="button" disabled data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="navpg" id="solIdx" aria-live="polite"></span>
         <button class="navbtn" id="solNext" type="button" disabled data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
       <button class="sharebtn" id="solShare"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4"/><path d="m15.4 6.5-6.8 4"/></svg><span data-i18n="share"></span></button>
@@ -255,9 +262,29 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
     <div class="navbar">
       <div class="navgrp">
         <button class="navbtn" id="statPrev" type="button" disabled data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="navpg" id="statPg" aria-live="polite"></span>
         <button class="navbtn" id="statNext" type="button" disabled data-nosound aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="rankModal">
+  <div class="box rankbox" id="rankBox">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--yel);background:var(--yel)"><span data-i18n="rank.title"></span><span class="h2-acts"><button class="ibtn" id="rankInfoBtn" type="button" style="width:30px;height:30px" data-i18n-title="tip.rankInfo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg></button><button class="ibtn" id="rankClose" type="button" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></h2>
+    </div>
+    <div class="rankcols" id="rankCols"></div>
+    <div class="rnote" id="rankNote"></div>
+  </div>
+</div>
+
+<div class="modal" id="rankInfoModal">
+  <div class="box rinfobox">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--yel);background:var(--yel)"><span data-i18n="ri.title"></span><button class="ibtn" id="rankInfoClose" type="button" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+    </div>
+    <div class="rinfo" id="rankInfoBody"></div>
   </div>
 </div>
 
@@ -281,9 +308,6 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
         <div class="sgrp sgrp-vol sgrp-extra"><span><span data-i18n="set.extra"></span><small class="sub" data-i18n="set.extraDesc"></small></span><button class="switch" id="swExtra" role="switch" aria-checked="false" data-i18n-title="set.extra"><i></i></button></div>
       </div>
     </div>
-    <div class="dzone">
-      <div class="srow srow-reset"><span><span data-i18n="reset.title"></span><small class="sub" data-i18n="reset.desc"></small></span><button class="btn danger" id="resetOpen" data-i18n="reset.btn"></button></div>
-    </div>
   </div>
 </div>
 
@@ -296,27 +320,6 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
     <div class="tools" style="padding:16px 14px 14px;justify-content:flex-end">
       <button class="btn" id="brdCancel" data-i18n="reset.cancel"></button>
       <button class="btn danger" id="brdConfirm" data-nosound data-i18n="brd.confirm"></button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="resetModal">
-  <div class="box" style="width:min(460px,100%)">
-    <div class="panel" style="margin:0;border:0;border-radius:0">
-      <h2 style="--c:#F28B8B;background:#F28B8B"><span data-i18n="reset.confirmTitle"></span><button class="ibtn" id="resetClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
-    </div>
-    <div class="rchecks">
-      <label class="rchk"><input type="checkbox" id="rstCache" checked><span><b data-i18n="reset.optCache"></b><small data-i18n="reset.optCacheDesc"></small></span></label>
-      <label class="rchk"><input type="checkbox" id="rstSet" checked><span><b data-i18n="reset.optSettings"></b><small data-i18n="reset.optSettingsDesc"></small></span></label>
-      <label class="rchk"><input type="checkbox" id="rstSol"><span><b data-i18n="reset.optSolutions"></b><small data-i18n="reset.optSolutionsDesc"></small></span></label>
-      <label class="rchk"><input type="checkbox" id="rstNear"><span><b data-i18n="reset.optNear"></b><small data-i18n="reset.optNearDesc"></small></span></label>
-    </div>
-    <div class="sdesc" style="padding-top:12px;font-size:13px;color:var(--muted)" data-i18n="reset.cloudNote"></div>
-    <div class="sdesc" style="padding-top:8px;font-size:13.5px;color:var(--ink)" data-i18n="reset.confirmDesc"></div>
-    <input class="txt" id="resetInput" autocomplete="off" spellcheck="false" data-i18n-ph="reset.ph">
-    <div class="tools" style="padding:14px;justify-content:flex-end">
-      <button class="btn" id="resetCancel" data-i18n="reset.cancel"></button>
-      <button class="btn danger" id="resetConfirm" data-i18n="reset.confirm" disabled></button>
     </div>
   </div>
 </div>

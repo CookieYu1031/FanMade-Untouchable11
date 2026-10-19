@@ -10,10 +10,9 @@
 .dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--c);box-sizing:border-box}
 .dots i.on{background:var(--c)}
 .pct{min-width:60px;font-weight:700;text-align:left}
-/* 分頁：左右箭頭放在視窗下方兩側（與解答檢視相同，樣式見 solution.css 的 .navbar / .navbtn）；沒有上（下）一頁時不可點按 */
+/* 分頁：「← 頁數 →」工具列放在視窗下方正中間（與解答檢視相同，樣式見 solution.css 的 .navbar / .navbtn）；沒有上（下）一頁時不可點按 */
 .statrow{width:min(720px,100%);display:flex;flex-direction:column;gap:12px}
 .statrow .box{width:100%}
-#statTitle small{font-size:12px;font-weight:500;opacity:.7;margin-left:8px}
 /* 近似解列：與同關卡的正解列合成一組（關卡標籤跨兩列），文字用灰字 */
 .stat tr.g1 td{border-bottom:0;padding-bottom:3px}
 .stat tr.nr td{color:var(--muted);padding-top:3px}

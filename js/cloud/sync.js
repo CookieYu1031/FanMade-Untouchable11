@@ -1,9 +1,10 @@
 /* 雲端同步（Firebase Auth + Firestore）
  * 資料結構（每位使用者只能讀寫自己的 users/{uid}/…，見 firestore.rules）：
- *   users/{uid}/data/settings   設定（暱稱、語言、背景、音量、額外關卡）
+ *   users/{uid}/data/settings   設定（暱稱、語言、背景、音量、額外關卡、近似解顯示、解答冊隱藏）
  *   users/{uid}/data/meta       { rev, brev }  rev = 設定 / 解答冊最後更新時間、brev = 盤面最後更新時間；裝置比對沒變就不必重讀
  *   users/{uid}/data/boards     { level, group, lt, boards:{ 鍵: { t, p:[拼圖…] } } }  各關未完成的盤面（t = 最後變更時間，換裝置時以較晚的為準）
  *   users/{uid}/book/{s|n}{lv}_{k}   解答（s）/ 近似解（n），每 CHUNK 組一個文件（避免超過單一文件 1MiB 上限）
+ *   leaderboard/{uid}           排行榜（任何人可讀、只有本人能寫）：暱稱、兩個榜的分數與排序鍵；只有分數 / 暱稱真的改變才會寫入
  * 本機 localStorage 是快取：登入期間所有寫入同時存本機與雲端（去抖動、只寫有變動的文件）。
  * 盤面同步：玩家每動一次拼圖只寫本機；「有變動」且「停手超過 BOARD_DELAY（3 秒）」才上傳，而且只送有變動的盤面；
  *   沒有變動就不會有任何網路動作（掛機不會一直同步）。分頁被切到背景時，若還有沒傳的變動會立刻補傳一次。*/
@@ -12,6 +13,7 @@ import { Store, Hooks, KEY_SYNC, KEY_REDIRECT, KEY_BOOK, KEY_BOARDS } from '../s
 import { loadBook } from '../storage/book.js';
 import { readBoardsStore, persistBoards } from '../storage/boards.js';
 import { settings, sanitizeSettings, saveSettingsLocal } from '../state/settings.js';
+import { computeScores, challengeKey, masterKey } from '../core/score.js';
 
 const CHUNK = 400, DELAY = 1500, RETRY = 15000;
 const BOARD_DELAY = 3000;     // 盤面：停手超過 3 秒才上傳
@@ -116,7 +118,7 @@ let mirror = new Map();     // 雲端目前的文件內容（id -> JSON）
 const pending = new Set();  // 待上傳：'book' | 'settings'
 let timer = null, chain = Promise.resolve();
 const setSync = patch => Store.set(KEY_SYNC, { ...(Store.get(KEY_SYNC, {}) || {}), ...patch });
-const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme || '', extra: !!settings.extra, vol: settings.vol, musicVol: settings.musicVol });
+const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme || '', extra: !!settings.extra, near: !!settings.near, hideBook: !!settings.hideBook, vol: settings.vol, musicVol: settings.musicVol });
 function schedule(what) {
   if (!cloud.user || !ready) return;
   pending.add(what); setSync({ dirty: true });
@@ -142,6 +144,7 @@ async function doPush() {
     await batch.commit();
     mirror = next; setSync({ uid, rev, dirty: pending.size > 0 });
     if (!pending.size) setStatus('ok');
+    if (what.includes('book') || what.includes('settings')) pushRank();   // 解答或暱稱有變動：排行榜跟著更新（分數沒變就不會寫入）
     return true;
   } catch (e) {
     console.error('cloud push failed', e);
@@ -197,6 +200,35 @@ function flushBoards() {
 }
 // 設定 / 解答冊與盤面一併立刻上傳；回傳是否全部成功
 const flushAll = async () => { const a = await flush(); const b = await flushBoards(); return a && b; };
+
+// ---- 排行榜：把「我的分數」寫到 leaderboard/{uid} ----
+// 只有分數或暱稱真的改變才寫入：上次寫入的內容簽章記在本機（KEY_SYNC.rankSig），相同就完全不送請求
+let rankTimer = null, rankChain = Promise.resolve();
+function rankDoc(uid) {
+  const s = computeScores(loadBook());
+  return { s, doc: { v: 1, nick: (settings.nick || '').slice(0, 20), c4: s.c4, m4: s.m4, near: s.near, ck: challengeKey(s, uid), mk: masterKey(s, uid), ct: s.ct, mt: s.mt } };
+}
+async function doRank() {
+  if (!cloud.user || !ready) return true;
+  const uid = cloud.user.uid, { s, doc } = rankDoc(uid), sig = canon(doc);
+  const st = Store.get(KEY_SYNC, null) || {}, known = st.rankUid === uid;
+  const empty = s.c4 === 0 && s.m4 === 0;          // 還沒有任何解答：不上榜
+  if (known && st.rankSig === (empty ? '' : sig)) return true;
+  if (empty && !known) { setSync({ rankUid: uid, rankSig: '' }); return true; }
+  try {
+    const { fs, db } = await loadSdk(), ref = fs.doc(db, 'leaderboard', uid);
+    if (empty) await fs.deleteDoc(ref); else await fs.setDoc(ref, doc);
+    setSync({ rankUid: uid, rankSig: empty ? '' : sig });
+    return true;
+  } catch (e) {
+    console.error('cloud rank push failed', e);
+    clearTimeout(rankTimer); rankTimer = setTimeout(pushRank, RETRY);
+    return false;
+  }
+}
+export function pushRank() { rankChain = rankChain.then(doRank); return rankChain; }
+// 排行榜視窗讀取用：回傳 { fs, db }（不需要登入；規則允許任何人讀排行榜）
+export const rankApi = async () => { const { fs, db } = await loadSdk(); return { fs, db }; };
 
 // 立刻上傳待處理的變更；回傳是否全部成功
 function flush() {
@@ -275,6 +307,7 @@ async function reconcile(user, opts = {}) {
   const jobs = [];
   if (pending.size) { setSync({ dirty: true }); jobs.push(flush()); }
   if (boardDiff()) { setSync({ bdirty: true }); jobs.push(flushBoards()); }   // 本機有比雲端新的盤面（離線時玩的、或登入前玩的）
+  jobs.push(pushRank());   // 雲端解答冊套用後分數可能改變
   await Promise.all(jobs);
 }
 async function onUser(user) {
@@ -282,7 +315,7 @@ async function onUser(user) {
   if (!user) { cloud.user = null; setStatus('out'); return; }
   cloud.user = user; setStatus('syncing');
   reconciling = true;
-  try { await reconcile(user); ready = true; if (!pending.size && !bWaiting) setStatus('ok'); }
+  try { await reconcile(user); ready = true; if (!pending.size && !bWaiting) setStatus('ok'); pushRank(); }   // 沒有變動的登入也要確認排行榜資料是最新的（本機簽章相同就不會寫入）
   catch (e) { console.error('cloud sync failed', e); setStatus('error'); handlers.notify('acct.syncFail'); }
   finally { reconciling = false; }
 }
@@ -333,20 +366,4 @@ export async function signOut() {
   const { au, auth } = await loadSdk();
   await au.signOut(auth);
   return true;
-}
-// 清除雲端資料（重置資料用）。失敗會丟出例外
-export async function clearCloud({ settings: s, exact, near, boards }) {
-  if (!cloud.user) return;
-  pending.clear(); clearTimeout(timer); clearTimeout(bTimer); bWaiting = false; await chain;
-  const { fs, db } = await loadSdk(), uid = cloud.user.uid, batch = fs.writeBatch(db), rev = Date.now();
-  if (s) batch.delete(fs.doc(db, 'users', uid, 'data', 'settings'));
-  if (exact || near) {
-    const snap = await fs.getDocs(fs.collection(db, 'users', uid, 'book'));
-    snap.docs.forEach(d => { if ((d.id[0] === 's' && exact) || (d.id[0] === 'n' && near)) { batch.delete(d.ref); mirror.delete(d.id); } });
-  }
-  if (boards) batch.delete(fs.doc(db, 'users', uid, 'data', 'boards'));
-  batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), boards ? { rev, brev: rev } : { rev }, { merge: true });
-  await batch.commit();
-  if (boards) { bmirror = new Map(); bmetaMirror = ''; }
-  setSync(boards ? { uid, rev, brev: rev, dirty: false, bdirty: false } : { uid, rev, dirty: false });
 }

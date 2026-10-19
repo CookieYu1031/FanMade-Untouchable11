@@ -81,6 +81,29 @@ export default {
     'anon':'匿名プレイヤー',
 
     // ── 統計視窗 ──
+    // ── 排行榜 ──
+    'tip.rank':'ランキング',
+    'tip.rankInfo':'得点の計算式',
+    'rank.title':'ランキング',
+    'rank.challenge':'チャレンジ',
+    'rank.master':'マスター',
+    'rank.pos':n=>`${n} 位`,
+    'rank.login':'ログインするとランキングに参加できます',
+    'rank.loginBtn':'ログイン',
+    'rank.zero':'いずれかのステージをクリアすると順位が付きます',
+    'rank.pending':'得点を同期中です。少し待ってから開き直してください',
+    'rank.loading':'読み込み中…',
+    'rank.empty':'まだランキングに載っているプレイヤーがいません',
+    'rank.fail':'ランキングを読み込めませんでした。しばらくしてからお試しください',
+    'rank.retry':'再試行',
+    'rank.public':'ログインすると、ニックネームと得点がランキングに公開されます。',
+    'ri.title':'得点の計算式',
+    'ri.extra':'追加ステージ',
+    'ri.crown':n=>`${n}ピース組`,
+    'ri.cols':['ステージ','初解答','全解答（上限）'],
+    'ri.pcols':['構成','割合','得点'],
+    'ri.theory':'理論値',
+
     'stat.title':'統計',
     'stat.lv':'レベル',
     'stat.total':'解答数',
@@ -117,8 +140,8 @@ export default {
     'set.vol':'音量',
     'set.music':'音楽',
     'set.sfx':'効果音',
-    'set.extra':'追加レベルを有効にする',
-    'set.extraDesc':'派生作品・特別レベルを表示',
+    'set.extra':'拡張パック',
+    'set.extraDesc':'追加ステージとマスターランキングを表示',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'アカウント',
@@ -141,23 +164,7 @@ export default {
     'logout.confirm':'ログアウト',
 
     // ── 設定 / 重置資料 ──
-    'reset.title':'データのリセット',
-    'reset.desc':'消去する内容を選べます。元に戻せません',
-    'reset.btn':'データをリセット',
-    'reset.optCache':'キャッシュを消去',
-    'reset.optCacheDesc':'プレイ中の盤面、「一つ戻る」の履歴',
-    'reset.optSettings':'設定をリセット',
-    'reset.optSettingsDesc':'名前、言語、背景、音量、追加レベル',
-    'reset.optSolutions':'解答を消去',
-    'reset.optSolutionsDesc':'収録済みの解答',
-    'reset.optNear':'近似解を消去',
-    'reset.optNearDesc':'収録済みの近似解',
-    'reset.cloudNote':'ログイン中は、クラウド上のデータも一緒に消去されます',
-    'reset.confirmTitle':'データのリセットを確認',
-    'reset.confirmDesc':'この操作で、選択した内容が完全に削除され、元に戻せません。\n確認のため「Untouchable11」と入力してください。',
-    'reset.ph':'Untouchable11',
     'reset.cancel':'キャンセル',
-    'reset.confirm':'削除する',
 
     // ── 提示訊息（Toast） ──
     'toast.pick':'先に盤面上のピースを選んでください',

@@ -81,6 +81,29 @@ export default {
     'anon':'匿名玩家',
 
     // ── 統計視窗 ──
+    // ── 排行榜 ──
+    'tip.rank':'排行榜',
+    'tip.rankInfo':'積分公式',
+    'rank.title':'排行榜',
+    'rank.challenge':'挑戰榜',
+    'rank.master':'大師榜',
+    'rank.pos':n=>`第 ${n} 名`,
+    'rank.login':'登入後即可加入排行榜',
+    'rank.loginBtn':'登入',
+    'rank.zero':'完成任一關卡後即可上榜',
+    'rank.pending':'分數同步中，稍後重新開啟即可看到名次',
+    'rank.loading':'載入中…',
+    'rank.empty':'目前還沒有玩家上榜',
+    'rank.fail':'排行榜載入失敗，請稍後再試',
+    'rank.retry':'重試',
+    'rank.public':'登入後，暱稱與積分會公開顯示在排行榜上。',
+    'ri.title':'積分公式',
+    'ri.extra':'額外關卡',
+    'ri.crown':n=>`${n} 片組`,
+    'ri.cols':['關卡','首解積分','全解上限'],
+    'ri.pcols':['組成','佔比','積分'],
+    'ri.theory':'理論值',
+
     'stat.title':'統計',
     'stat.lv':'等級',
     'stat.total':'解答組數',
@@ -117,8 +140,8 @@ export default {
     'set.vol':'音量',
     'set.music':'音樂',
     'set.sfx':'音效',
-    'set.extra':'啟用額外關卡',
-    'set.extraDesc':'顯示延伸作品&特殊關卡',
+    'set.extra':'擴展包',
+    'set.extraDesc':'顯示額外關卡與大師榜',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'帳戶',
@@ -141,23 +164,7 @@ export default {
     'logout.confirm':'登出',
 
     // ── 設定 / 重置資料 ──
-    'reset.title':'重置資料',
-    'reset.desc':'選擇要清除的內容，清除後無法復原',
-    'reset.btn':'重置資料',
-    'reset.optCache':'清理快取',
-    'reset.optCacheDesc':'遊玩中的盤面、返回上一步紀錄',
-    'reset.optSettings':'重置設定',
-    'reset.optSettingsDesc':'暱稱、語言、背景、音量、額外關卡',
-    'reset.optSolutions':'清理解答',
-    'reset.optSolutionsDesc':'已收錄的解答',
-    'reset.optNear':'清理近似解',
-    'reset.optNearDesc':'已收錄的近似解',
-    'reset.cloudNote':'已登入時，雲端資料也會一併清除',
-    'reset.confirmTitle':'確認重置資料',
-    'reset.confirmDesc':'此動作會永久刪除所選內容，無法復原。\n請輸入「Untouchable11」以確認刪除。',
-    'reset.ph':'Untouchable11',
     'reset.cancel':'取消',
-    'reset.confirm':'確認刪除',
 
     // ── 提示訊息（Toast） ──
     'toast.pick':'請先點選方框中的拼圖',

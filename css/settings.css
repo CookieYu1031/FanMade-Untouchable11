@@ -1,4 +1,4 @@
-/* 設定視窗：列、音量滑桿、資料匯出匯入、重置資料 */
+/* 設定視窗：列、音量滑桿 */
 .setbody{padding:4px 18px 0}
 .srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;min-height:68px;border-bottom:1px dashed var(--line)}   /* 各列等高（文字換行時才會變高） */
 .srow label,.srow>span{font-weight:700;font-size:14px}
@@ -24,13 +24,8 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .vslider input[type=range]::-moz-range-progress{height:6px;border-radius:999px;background:var(--ink)}
 .vslider input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--panel);border:3px solid var(--ink);box-sizing:border-box}
 .vslider input[type=range]:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:6px}
-/* 設定：重置資料 */
-.dzone{margin-top:14px;border-top:1px dashed var(--line)}
-.dzone .srow{border-bottom:0;padding:12px 18px}
-.srow-reset .btn{flex:none}
 .btn.danger{border-color:#F0364B;color:#F0364B;font-weight:700}
 .btn.danger:hover:not(:disabled){background:#F0364B;color:#fff;box-shadow:none}
-.txt{width:calc(100% - 28px);margin:12px 14px 0;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:9px 12px;font:inherit}
 /* 額外難度：深色頂欄用淺色字、設定列、開關、近似解區 */
 .srow2{gap:0}
 .srow2 .sgrp:first-child{padding-right:16px}
@@ -66,8 +61,3 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .btn.gbtn .gtxt.wrap{white-space:normal;text-align:left}   /* 縮到最小字級仍放不下才換行 */
 .srow-acct .acct-txt{flex:1 1 0}
 .srow-acct>.btn:not(.gbtn){flex:none}
-/* 重置資料：勾選要清除的內容 */
-.rchecks{padding:12px 18px 0;display:grid;gap:10px}
-.rchk{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14px}
-.rchk input{margin-top:3px;width:16px;height:16px;accent-color:var(--ink);flex:none}
-.rchk small{display:block;font-size:12px;color:var(--muted)}

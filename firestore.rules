@@ -15,5 +15,21 @@ service cloud.firestore {
                             && request.resource.data.items is list
                             && request.resource.data.items.size() <= 500;
     }
+    // 排行榜：任何人可讀（顯示暱稱與積分）；只有本人能寫自己的那一份
+    //   c4 / m4 = 挑戰榜 / 大師榜分數 ×10000（整數）；ck / mk = 排序鍵（固定寬度數字 + uid，見 js/core/score.js）
+    //   分數由瀏覽器依解答冊計算，規則只檢查格式與範圍（無法驗證解答真偽）
+    match /leaderboard/{uid} {
+      allow read: if true;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && request.resource.data.keys().hasOnly(['v', 'nick', 'c4', 'm4', 'near', 'ck', 'mk', 'ct', 'mt'])
+                            && request.resource.data.nick is string && request.resource.data.nick.size() <= 20
+                            && request.resource.data.c4 is int && request.resource.data.c4 >= 0 && request.resource.data.c4 <= 100000000
+                            && request.resource.data.m4 is int && request.resource.data.m4 >= 0 && request.resource.data.m4 <= 100000000
+                            && request.resource.data.near is int && request.resource.data.near >= 0 && request.resource.data.near <= 999999
+                            && request.resource.data.ct is int && request.resource.data.mt is int
+                            && request.resource.data.ck is string && request.resource.data.ck.matches('^[0-9]{29}' + uid + '$')
+                            && request.resource.data.mk is string && request.resource.data.mk.matches('^[0-9]{38}' + uid + '$');
+    }
   }
 }

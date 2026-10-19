@@ -81,6 +81,29 @@ export default {
     'anon':'Anonymous',
 
     // ── 統計視窗 ──
+    // ── 排行榜 ──
+    'tip.rank':'Leaderboard',
+    'tip.rankInfo':'Scoring formulas',
+    'rank.title':'Leaderboard',
+    'rank.challenge':'Challenge',
+    'rank.master':'Master',
+    'rank.pos':n=>`Rank #${n}`,
+    'rank.login':'Sign in to join the leaderboard',
+    'rank.loginBtn':'Sign in',
+    'rank.zero':'Solve any level to get ranked',
+    'rank.pending':'Your score is syncing — reopen in a moment to see your rank',
+    'rank.loading':'Loading…',
+    'rank.empty':'No players on the board yet',
+    'rank.fail':'Couldn\'t load the leaderboard. Please try again later.',
+    'rank.retry':'Retry',
+    'rank.public':'Once signed in, your nickname and score are shown publicly on the leaderboard.',
+    'ri.title':'Scoring formulas',
+    'ri.extra':'Extra levels',
+    'ri.crown':n=>`${n}-piece set`,
+    'ri.cols':['Level','First solve','All solved (cap)'],
+    'ri.pcols':['Part','Share','Points'],
+    'ri.theory':'Theoretical max',
+
     'stat.title':'Statistics',
     'stat.lv':'Level',
     'stat.total':'Solutions',
@@ -117,8 +140,8 @@ export default {
     'set.vol':'Volume',
     'set.music':'Music',
     'set.sfx':'SFX',
-    'set.extra':'Enable extra levels',
-    'set.extraDesc':'Show spin-off works & special levels',
+    'set.extra':'Expansion pack',
+    'set.extraDesc':'Show extra levels and the Master leaderboard',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'Account',
@@ -141,23 +164,7 @@ export default {
     'logout.confirm':'Sign out',
 
     // ── 設定 / 重置資料 ──
-    'reset.title':'Reset data',
-    'reset.desc':'Choose what to erase. This cannot be undone.',
-    'reset.btn':'Reset data',
-    'reset.optCache':'Clear cache',
-    'reset.optCacheDesc':'In-progress boards and undo history',
-    'reset.optSettings':'Reset settings',
-    'reset.optSettingsDesc':'Nickname, language, theme, volume, extra levels',
-    'reset.optSolutions':'Clear solutions',
-    'reset.optSolutionsDesc':'Collected solutions',
-    'reset.optNear':'Clear near solutions',
-    'reset.optNearDesc':'Collected near solutions',
-    'reset.cloudNote':'When signed in, cloud data is erased too.',
-    'reset.confirmTitle':'Confirm reset',
-    'reset.confirmDesc':'This permanently deletes the selected data and cannot be undone.\nType "Untouchable11" to confirm.',
-    'reset.ph':'Untouchable11',
     'reset.cancel':'Cancel',
-    'reset.confirm':'Delete',
 
     // ── 提示訊息（Toast） ──
     'toast.pick':'Select a piece on the board first',

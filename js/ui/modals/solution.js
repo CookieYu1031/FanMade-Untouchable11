@@ -20,7 +20,7 @@ function showSolution(list, idx, near) {
   $('solNick').textContent = item.nick || settings.nick || t('anon');
   $('solPrev').disabled = idx <= 0;                  // 左右箭頭一律顯示；沒有上（下）一個解時不可點按（不循環）
   $('solNext').disabled = idx >= list.length - 1;
-  $('solIdx').textContent = list.length > 1 ? `${idx + 1} / ${list.length}` : '';
+  $('solIdx').textContent = `${idx + 1} / ${list.length}`;   // 頁數固定顯示在 ← → 兩個按鈕中間
 }
 export function stepSolution(d) {
   const v = state.viewItem;

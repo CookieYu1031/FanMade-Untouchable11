@@ -4,7 +4,7 @@
 import { t } from '../../i18n/i18n.js';
 import { LEVEL_ORDER, LV_COLORS, LV_INK } from '../../core/config.js';
 import { loadBook } from '../../storage/book.js';
-import { settings } from '../../state/settings.js';
+import { settings, saveSettings } from '../../state/settings.js';
 import { state, lvTag, nearTotal, solvedGroups } from '../../state/state.js';
 import { $ } from '../dom.js';
 import { EYE, EYE_OFF, crownsHTML } from '../render-book.js';
@@ -42,19 +42,31 @@ function nearCells(L, book) {
     + `<td class="c-prog"><div class="pg"><div class="pbar"><i style="width:${n / tot * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, tot)}</span></div></td>`;
 }
 
-export function renderStats() {
-  const book = loadBook(), near = !!state.statNear, all = pages();
-  state.statPage = Math.max(0, Math.min(all.length - 1, state.statPage || 0));   // 關閉額外關卡後頁數可能超出範圍
+// 某一頁的表格內容（表頭 + 各關卡列）
+function tableHTML(page, near, book, all) {
   const head = `<thead><tr><th>${t('stat.lv')}</th><th>${t(near ? 'stat.totalNear' : 'stat.total')}</th><th>${t('stat.got')}</th><th class="c-prog">${t('stat.progress')}</th></tr></thead>`;
   const tag = (L, span) => { const c = LV_COLORS[L.lv - 1]; return `<td${span > 1 ? ` rowspan="${span}"` : ''}><span class="lvtag" style="background:${c};color:${LV_INK[L.lv - 1]}">${lvTag(L)}</span></td>`; };
-  const rows = all[state.statPage].map(L => {
+  const rows = all[page].map(L => {
     const st = `style="--c:${LV_COLORS[L.lv - 1]}"`;
     if (!(near && L.near)) return `<tr ${st}>${tag(L, 1)}${exactCells(L, book)}</tr>`;   // 沒有近似解的關卡維持一列
     return `<tr class="g1" ${st}>${tag(L, 2)}${exactCells(L, book)}</tr><tr class="nr" ${st}>${nearCells(L, book)}</tr>`;   // 關卡標籤佔兩列高度
   }).join('');
-  $('statTable').innerHTML = `${head}<tbody>${rows}</tbody>`;
-  $('statTable').classList.toggle('more', near);   // 窄視窗：「收錄進度」欄預設隱藏，按下「顯示更多資訊」才出現（見 stats.css）
-  $('statTitle').innerHTML = t('stat.title') + (all.length > 1 ? `<small>${state.statPage + 1} / ${all.length}</small>` : '');
+  return `${head}<tbody>${rows}</tbody>`;
+}
+
+export function renderStats() {
+  const book = loadBook(), near = !!settings.near, all = pages();
+  state.statPage = Math.max(0, Math.min(all.length - 1, state.statPage || 0));   // 關閉額外關卡後頁數可能超出範圍
+  const tbl = $('statTable'), wrap = tbl.parentElement;
+  // 換頁時視窗高度不變：先量出每一頁的高度，取最高的當作固定高度（關卡由上往下依序擺放，下方留白沒關係）
+  wrap.style.minHeight = '';
+  let maxH = 0;
+  all.forEach((_, i) => { tbl.innerHTML = tableHTML(i, near, book, all); maxH = Math.max(maxH, tbl.offsetHeight); });
+  tbl.innerHTML = tableHTML(state.statPage, near, book, all);
+  wrap.style.minHeight = Math.min(maxH, Math.max(0, window.innerHeight - 160)) + 'px';
+  tbl.classList.toggle('more', near);   // 窄視窗：「收錄進度」欄預設隱藏，按下「顯示更多資訊」才出現（見 stats.css）
+  $('statTitle').textContent = t('stat.title');
+  $('statPg').textContent = `${state.statPage + 1} / ${all.length}`;   // 頁數顯示在 ← → 兩個按鈕中間
   const nb = $('statNearBtn');   // 更多資訊（近似解列；窄視窗另含收錄進度欄）：睜眼 = 目前顯示，閉眼 = 目前隱藏（與解答冊的隱藏按鈕相同）
   nb.innerHTML = near ? EYE : EYE_OFF;
   nb.title = t(near ? 'stat.nearHide' : 'stat.nearShow'); nb.setAttribute('aria-label', nb.title);
@@ -64,8 +76,9 @@ export function renderStats() {
 }
 const statModal = $('statModal');
 const turn = d => { state.statPage = (state.statPage || 0) + d; renderStats(); };
-$('btnStats').addEventListener('click', () => { state.statPage = 0; renderStats(); statModal.classList.add('open'); });
-$('statNearBtn').addEventListener('click', () => { state.statNear = !state.statNear; renderStats(); });
+$('btnStats').addEventListener('click', () => { state.statPage = 0; statModal.classList.add('open'); renderStats(); });   // 先開視窗再繪製：才量得到表格高度
+$('statNearBtn').addEventListener('click', () => { settings.near = !settings.near; saveSettings(); renderStats(); });   // 寫入設定（登入時會同步到雲端）
+window.addEventListener('resize', () => { if (statModal.classList.contains('open')) renderStats(); });   // 視窗大小改變：欄位顯示不同，高度重算
 $('statPrev').addEventListener('click', () => turn(-1));
 $('statNext').addEventListener('click', () => turn(1));
 window.addEventListener('keydown', e => {   // 統計視窗開著時：左右鍵換頁
