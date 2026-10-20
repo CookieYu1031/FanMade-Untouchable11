@@ -1,7 +1,8 @@
 /* 頁首（標題區塊與右上角按鈕） */
 /* ============ 頁首：簡報封面風色塊 ============ */
 .hero{position:relative;margin:16px auto 12px;background:var(--blue);color:#2B2E4A;border-radius:22px;
-  padding:20px 26px;min-height:80px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  padding:20px 26px;min-height:80px;   /* 標題欄高度由 fitHeroTitle 量測所有關卡標題後統一（切換關卡不跳動） */
+  display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .hero h1{margin:0;font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:-.01em;line-height:1.1}
 .hero h1.split .t2{display:block}   /* 標題壓到按鈕時，冒號後面的字換到下一行（見 render-levels.js 的 fitHeroTitle） */
 .hero p{margin:6px 0 0;font-size:15px}

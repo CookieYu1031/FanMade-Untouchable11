@@ -26,11 +26,11 @@
 /* 橫向且高度不足（手機橫放、矮視窗）：頁首與關卡列壓縮，讓圖板與拼圖盤盡量在一個視窗內看完 */
 @media (orientation:landscape) and (max-height:560px){
   .hero{margin:8px auto 8px;padding:10px 18px;border-radius:16px}
-  .hero h1{font-size:clamp(20px,3.4vw,28px)}
   .hero{min-height:0}
+  .hero h1{font-size:clamp(20px,3.4vw,28px)}
   .hero-acts{top:50%;bottom:auto;transform:translateY(-50%);justify-content:flex-start;flex-direction:row;align-items:center;gap:8px}   /* 矮視窗：標籤改放按鈕左側，頁首才不會被撐高 */
   .levels{margin-bottom:8px}
   .lv{padding:4px 2px;font-size:13px}.lv b,.lv small{font-size:13px}
-  .lvrow.ext{margin-top:6px}
+  .levels{gap:6px}
   .panel>h2{height:40px}
 }

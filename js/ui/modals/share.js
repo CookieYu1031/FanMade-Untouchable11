@@ -1,7 +1,7 @@
 /* 分享圖片：把解答、完成時間、暱稱、製作者資訊畫成 PNG（依設定的亮 / 暗背景、一律橫式），按下按鈕後依裝置直接開啟系統分享（行動裝置）或下載（電腦） */
 import { t, fmtTime, getLang } from '../../i18n/i18n.js';
 import { rotateCW } from '../../core/matrix.js';
-import { LV_COLORS, LV_INK } from '../../core/config.js';
+import { LV_INK, lvFill } from '../../core/config.js';
 import { settings, effTheme } from '../../state/settings.js';
 import { state, lvLong, gameTitle, colorOf, groupOfSig, itemTag } from '../../state/state.js';
 import { $ } from '../dom.js';
@@ -23,7 +23,7 @@ function drawShareCanvas(item, L, nick, near) {
   const c = cv.getContext('2d'); c.scale(S, S);
   const FONT = getLang() === 'ja' ? '"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif' : '"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif';
   c.fillStyle = K.bg; c.fillRect(0, 0, W, H);
-  c.fillStyle = LV_COLORS[L.lv - 1]; c.fillRect(0, 0, W, barH);          // 頂欄 = 難度顏色
+  lvFill(c, L.lv, 0, 0, W, barH);          // 頂欄 = 難度顏色
   c.fillStyle = LV_INK[L.lv - 1]; c.textBaseline = 'middle';
   const grp = groupOfSig(L, item.sig), gt = itemTag(L, item);   // 有拼圖組合的關卡：標註使用的組合，配色也用那一組的
   const rt = `${lvLong(L)}${gt ? ' ' + gt : ''}  ${L.cols} × ${L.rows}${near ? '  ' + t('near.tag') : ''}`;

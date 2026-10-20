@@ -17,6 +17,7 @@ export const SLOT_COLORS = {};     // 槽位數 → 色名陣列
 export const LEVELS = [];          // 關卡陣列（索引 = lv - 1；lv 是存檔用的固定編號）
 export const LEVEL_ORDER = [];     // 關卡「顯示順序」（按鈕列、統計表依此排列；由 levels.json 的 order 決定）
 export const LV_COLORS = [];       // 各關卡的代表色
+export const LV_STOPS = [];       // 漸層色關卡的色碼陣列（一般關卡為 null；畫在 canvas 時用，見 gradFill）
 export const LV_INK = [];          // 各關卡色塊上的文字色
 export const CONFIG = { defaultTitle: 'Untouchable 11' };
 
@@ -84,7 +85,7 @@ function buildLevels(data) {
   const sets = data.slotSets || {};
   CONFIG.defaultTitle = data.defaultTitle || CONFIG.defaultTitle;
 
-  LEVELS.length = 0; LV_COLORS.length = 0; LV_INK.length = 0; LEVEL_ORDER.length = 0;
+  LEVELS.length = 0; LV_COLORS.length = 0; LV_STOPS.length = 0; LV_INK.length = 0; LEVEL_ORDER.length = 0;
   data.levels.forEach((src, i) => {
     if (src.lv !== i + 1) throw new Error(`levels.json：第 ${i + 1} 關的 lv 應為 ${i + 1}`);
     const famKey = src.family || HEXO, fam = FAMILIES[famKey];   // 關卡使用哪一類拼圖（省略 = 六格骨牌）
@@ -132,7 +133,9 @@ function buildLevels(data) {
       L = { ...src, family: famKey, pieces: nums, ids: nums.map(fam.idOf).join('') };
     }
     LEVELS.push(L);
-    LV_COLORS.push(src.color);
+    const stops = Array.isArray(src.color) && src.color.length > 1 ? src.color : null;   // color 寫成陣列 = 由左至右的漸層
+    LV_COLORS.push(stops ? `linear-gradient(90deg, ${stops.join(', ')})` : src.color);
+    LV_STOPS.push(stops);
     LV_INK.push(src.ink || '#2B2E4A');
   });
   // 顯示順序：預設 = lv 順序；levels.json 的 order 可以把新關卡排到中間（必須剛好列出每一關一次）
@@ -158,4 +161,12 @@ export async function loadConfig() {
   buildPieces(pieces);     // 拼圖要先建好，關卡才能檢查
   buildColors(colors);
   buildLevels(levels);
+}
+
+// 在 canvas 上用關卡代表色填滿矩形（漸層關卡由左至右；一般關卡為單色）
+export function lvFill(c, lv, x, y, w, h) {
+  const stops = LV_STOPS[lv - 1];
+  if (stops) { const g = c.createLinearGradient(x, 0, x + w, 0); stops.forEach((s, i) => g.addColorStop(i / (stops.length - 1), s)); c.fillStyle = g; }
+  else c.fillStyle = LV_COLORS[lv - 1];
+  c.fillRect(x, y, w, h);
 }
