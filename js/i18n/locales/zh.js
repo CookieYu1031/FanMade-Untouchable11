@@ -55,6 +55,15 @@ export default {
     'grp.n':n => `${n}片`,
     'grp.solved':'已解出',
 
+    // ── 隨機挑戰 ──
+    'tip.random':'隨機抽選拼圖組合',
+    'tip.rndCode':'組合代碼（輸入任意 4 個字後按 Enter 套用）',
+    'rnd.ph':'代碼',
+    'rnd.rolled':c => `已隨機抽出組合：${c}`,
+    'rnd.loaded':c => `已套用組合代碼：${c}`,
+    'rnd.mapped':(a, c) => `「${a}」對應到組合代碼：${c}`,
+    'rnd.need4':'請輸入 4 個字',
+
     // ── 解答冊 ──
     'book.title':'解答冊',
     'book.count':(lv, n, m) => `<span class="bc-l">${lv}</span><span class="bc-r">已收錄 <b>${m == null ? n : n + '/' + m}</b> 組</span>`,
@@ -119,10 +128,12 @@ export default {
     'sp.desc.h10':'危險貨物',
     'sp.desc.h11':'危險貨物2',
     'sp.desc.h12':'皇冠挑戰',
+    'sp.desc.h13':'隨機挑戰',
     'sp.desc.9':'<ul class="splist"><li>Carl Hoff 基於《Untouchable 11》設計之衍伸作</li><li>使用12x12圖板、11片拼圖</li><li>僅有2組正解</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>Carl Hoff 所設計之作品</li><li>使用11x11圖板、9片拼圖</li><li>僅有1組唯一解，卻有3761組近似解</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>Carl Hoff 基於《危險貨物》設計之續作</li><li>使用12*12圖板、9片拼圖(七格骨牌)</li><li>一樣僅有1組唯一解，但近似解卻來到了誇張的26226組</li></ul>',
     'sp.desc.12':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、14組不同的拼圖組合</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可得一個皇冠</li></ul>',
+    'sp.desc.13':'<ul class=\"splist\"><li>依據《<a href=\"https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Untouchable 11</a>》中關於「11*11版圖下，21種拼圖任取9個求解，得出僅有一組僅存在唯一解，且其餘組合皆具有多組種解」的結論而設計之關卡</li><li>使用11x11圖板，從20種拼圖中隨機取用9種(危險貨物那組除外，一共 167,960 種組合)</li><li>按下骰子進行隨機抽選遊玩，若將代碼分享給其他玩家，就能挑戰同一組拼圖</li><li>也可以自行輸入任意 4 個字（中英皆可），會對應到其中一組</li><li>解出後會收錄，但不會獲得排行榜積分</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'重置版圖',

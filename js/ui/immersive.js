@@ -20,11 +20,11 @@ function syncButton() {
   const v = t(key); btn.title = v; btn.setAttribute('aria-label', v);
   btn.setAttribute('aria-pressed', String(state.immersive));
 }
-// 皇冠挑戰的「拼圖組合」按鈕平時在拼圖盤標題列；沉浸模式沒有拼圖盤標題列，改放到圖板標題列、「關卡資訊」按鈕左側
-const grpBtn = $('btnGroup'), helpBtn = $('btnHelp'), infoBtn = $('btnSpecial');
+// 皇冠挑戰的「拼圖組合」按鈕、隨機挑戰的「代碼框 + 骰子」平時在拼圖盤標題列；沉浸模式沒有拼圖盤標題列，改放到圖板標題列、「關卡資訊」按鈕左側
+const grpBtn = $('btnGroup'), rndBox = $('rndBox'), helpBtn = $('btnHelp'), infoBtn = $('btnSpecial');
 function placeGroupBtn() {
-  if (state.immersive) infoBtn.parentNode.insertBefore(grpBtn, infoBtn);
-  else helpBtn.parentNode.insertBefore(grpBtn, helpBtn);
+  if (state.immersive) { infoBtn.parentNode.insertBefore(rndBox, infoBtn); infoBtn.parentNode.insertBefore(grpBtn, infoBtn); }
+  else { helpBtn.parentNode.insertBefore(grpBtn, helpBtn); helpBtn.parentNode.insertBefore(rndBox, grpBtn); }
 }
 
 // 中、大視窗（寬 > 640px）直向也能使用沉浸模式；小視窗的直向（手機直拿，寬 <= 640px）點擊沉浸模式會蓋上純色底 + 「請將裝置轉為橫向」動畫，

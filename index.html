@@ -79,6 +79,7 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
 <link rel="stylesheet" href="css/settings.css">
 <link rel="stylesheet" href="css/stats.css">
 <link rel="stylesheet" href="css/group.css">
+<link rel="stylesheet" href="css/random.css">
 <link rel="stylesheet" href="css/rank.css">
 <link rel="stylesheet" href="css/immersive.css">
 </head>
@@ -138,7 +139,7 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
 
     <aside class="side">
       <section class="panel tray-panel" style="--c:var(--p6)">
-        <h2><span data-i18n="tray.title"></span><span class="h2-acts"><button class="ibtn" id="btnGroup" hidden style="width:30px;height:30px" data-i18n-title="tip.group"><svg viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></button><button class="ibtn" id="btnHelp" style="width:30px;height:30px" data-i18n-title="tip.help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></span></h2>
+        <h2><span data-i18n="tray.title"></span><span class="h2-acts"><span class="rnd" id="rndBox" hidden><input class="rnd-in" id="rndInput" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="go" data-i18n-title="tip.rndCode" data-i18n-ph="rnd.ph"><button class="ibtn" id="btnRandom" type="button" style="width:30px;height:30px" data-i18n-title="tip.random"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/></svg></button></span><button class="ibtn" id="btnGroup" hidden style="width:30px;height:30px" data-i18n-title="tip.group"><svg viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg></button><button class="ibtn" id="btnHelp" style="width:30px;height:30px" data-i18n-title="tip.help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></button></span></h2>
         <div class="tray" id="tray"></div>
       </section>
 
@@ -204,7 +205,8 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
 </div>
 
 <div class="modal" id="infoModal">
-  <div class="box" style="width:min(720px,100%)">
+  <div class="inforow">
+  <div class="box">
     <div class="panel" style="margin:0;border:0;border-radius:0">
       <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="info.title"></span><button class="ibtn" id="infoClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
@@ -224,7 +226,8 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
       </ul>
     </div>
     <!-- 小視窗（<= 640px）：規則 / 資訊分成兩頁，用這裡的 ← → 換頁，內容不需要上下捲動（其他視窗大小不顯示；見 css/modals.css） -->
-    <div class="infopager">
+  </div>
+    <div class="navbar infopager">
       <div class="navgrp">
         <button class="navbtn" id="infoPrev" type="button" disabled data-nosound aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
         <span class="navpg" id="infoPg" aria-live="polite">1 / 2</span>

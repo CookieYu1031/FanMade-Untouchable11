@@ -1,7 +1,7 @@
 /* 規則與資訊視窗（初次開啟網頁時自動顯示一次）
  *   小視窗（<= 640px）：分成「規則」「資訊」兩頁，用視窗下方的 ← → 換頁（樣式見 css/modals.css）；其他視窗大小一次顯示全部 */
 import { Store, KEY_WELCOME } from '../../storage/store.js';
-import { $ } from '../dom.js';
+import { $, pageDir } from '../dom.js';
 
 const infoModal = $('infoModal'), PAGES = 2;
 function setPage(n) {
@@ -19,9 +19,10 @@ infoModal.addEventListener('click', e => { if (e.target === infoModal) infoModal
 $('infoPrev').addEventListener('click', () => setPage(+infoModal.dataset.ip - 1));
 $('infoNext').addEventListener('click', () => setPage(+infoModal.dataset.ip + 1));
 window.addEventListener('keydown', e => {   // 規則視窗開著時：左右鍵換頁（只有小視窗才分頁）
-  if (!infoModal.classList.contains('open') || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+  const d = pageDir(e);
+  if (!infoModal.classList.contains('open') || !d) return;
   if (!window.matchMedia('(max-width:640px)').matches) return;
-  setPage(+infoModal.dataset.ip + (e.key === 'ArrowLeft' ? -1 : 1)); e.preventDefault();
+  setPage(+infoModal.dataset.ip + d); e.preventDefault();
 });
 
 // 玩家第一次開啟網頁時顯示規則與資訊；之後不再自動彈出（仍可按右上角的書本圖示開啟）

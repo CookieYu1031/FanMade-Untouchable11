@@ -6,7 +6,7 @@ import { analyze, isNear } from './analyze.js';
 import { gridOf, canonicalSig } from './signature.js';
 import { loadBook, saveBook, addSolution } from '../storage/book.js';
 import { settings } from '../state/settings.js';
-import { state, curLevel, curPieces, lvShort, curGroup, grpTag, solvedGroups } from '../state/state.js';
+import { state, curLevel, curPieces, lvShort, curGroup, curTag, typedOf, solvedGroups } from '../state/state.js';
 import { toast } from '../ui/toast.js';
 import { renderBoard } from '../ui/render-board.js';
 import { renderLevels } from '../ui/render-levels.js';
@@ -30,11 +30,12 @@ export function evaluate() {
   const sig = canonicalSig(g);
   const disp = g.map(r => r.join('')).join('/'); // 實際擺法（簡報冊原始方向）
   const book = loadBook();
-  const isNew = addSolution(book, L.lv, sig, null, disp, settings.nick);
+  const typed = L.random ? typedOf(L).toUpperCase() : '';   // 隨機挑戰：玩家輸入的代碼與原代碼不同時（例如 GOOD）一併記下，解答冊標註成 GOOD(原代碼)
+  const isNew = addSolution(book, L.lv, sig, null, disp, settings.nick, false, typed && typed !== curGroup(L) ? typed : null);
   if (isNew) saveBook(book);
   renderLevels(); renderBook();
   const list = book.levels[L.lv] || [], n = L.crown ? solvedGroups(L, list).size : list.length;   // 皇冠挑戰：第幾個皇冠
-  const gt = grpTag(L, curGroup(L));
+  const gt = curTag(L);   // 皇冠挑戰：「A組」；隨機挑戰：代碼
   renderBoard();
   toast(isNew ? t('toast.new', lvShort(L) + (gt ? ' ' + gt : ''), n) : t('toast.dup'));
   if (isNew) Sfx.solve();

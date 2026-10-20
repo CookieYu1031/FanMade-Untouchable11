@@ -8,7 +8,7 @@ import { LEVEL_ORDER, LV_COLORS, LV_INK } from '../../core/config.js';
 import { loadBook } from '../../storage/book.js';
 import { settings, saveSettings } from '../../state/settings.js';
 import { state, lvTag, nearTotal, solvedGroups } from '../../state/state.js';
-import { $ } from '../dom.js';
+import { $, pageDir } from '../dom.js';
 import { EYE, EYE_OFF, crownsHTML } from '../render-book.js';
 import { isSmall } from '../viewport.js';
 
@@ -91,9 +91,10 @@ $('statNearBtn').addEventListener('click', () => { settings.near = !settings.nea
 window.addEventListener('resize', () => { if (statModal.classList.contains('open')) renderStats(); });   // 視窗大小改變：欄位顯示不同，高度重算
 $('statPrev').addEventListener('click', () => turn(-1));
 $('statNext').addEventListener('click', () => turn(1));
-window.addEventListener('keydown', e => {   // 統計視窗開著時：左右鍵換頁
-  if (!statModal.classList.contains('open') || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
-  if ((e.key === 'ArrowLeft' && !$('statPrev').disabled) || (e.key === 'ArrowRight' && !$('statNext').disabled)) turn(e.key === 'ArrowLeft' ? -1 : 1);
+window.addEventListener('keydown', e => {   // 統計視窗開著時：← → 或 A D 換頁
+  const d = pageDir(e);
+  if (!statModal.classList.contains('open') || !d) return;
+  if ((d < 0 && !$('statPrev').disabled) || (d > 0 && !$('statNext').disabled)) turn(d);
   e.preventDefault();
 });
 $('statClose').addEventListener('click', () => statModal.classList.remove('open'));

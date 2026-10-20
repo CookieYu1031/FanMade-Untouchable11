@@ -8,6 +8,7 @@
  * 所以其他模組在載入完成後直接使用即可。
  * ===================================================================== */
 import { cellsOf } from './matrix.js';
+import { makeCodec } from './random-code.js';
 
 export const PIECE = {};           // 代號 → 拼圖物件（所有類別共用同一張表，代號不可重複）
 const FAMILIES = {};              // 類別代號（hexo、hepto…）→ { key, name, nameEn, cells, byNo, idOf }
@@ -77,7 +78,8 @@ function buildPieces(data) {
 /* ---- 關卡：槽位 → 拼圖號碼（任何組別的拼圖都可使用） ----
  * 一般關卡：pieces = 各槽位的拼圖號碼。
  * 有「拼圖組合」的關卡（皇冠挑戰）：寫 groups = [{ key, pieces }, …]；L.pieces / L.ids 預設為第一組，
- *   實際使用哪一組由 state.group 決定（見 state.js 的 idsOf / curGroup）。 */
+ *   實際使用哪一組由 state.group 決定（見 state.js 的 idsOf / curGroup）。
+ * 隨機挑戰：寫 random = { pool, pick, exclude }；組合由玩家的 4 碼代碼決定（state.group 存玩家輸入的代碼）。 */
 function buildLevels(data) {
   const sets = data.slotSets || {};
   CONFIG.defaultTitle = data.defaultTitle || CONFIG.defaultTitle;
@@ -97,7 +99,20 @@ function buildLevels(data) {
       return nums;
     };
     let L;
-    if (Array.isArray(src.groups)) {
+    if (src.random) {
+      // 隨機挑戰：從 pool 取 pick 片，組合由 4 碼代碼決定（見 random-code.js）；L.codec = 編碼器，L.pieces / L.ids = 預設組合（實際使用的見 state.js 的 idsOf）
+      const r = src.random, pool = check(r.pool, '的拼圖庫 ').slice().sort((a, b) => a - b);
+      if (!Number.isInteger(r.pick) || r.pick < 1 || r.pick > pool.length) throw new Error(`levels.json：第 ${src.lv} 關的 random.pick 無效`);
+      const idsOfNums = nums => nums.map(fam.idOf).join('');
+      const exclude = (r.exclude || []).map(g => {
+        const nums = check(g, '的排除組合 ');
+        if (nums.length !== r.pick || nums.some(n => !pool.includes(n))) throw new Error(`levels.json：第 ${src.lv} 關的排除組合必須是 pool 裡的 ${r.pick} 片`);
+        return idsOfNums(nums);
+      });
+      const codec = makeCodec({ n: pool.length, k: r.pick, ids: [...idsOfNums(pool)], exclude });
+      const ids = codec.idsOfCode(codec.defaultCode);
+      L = { ...src, family: famKey, random: { pool, pick: r.pick }, codec, pieces: [...ids].map(id => PIECE[id].no), ids };
+    } else if (Array.isArray(src.groups)) {
       if (!src.groups.length) throw new Error(`levels.json：第 ${src.lv} 關的 groups 不可為空`);
       const keys = new Set(), compo = new Set();
       const groups = src.groups.map(g => {

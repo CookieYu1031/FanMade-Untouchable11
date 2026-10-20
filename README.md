@@ -26,12 +26,13 @@
   - `pieces.json`：35 種六格骨牌（1~21 號「常用組」、22~35 號「非常用組」），啟動時會驗證每片都是 6 格；`extraFamilies` 放其他類別的拼圖（目前有 9 種七格骨牌，代號為 a~i，驗證每片都是 7 格）
   - `levels.json`：關卡（尺寸、解答數、各槽位放哪一號拼圖）、拼圖盤順序；關卡可使用任一組的拼圖（以 `family` 指定拼圖類別，省略 = 六格骨牌）
     - `lv` 是存檔用的固定編號（解答冊、盤面、雲端文件都以它記錄），新關卡一律接在最後；按鈕列與統計表的顯示順序由 `order` 決定（皇冠挑戰 lv 12 排在大師挑戰之後）
+    - 隨機挑戰（lv 13）寫 `random`：`{pool, pick, exclude}`，從 pool 取 pick 片；組合由 4 碼代碼決定（編碼 / 映射規則見 `js/core/random-code.js`），`exclude` = 不使用的組合（目前排除與危險貨物相同的那組）；盤面本機最多留 12 份；上雲端的只有「目前代碼」的那一份，玩家換代碼後雲端上不符的盤面會刪除（雲端文件的盤面上限為 60 份）
     - 有「拼圖組合」的關卡（皇冠挑戰）寫 `groups`：每組 `{key, pieces}`，各組的拼圖組成不可相同（解答冊靠盤面上出現的拼圖判斷解答屬於哪一組）；每組各自保留盤面與返回上一步紀錄；`crown: true` = 收錄進度以「每組一個皇冠」顯示
   - `colors.json`：色盤與「槽位數 → 顏色序」
-- `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、group、immersive）；載入順序見 index.html，順序會影響覆蓋關係
+- `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、group、random、immersive）；載入順序見 index.html，順序會影響覆蓋關係
 - `js/`：依功能分檔（ES modules），進入點 `main.js`
   - 音效（`js/audio/sfx.js`）與背景音樂（`js/audio/music.js`）都是 Web Audio 即時合成，沒有使用任何音檔或他人作品，因此沒有音樂版權問題
-  - `core/` 設定載入、矩陣工具　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄
+  - `core/` 設定載入、矩陣工具、隨機挑戰的代碼編碼（`random-code.js`）　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄
   - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（中、英、日）　`audio/` 音效　`cloud/` Google 登入與雲端同步
     - 雲端同步分兩類：主動同步（收錄新解答與排行積分同一批、暱稱、參與排行）立刻送出；延遲同步（盤面、其他設定）等下一個每 5 分鐘的定時點，或被主動同步順帶送出；詳見 `js/cloud/sync.js` 開頭註解
   - `ui/viewport.js`：視窗分級（小 ≤ 640px／中 641~1007px／大 ≥ 1008px），斷點與 `css/` 的 `@media` 一致

@@ -5,8 +5,8 @@ import { layoutTools, toolsReserveBottom } from './piece-tools.js';
 import { analyze } from '../game/analyze.js';
 import { schedulePersist } from '../storage/boards.js';
 import { updateUndo } from '../storage/history.js';
-import { state, curLevel, curPieces, curGroup, dims, absCells, colorOf, lvLong, clamp } from '../state/state.js';
-import { els } from './dom.js';
+import { state, curLevel, curPieces, curTag, dims, absCells, colorOf, lvLong, clamp } from '../state/state.js';
+import { els, escapeHtml } from './dom.js';
 import { cellRects } from './svg.js';
 import { trayUnit, trayPerRow, renderTray } from './render-tray.js';
 import { syncTools } from './piece-tools.js';
@@ -95,8 +95,8 @@ export function renderBoard() {
   els.gOverlay.innerHTML = ov.join('');
 
   // 標題列狀態
-  const gk = curGroup(L);   // 有拼圖組合的關卡：標題列顯示目前使用的組合（如「A組」）
-  els.title.innerHTML = `<span class="lvn">${lvLong(L)}</span>${gk ? `<span class="lvg">${t('grp.tag', gk)}</span>` : ''}<span class="dims">${L.cols} × ${L.rows}</span>`;
+  const gk = curTag(L);   // 有拼圖組合的關卡：標題列顯示目前使用的組合（如「A組」；隨機挑戰顯示代碼，如「GOOD(3K7Z)」）
+  els.title.innerHTML = `<span class="lvn">${lvLong(L)}</span>${gk ? `<span class="lvg">${escapeHtml(gk)}</span>` : ''}<span class="dims">${L.cols} × ${L.rows}</span>`;
   updateUndo();
   if (!(state.drag && state.drag.moved)) schedulePersist(); // 拖曳 / 吸附途中不存，放下後才存
   syncTools();

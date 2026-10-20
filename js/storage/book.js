@@ -14,13 +14,15 @@ export const saveBookLocal = b => Store.set(KEY_BOOK, b);   // 只寫本機（�
 export const saveBook  = b => { Store.set(KEY_BOOK, b); if (Hooks.book) Hooks.book(); };   // 寫本機並通知雲端同步
 // 加入一組解答到解答冊物件，回傳是否為新解
 // sig = 去除旋轉鏡射後的標準簽章（用來判斷是否同一組）；disp = 玩家實際拼出的擺法（縮圖與檢視用，才不會鏡像顛倒）
-export function addSolution(book, lv, sig, time, disp, nick, near) {
+// code = 隨機挑戰：玩家輸入的代碼（例如 GOOD；與映射後的原代碼不同才記，畫面上顯示成 GOOD(原代碼)）
+export function addSolution(book, lv, sig, time, disp, nick, near, code) {
   const root = near ? (book.near = book.near || {}) : book.levels;   // near = 近似解冊
   const list = (root[lv] = root[lv] || []);
   if (list.some(it => it.sig === sig)) return false;
   const item = { sig, time: time || Date.now() };
   if (disp && disp !== sig) item.disp = disp;
   if (nick) item.nick = nick; // 作答當下的暱稱
+  if (code) item.code = code; // 隨機挑戰：作答當下玩家輸入的代碼（只有與原代碼不同時才記）
   list.push(item);
   return true;
 }

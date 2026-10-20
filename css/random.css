@@ -1,0 +1,25 @@
+/* 隨機挑戰：拼圖盤頂欄的「代碼框（膠囊）」與「骰子」按鈕、解答縮圖上的代碼標籤 */
+
+/* ---- 代碼框 + 骰子（平時在拼圖盤標題列、說明按鈕左側；沉浸模式移到圖板標題列，見 js/ui/immersive.js） ---- */
+.rnd{display:flex;align-items:center;gap:6px}
+.rnd[hidden]{display:none}
+/* 膠囊：高度與旁邊的 30px 圓形按鈕一致；字級 16px 以上，iOS 點進去才不會自動放大畫面 */
+.rnd-in{box-sizing:border-box;width:96px;height:30px;padding:0 8px;border:0;border-radius:999px;background:var(--bg);color:var(--ink);
+  font-family:inherit;font-size:16px;font-weight:700;line-height:30px;text-align:center;letter-spacing:.08em;text-transform:uppercase;
+  -webkit-tap-highlight-color:transparent;-webkit-appearance:none;appearance:none}
+.rnd-in::placeholder{color:var(--muted);font-weight:500;letter-spacing:0;text-transform:none}
+@media (hover:hover){.rnd-in:hover{box-shadow:inset 0 0 0 2px var(--ink)}}
+.rnd-in:focus,.rnd-in:focus-visible{outline:0;box-shadow:inset 0 0 0 3px var(--ink)}
+.rnd-in.bad{animation:rnd-shake .32s}
+@keyframes rnd-shake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+
+/* 骰子：按下去轉一圈 */
+#btnRandom svg.spin{animation:rnd-spin .5s ease-out}
+@keyframes rnd-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#btnRandom svg.spin,.rnd-in.bad{animation:none}}
+
+/* 窄視窗：代碼框略縮，標題列才放得下 */
+@media (max-width:360px){.rnd-in{width:84px;padding:0 4px}.rnd{gap:4px}}
+
+/* ---- 解答縮圖左上角的代碼標籤：比皇冠挑戰的組合標籤長（如 GOOD(3K7Z)），字級小一點 ---- */
+.thumb .gtag.code{font-size:11px;letter-spacing:.02em;padding:0 7px;white-space:nowrap;max-width:calc(100% - 10px)}

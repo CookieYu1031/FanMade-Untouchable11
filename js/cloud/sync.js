@@ -17,6 +17,7 @@ import { loadBook } from '../storage/book.js';
 import { readBoardsStore, persistBoards } from '../storage/boards.js';
 import { settings, sanitizeSettings, saveSettingsLocal } from '../state/settings.js';
 import { computeScores, challengeKey, masterKey } from '../core/score.js';
+import { isLocalBoardKey, syncRandomKeys } from '../state/state.js';
 
 const CHUNK = 400, RETRY = 15000;
 const MERGE_DELAY = 200;      // 主動同步：同一瞬間的多個變動合併成一次（0.2 秒）
@@ -48,6 +49,7 @@ const normItem = it => {
   const o = { sig: it.sig, time: Number.isFinite(it.time) ? it.time : Date.now() };
   if (typeof it.disp === 'string' && it.disp.length <= 600) o.disp = it.disp;
   if (typeof it.nick === 'string' && it.nick) o.nick = it.nick.slice(0, 20);
+  if (typeof it.code === 'string' && it.code) o.code = Array.from(it.code).slice(0, 4).join('');   // 隨機挑戰：玩家輸入的代碼（與原代碼不同時才有）
   return o;
 };
 function bookToDocs(book) {   // Map: 文件 id -> JSON 字串（用字串比對有沒有變動）
@@ -100,7 +102,8 @@ const isFresh = p => p.every(q => !q.placed && !q.rot && !q.flip);   // 完全�
 const metaOf = o => canon({ level: o.level || 1, group: o.group || {}, lt: o.lt || 0 });
 const localBoards = () => {   // 本機盤面整理成 { 鍵: {t,p} }
   const lb = readBoardsStore(), out = {};
-  for (const k of Object.keys(lb.boards)) { const e = normBoard({ t: lb.times[k] || 0, p: lb.boards[k] }); if (e) out[k] = e; }
+  const rk = syncRandomKeys(lb);   // 隨機挑戰：只有目前代碼的那一份會上雲端，其餘只留本機
+  for (const k of Object.keys(lb.boards)) { if (isLocalBoardKey(k) && !rk.has(k)) continue; const e = normBoard({ t: lb.times[k] || 0, p: lb.boards[k] }); if (e) out[k] = e; }
   return { lb, boards: out };
 };
 let bmirror = new Map();    // 雲端目前的盤面（鍵 -> canon 字串）
@@ -114,8 +117,10 @@ function boardDiff() {
     if (m === c || (m === undefined && isFresh(boards[k].p))) continue;
     diff[k] = boards[k];
   }
+  // 隨機挑戰：雲端只留一份。雲端上的隨機盤面與目前代碼不符（玩家換了代碼）就刪除
+  const dels = [...bmirror.keys()].filter(k => isLocalBoardKey(k) && !(k in boards));
   const metaDiff = metaOf(lb) !== bmetaMirror && lb.lt > 0;
-  return Object.keys(diff).length || metaDiff ? { lb, diff } : null;
+  return Object.keys(diff).length || dels.length || metaDiff ? { lb, diff, dels } : null;
 }
 
 // ---- 寫入（去抖動 + 只送有變動的文件）----
@@ -210,10 +215,11 @@ async function pushBoards() {
   setStatus('syncing');
   try {
     const { fs, db } = await loadSdk(), uid = cloud.user.uid, batch = fs.writeBatch(db), brev = Date.now();
-    batch.set(fs.doc(db, 'users', uid, 'data', 'boards'), { level: d.lb.level, group: d.lb.group, lt: d.lb.lt, boards: d.diff }, { merge: true });   // merge：只更新有變動的盤面
+    batch.set(fs.doc(db, 'users', uid, 'data', 'boards'), { level: d.lb.level, group: d.lb.group, lt: d.lb.lt, boards: { ...d.diff, ...Object.fromEntries(d.dels.map(k => [k, fs.deleteField()])) } }, { merge: true });   // merge：只更新有變動的盤面
     batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { brev }, { merge: true });
     await batch.commit();
     for (const k of Object.keys(d.diff)) bmirror.set(k, canon(d.diff[k]));
+    d.dels.forEach(k => bmirror.delete(k));
     bmetaMirror = metaOf(d.lb);
     setSync({ uid, brev, bdirty: bWaiting });
     failed.boards = false; okIfHealthy();
@@ -321,6 +327,10 @@ async function reconcileBoards({ fs, db, uid, merge, pullLevel, cloudBrev }) {
   if (cloudMeta.lt > lb.lt && Number.isInteger(cloudMeta.level)) {
     group = { ...lb.group, ...cloudMeta.group }; lt = cloudMeta.lt;
     if (pullLevel) { level = cloudMeta.level; takeLevel = true; }
+  }
+  if (merge) {   // 隨機挑戰：本機其餘的盤面（不是目前代碼的）不跟雲端比對，原封不動留著
+    const keep = readBoardsStore();
+    Object.keys(keep.boards).filter(k => isLocalBoardKey(k) && !(k in outBoards)).forEach(k => { outBoards[k] = keep.boards[k]; outTimes[k] = keep.times[k] || 0; });
   }
   Store.set(KEY_BOARDS, { version: 2, level, group, boards: outBoards, times: outTimes, lt });
   setSync({ uid, brev: cloudBrev, bdirty: false });

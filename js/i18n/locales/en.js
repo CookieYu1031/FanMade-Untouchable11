@@ -55,6 +55,15 @@ export default {
     'grp.n':n => `${n} pcs`,
     'grp.solved':'Solved',
 
+    // ── Random Challenge ──
+    'tip.random':'Draw a random piece set',
+    'tip.rndCode':'Set code (type any 4 characters, then press Enter)',
+    'rnd.ph':'Code',
+    'rnd.rolled':c => `Random set drawn: ${c}`,
+    'rnd.loaded':c => `Set code applied: ${c}`,
+    'rnd.mapped':(a, c) => `"${a}" maps to set code: ${c}`,
+    'rnd.need4':'Please enter 4 characters',
+
     // ── 解答冊 ──
     'book.title':'Solutions',
     'book.count':(lv, n, m) => `<span class="bc-l">${lv}</span><span class="bc-r"><b>${m == null ? n : n + '/' + m}</b> collected</span>`,
@@ -119,10 +128,12 @@ export default {
     'sp.desc.h10':'Hazmat Cargo',
     'sp.desc.h11':'Hazmat Cargo 2',
     'sp.desc.h12':'Crown Challenge',
+    'sp.desc.h13':'Random Challenge',
     'sp.desc.9':'<ul class="splist"><li>A spin-off designed by Carl Hoff based on "Untouchable 11"</li><li>Uses a 12x12 board and 11 pieces</li><li>Only 2 solutions</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>A puzzle designed by Carl Hoff</li><li>Uses an 11x11 board and 9 pieces</li><li>Only 1 unique solution, yet 3,761 near solutions</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>A sequel designed by Carl Hoff based on "Hazmat Cargo"</li><li>Uses a 12*12 board and 9 pieces (heptominoes)</li><li>Again only 1 unique solution, but the near solutions soar to a staggering 26,226</li></ul>',
     'sp.desc.12':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 14 different piece sets</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find earns a crown</li></ul>',
+    'sp.desc.13':'<ul class=\"splist\"><li>A level designed from the conclusion in &quot;<a href=\"https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Untouchable 11</a>&quot;: on an 11x11 board, when 9 pieces are chosen from the 21 pieces, exactly one set has a unique solution, and every other set has multiple solutions</li><li>Uses an 11x11 board and randomly picks 9 of the 20 pieces (excluding the &quot;Hazmat Cargo&quot; set): 167,960 possible sets in total</li><li>Press the dice to draw a random set and play it; share the code with other players and they can take on the same set</li><li>You can also type any 4 characters (letters, digits or Chinese) and they will map to one of the sets</li><li>Solved puzzles are collected, but they do not earn leaderboard points</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'Reset board',

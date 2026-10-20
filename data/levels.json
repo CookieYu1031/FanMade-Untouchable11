@@ -1,10 +1,10 @@
 {
-  "_說明": "names = 各語言的關卡名稱（缺少某語言時顯示中文）；pieces = 各槽位依序放的拼圖號碼（號碼見 pieces.json，常用組與非常用組皆可使用）；槽位順序同時決定顏色（見 colors.json 的 slotColors）。可寫成號碼陣列，或引用 slotSets 的名稱。cols/rows = 底板寬/高（格）；total = 正解總組數；near = true（有近似解、總數未知）或近似解總組數；extra = 獨立關卡（設定中開啟才會出現）；title = 該關卡的遊戲標題（省略則用 defaultTitle）；family = 該關卡使用的拼圖類別（省略 = 六格骨牌；七格骨牌為 hepto，pieces 的號碼指的是該類別內的編號）；order = 關卡按鈕與統計表的顯示順序（填 lv；lv 是存檔用的固定編號，已有玩家的解答冊依它記錄，所以新關卡一律接在最後，要插在中間請改 order，不要改 lv）；groups = 拼圖組合（皇冠挑戰）：每組 {key, pieces}，玩家在拼圖盤標題列的按鈕切換，各組的盤面分開保存，各組的拼圖組成不可相同（解答冊靠拼圖組成判斷屬於哪一組）；crown = true 時，收錄進度以「每組一個皇冠」顯示。",
+  "_說明": "names = 各語言的關卡名稱（缺少某語言時顯示中文）；pieces = 各槽位依序放的拼圖號碼（號碼見 pieces.json，常用組與非常用組皆可使用）；槽位順序同時決定顏色（見 colors.json 的 slotColors）。可寫成號碼陣列，或引用 slotSets 的名稱。cols/rows = 底板寬/高（格）；total = 正解總組數；near = true（有近似解、總數未知）或近似解總組數；extra = 獨立關卡（設定中開啟才會出現）；title = 該關卡的遊戲標題（省略則用 defaultTitle）；family = 該關卡使用的拼圖類別（省略 = 六格骨牌；七格骨牌為 hepto，pieces 的號碼指的是該類別內的編號）；order = 關卡按鈕與統計表的顯示順序（填 lv；lv 是存檔用的固定編號，已有玩家的解答冊依它記錄，所以新關卡一律接在最後，要插在中間請改 order，不要改 lv）；groups = 拼圖組合（皇冠挑戰）：每組 {key, pieces}，玩家在拼圖盤標題列的按鈕切換，各組的盤面分開保存，各組的拼圖組成不可相同（解答冊靠拼圖組成判斷屬於哪一組）；crown = true 時，收錄進度以「每組一個皇冠」顯示；random = 隨機挑戰：{pool, pick, exclude}，從 pool（拼圖號碼）中取 pick 片組成拼圖盤，每種組合有一個 4 碼代碼（編碼規則見 js/core/random-code.js），exclude = 不使用的組合（各組是拼圖號碼陣列）；這種關卡沒有固定的 pieces / groups，目前的組合由玩家的代碼決定，盤面只存在本機。",
   "defaultTitle": "Untouchable 11",
   "slotSets": {
     "standard11": [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 8]
   },
-  "order": [1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 10, 11],
+  "order": [1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 10, 11, 13],
   "levels": [
     {"lv": 1, "names": {"zh": "入門", "en": "Beginner", "ja": "入門"}, "color": "#F28B8B", "cols": 9, "rows": 17, "total": 65516635, "pieces": "standard11"},
     {"lv": 2, "names": {"zh": "簡單", "en": "Easy", "ja": "簡単"}, "color": "#F9B88A", "cols": 10, "rows": 15, "total": 482482, "pieces": "standard11"},
@@ -32,6 +32,7 @@
       {"key": "e", "pieces": [5, 6, 9, 10, 11, 12, 14, 18, 2, 4, 8, 1]},
       {"key": "f", "pieces": [5, 10, 11, 12, 14, 16, 2, 3, 4, 7, 8, 1]},
       {"key": "g", "pieces": [5, 6, 9, 11, 14, 16, 19, 2, 3, 7, 8, 1]}
-    ]}
+    ]},
+    {"lv": 13, "names": {"zh": "隨機挑戰", "en": "Random Challenge", "ja": "ランダム挑戦"}, "color": "#5F6275", "ink": "#FFFFFF", "cols": 11, "rows": 11, "extra": true, "title": "Hazmat Cargo: Random Challenge", "random": {"pool": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "pick": 9, "exclude": [[9, 12, 13, 15, 17, 18, 20, 21, 8]]}}
   ]
 }

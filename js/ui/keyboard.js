@@ -4,6 +4,7 @@ import { transformSelected, returnSelected } from './interaction/transform.js';
 import { cancelHold } from './interaction/drag.js';
 import { undo } from './interaction/undo.js';
 import { toggleFan, isFanOpen, setFanOpen, exitImmersive } from './immersive.js';
+import { pageDir } from './dom.js';
 import { solModal, stepSolution } from './modals/solution.js';
 
 window.addEventListener('keydown', e => {
@@ -13,8 +14,8 @@ window.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'Escape') { document.querySelectorAll('.modal.open:not([data-lock])').forEach(m => m.classList.remove('open')); return; }
-  if (solModal.classList.contains('open') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {   // 解答檢視：左右鍵切換
-    stepSolution(e.key === 'ArrowLeft' ? -1 : 1); e.preventDefault(); return;
+  if (solModal.classList.contains('open') && pageDir(e)) {   // 解答檢視：← → 或 A D 切換
+    stepSolution(pageDir(e)); e.preventDefault(); return;
   }
   { // 說明視窗開著時：按下對應快捷鍵，畫面上的按鍵跟著亮起
     const kk = e.key.length === 1 ? e.key.toLowerCase() : e.key;

@@ -22,6 +22,7 @@ import { showWelcomeOnce } from './ui/modals/info.js';
 import './ui/modals/help.js';
 import './ui/modals/special.js';
 import './ui/modals/group.js';
+import './ui/random.js';
 import './ui/modals/solution.js';
 import './ui/modals/share.js';
 import './ui/modals/board-reset.js';

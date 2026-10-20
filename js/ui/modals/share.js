@@ -3,7 +3,7 @@ import { t, fmtTime, getLang } from '../../i18n/i18n.js';
 import { rotateCW } from '../../core/matrix.js';
 import { LV_COLORS, LV_INK } from '../../core/config.js';
 import { settings, effTheme } from '../../state/settings.js';
-import { state, lvLong, gameTitle, colorOf, groupOfSig, grpTag } from '../../state/state.js';
+import { state, lvLong, gameTitle, colorOf, groupOfSig, itemTag } from '../../state/state.js';
 import { $ } from '../dom.js';
 import { toast } from '../toast.js';
 
@@ -25,7 +25,7 @@ function drawShareCanvas(item, L, nick, near) {
   c.fillStyle = K.bg; c.fillRect(0, 0, W, H);
   c.fillStyle = LV_COLORS[L.lv - 1]; c.fillRect(0, 0, W, barH);          // 頂欄 = 難度顏色
   c.fillStyle = LV_INK[L.lv - 1]; c.textBaseline = 'middle';
-  const grp = groupOfSig(L, item.sig), gt = grpTag(L, grp);   // 有拼圖組合的關卡：標註使用的組合，配色也用那一組的
+  const grp = groupOfSig(L, item.sig), gt = itemTag(L, item);   // 有拼圖組合的關卡：標註使用的組合，配色也用那一組的
   const rt = `${lvLong(L)}${gt ? ' ' + gt : ''}  ${L.cols} × ${L.rows}${near ? '  ' + t('near.tag') : ''}`;
   c.font = `700 22px ${FONT}`; c.textAlign = 'right'; c.fillText(rt, W - padX, barH / 2);
   const rtW = c.measureText(rt).width, ttl = gameTitle(L);   // 標題較長時（額外難度）自動縮小字級

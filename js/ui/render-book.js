@@ -3,8 +3,8 @@ import { t } from '../i18n/i18n.js';
 import { settings, saveSettings } from '../state/settings.js';
 import { rotateCW } from '../core/matrix.js';
 import { loadBook } from '../storage/book.js';
-import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups } from '../state/state.js';
-import { $, els } from './dom.js';
+import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups, itemTag } from '../state/state.js';
+import { $, els, escapeHtml } from './dom.js';
 import { cellRects, CROWN } from './svg.js';
 import { grpLabel } from '../core/roman.js';
 
@@ -36,8 +36,8 @@ const MORE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke
 function thumbsHTML(list, near) {
   const L = curLevel();
   const items = newestFirst(list).slice(0, 60).map(it => {
-    const gk = groupOfSig(L, it.sig);
-    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${gk ? '　' + t('grp.tag', gk) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag">${grpLabel(gk)}</span>` : ''}</button>`;
+    const gk = groupOfSig(L, it.sig), tag = L.random ? itemTag(L, it) : gk ? t('grp.tag', gk) : '';   // 隨機挑戰：標註代碼（如 3K7Z、GOOD(3K7Z)）
+    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${tag ? '　' + escapeHtml(tag) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag${L.random ? ' code' : ''}">${L.random ? escapeHtml(tag) : grpLabel(gk)}</span>` : ''}</button>`;
   }).join('');
   return `<div class="tl">${items}</div><button class="tmore" type="button" hidden>${MORE}</button>`;
 }
