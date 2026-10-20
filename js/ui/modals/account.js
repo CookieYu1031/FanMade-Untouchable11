@@ -1,6 +1,7 @@
 /* 帳戶：Google 登入 / 登出、登入時詢問是否合併本機紀錄、套用雲端資料 */
 import { t, setLang, applyI18n } from '../../i18n/i18n.js';
-import { cloud, onCloud, setHandlers, signIn, signOut, retry } from '../../cloud/sync.js';
+import { cloud, onCloud, setHandlers, signIn, signOut, retry, manualSync, hasWaiting } from '../../cloud/sync.js';
+import { SYNC_ICON } from '../svg.js';
 import { Store } from '../../storage/store.js';
 import { cancelPersist, restoreBoards } from '../../storage/boards.js';
 import { settings, applyTheme } from '../../state/settings.js';
@@ -14,6 +15,8 @@ import { Music } from '../../audio/music.js';
 
 const G = '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>';
 const box = $('acctBox');
+const p2 = n => String(n).padStart(2, '0');
+const fmtSyncTime = ts => { const d = new Date(ts); return `${d.getMonth() + 1}/${d.getDate()} ${p2(d.getHours())}:${p2(d.getMinutes())}`; };
 
 function render() {
   box.textContent = '';
@@ -40,12 +43,19 @@ function render() {
   const nm = document.createElement('b'); nm.textContent = u.displayName || u.email || '';
   const em = document.createElement('small'); em.textContent = u.email || '';
   const st = document.createElement('small');
-  st.textContent = t({ syncing: 'acct.syncing', ok: 'acct.synced', error: 'acct.error' }[cloud.status] || 'acct.syncing');
+  const waiting = cloud.status === 'ok' && hasWaiting();   // 已同步但有延遲同步的變動在等定時點
+  st.textContent = waiting ? t('acct.waiting')
+    : cloud.status === 'ok' && cloud.lastSync ? t('acct.syncedAt', fmtSyncTime(cloud.lastSync))   // 「日期 時:分 已同步」
+    : t({ syncing: 'acct.syncing', ok: 'acct.synced', error: 'acct.error' }[cloud.status] || 'acct.syncing');
   if (cloud.status === 'error') {
     st.className = 'err';
     const rb = document.createElement('button'); rb.textContent = t('acct.retry'); rb.addEventListener('click', () => retry());
     st.append(rb);
   }
+  const sb = document.createElement('button'); sb.type = 'button'; sb.className = 'syncbtn'; sb.innerHTML = SYNC_ICON;   // 手動同步：緊接在狀態文字後面
+  sb.title = t('acct.syncNow'); sb.setAttribute('aria-label', sb.title); sb.disabled = cloud.status === 'syncing';
+  sb.addEventListener('click', () => manualSync());
+  st.append(sb);
   txt.append(nm, em, st); wrap.append(av, txt);
   const out = document.createElement('button'); out.className = 'btn'; out.textContent = t('acct.logout');
   out.addEventListener('click', () => $('logoutModal').classList.add('open'));

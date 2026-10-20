@@ -21,3 +21,9 @@
   color:var(--ink);font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(20,22,40,.25)}
 .sharebtn:hover{box-shadow:0 6px 16px rgba(20,22,40,.25),inset 0 0 0 2px var(--ink)}
 .sharebtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* 小視窗（<= 640px）：分享 / 下載按鈕只顯示圖示（文字隱藏；按鈕仍有 title / aria-label 供輔助工具與滑鼠提示） */
+@media (max-width:640px){
+  .sharebtn{width:42px;height:42px;padding:0;justify-content:center;gap:0}
+  .sharebtn span{display:none}
+  .sharebtn svg{width:20px;height:20px}
+}

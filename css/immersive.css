@@ -1,6 +1,6 @@
 /* 沉浸模式：圖板放大到佔滿整個頁面，右下角圓點彈出小型拼圖盤（js/ui/immersive.js、js/ui/fan.js） */
 
-/* 直向視窗也能開啟沉浸模式；但視窗太窄的直向（手機直拿）會蓋上「請將裝置轉為橫向」的提示（js/ui/immersive.js 控制顯示） */
+/* 中、大視窗直向也能開啟沉浸模式；小視窗（<= 640px）的直向（手機直拿）會蓋上「請將裝置轉為橫向」的提示，橫向轉回直向時自動離開沉浸模式（js/ui/immersive.js 控制） */
 #rotateHint{position:fixed;inset:0;z-index:55;display:grid;place-items:center;background:var(--bg);cursor:pointer;-webkit-tap-highlight-color:transparent}
 #rotateHint .rulegif{width:min(62vw,240px);margin:0}
 

@@ -9,6 +9,7 @@ export function renderSettings() {
   const eff = effTheme();
   document.querySelectorAll('#segTheme button').forEach(b => b.classList.toggle('on', b.dataset.theme === eff));
   $('swExtra').setAttribute('aria-checked', String(!!settings.extra));
+  $('swRank').setAttribute('aria-checked', String(!!settings.rank));
   renderVol();
 }
 // 兩條音量滑桿（音樂 / 音效）共用的畫面同步：0~10 段，每段 10%

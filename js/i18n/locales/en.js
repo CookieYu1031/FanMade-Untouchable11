@@ -142,6 +142,8 @@ export default {
     'set.sfx':'SFX',
     'set.extra':'Expansion pack',
     'set.extraDesc':'Show extra levels and the Master leaderboard',
+    'set.rank':'Join leaderboard',
+    'set.rankDesc':'When off: no scoring, no ranking',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'Account',
@@ -150,8 +152,11 @@ export default {
     'acct.logout':'Sign out',
     'acct.syncing':'Syncing…',
     'acct.synced':'Synced to the cloud',
+    'acct.syncedAt':t=>`Synced ${t}`,
+    'acct.waiting':'Waiting for auto sync',
     'acct.error':'Sync failed',
     'acct.retry':'Retry',
+    'acct.syncNow':'Sync now',
     'acct.loginFail':'Sign-in failed. Please try again later.',
     'acct.logoutFail':'Some records are not synced yet. Check your connection and try again.',
     'acct.syncFail':'Cannot reach the cloud. Please try again later.',

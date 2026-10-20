@@ -29,3 +29,10 @@
 .switch[aria-checked="true"]{background:var(--ink);border-color:var(--ink)}
 .switch[aria-checked="true"] i{transform:translateX(20px);background:var(--panel)}
 .switch:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+/* 同步進行時：設定按鈕的齒輪暫時換成同步符號、底色變藍（由 js/ui/sync-indicator.js 加上 .syncing，至少維持 3 秒） */
+#btnSettings .i-sync{display:none}
+#btnSettings.syncing{background:#3B82F6;color:#fff;transition:background .15s}
+#btnSettings.syncing .i-gear{display:none}
+#btnSettings.syncing .i-sync{display:block}
+@media (hover:hover){#btnSettings.syncing:hover{box-shadow:inset 0 0 0 2px #fff}}

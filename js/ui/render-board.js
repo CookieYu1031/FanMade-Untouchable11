@@ -10,13 +10,14 @@ import { els } from './dom.js';
 import { cellRects } from './svg.js';
 import { trayUnit, trayPerRow, renderTray } from './render-tray.js';
 import { syncTools } from './piece-tools.js';
+import { isSmall, sideBySide as isSideBySide } from './viewport.js';
 
 // 觸控裝置（手機）捲動時網址列會收合 / 展開，window.innerHeight 與 resize 事件會跟著變動，
-// 造成圖板高度與格子大小一直改變。因此觸控 + 窄視窗時，同一個視窗寬度只取第一次的高度，不再隨捲動更新。
+// 造成圖板高度與格子大小一直改變。因此觸控 + 小視窗（上下放置）時，同一個視窗寬度只取第一次的高度，不再隨捲動更新。
 let vhCache = { w: 0, h: 0 };
 function viewportH() {
   const w = window.innerWidth;
-  if (!window.matchMedia('(max-width:759px) and (pointer:coarse)').matches) return window.innerHeight;
+  if (!(isSmall() && window.matchMedia('(pointer:coarse)').matches)) return window.innerHeight;
   if (vhCache.w !== w) vhCache = { w, h: window.innerHeight };   // 寬度改變（轉向、分割視窗）才重新取值
   return vhCache.h;
 }
@@ -35,9 +36,9 @@ export function fitBoard() {
   const availW = imm
     ? Math.max(120, els.wrap.clientWidth - parseFloat(wCS0.paddingLeft) - parseFloat(wCS0.paddingRight))
     : Math.max(240, Math.min(els.wrap.clientWidth - 30, els.wrap.clientWidth - 2 * (toolsW + 8) - 4));
-  // 圖板與拼圖盤並排（>=1180px）時：圖板區域高度 = 拼圖盤區域高度（見 layout.css 的 contain:size），圖板高度以此為上限
-  // 並排條件（要與 css/layout.css 一致）：寬螢幕，或任何橫向視窗（寬 >= 600px）
-  const sideBySide = window.matchMedia('(min-width:1180px), (orientation:landscape) and (min-width:600px)').matches;
+  // 圖板與拼圖盤並排（中、大視窗，寬 >= 641px）時：圖板區域高度 = 拼圖盤區域高度（見 layout.css 的 contain:size），圖板高度以此為上限
+  // 並排條件（要與 css/layout.css 一致）：小視窗（<= 640px）上下放置，其餘左右放置
+  const sideBySide = isSideBySide();
 
   // 拼圖盤的拼圖大小與底板無關（換關卡、底板縮放都不會變），只看拼圖盤寬度：以「至少放得下 3 片（七格骨牌關卡 2 片）」決定大小；
   // 實際每行放幾片不設限（拼圖盤夠寬就會多放）。

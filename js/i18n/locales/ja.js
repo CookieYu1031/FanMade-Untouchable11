@@ -142,6 +142,8 @@ export default {
     'set.sfx':'効果音',
     'set.extra':'拡張パック',
     'set.extraDesc':'追加ステージとマスターランキングを表示',
+    'set.rank':'ランキング参加',
+    'set.rankDesc':'オフ：得点集計・順位の対象外',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'アカウント',
@@ -150,8 +152,11 @@ export default {
     'acct.logout':'ログアウト',
     'acct.syncing':'同期中…',
     'acct.synced':'クラウドに同期済み',
+    'acct.syncedAt':t=>`${t} 同期済み`,
+    'acct.waiting':'自動同期を待機中',
     'acct.error':'同期に失敗しました',
     'acct.retry':'再試行',
+    'acct.syncNow':'今すぐ同期',
     'acct.loginFail':'ログインに失敗しました。しばらくしてからお試しください',
     'acct.logoutFail':'未同期の記録があります。接続を確認してからもう一度お試しください',
     'acct.syncFail':'クラウドに接続できません。しばらくしてからお試しください',

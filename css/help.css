@@ -25,11 +25,12 @@ kbd{display:inline-block;min-width:46px;transition:background .08s,color .08s,tr
 .help .rulegrid li .rulegif{margin-top:auto;padding-top:6px}   /* 文字行數不同時，動畫仍上下對齊 */
 .rulegif img{display:block;width:100%;height:auto}
 .rulegif .g-d{display:none}
-/* 窄螢幕：單欄直排，動畫縮小為 80% 並置中；各項間距也縮小，讓視窗矮一點 */
-@media (max-width:560px){
-  .help{padding:2px 16px 12px}
-  .help .rulegrid{grid-template-columns:1fr;gap:8px;margin-left:-18px}   /* 抵消外層清單的縮排，動畫才會真正置中 */
-  .help .rulegrid li .rulegif{width:80%;margin:0 auto;padding-top:4px}
+/* 小視窗（<= 640px）：規則改成每條一列，文字在左、縮小的動畫在右，三條規則才能在一頁內放完（規則 / 資訊另外分頁，見 modals.css） */
+@media (max-width:640px){
+  .help{padding:2px 16px 8px}
+  .help .rulegrid{grid-template-columns:1fr;gap:10px;margin-left:-18px}   /* 抵消外層清單的縮排 */
+  .help .rulegrid li{display:grid;grid-template-columns:minmax(0,1fr) 38%;align-items:center;gap:12px;padding-left:18px}
+  .help .rulegrid li .rulegif{width:100%;margin:0;padding-top:0}
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]) .rulegif .g-l{display:none}

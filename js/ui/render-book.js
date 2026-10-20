@@ -75,6 +75,7 @@ export function renderBook() {
   // 這個關卡完全沒有解答（含近似解）時，停用隱藏按鈕，也不套用「隱藏」狀態（沒東西可藏）
   const hasAny = list.length > 0 || (!!L.near && ((book.near && book.near[L.lv]) || []).length > 0);
   const hidden = settings.hideBook && hasAny;
+  $('btnRank').hidden = !settings.rank;   // 不參與排行時隱藏排行榜按鈕（右側的隱藏解答按鈕會自動往右靠，不留空位）
   const hb = $('btnHide');
   hb.disabled = !hasAny;   // 沒有解答時停用（與「返回上一步」相同的灰階樣式），而不是消失
   hb.innerHTML = hidden ? EYE_OFF : EYE;

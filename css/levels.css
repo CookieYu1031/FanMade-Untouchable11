@@ -4,6 +4,17 @@
 .lvrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .lvrow.ext{margin-top:8px}   /* 獨立關卡另起一行，按鈕寬度沿用 .lvrow 的欄寬（與 Lv1~8 相同） */
 @media (min-width:760px){.lvrow{grid-template-columns:repeat(8,minmax(0,1fr))}}
+/* 開啟額外關卡時，依視窗寬度分行（js/ui/viewport.js）：
+   大視窗（>= 1008px）：Lv1~8 一行、額外關卡另起一行（上面的樣式）
+   中視窗（641~1007px）：全部關卡合併成 2 行（每行 6 個）
+   小視窗（<= 640px）：全部關卡合併成 3 行（每行 4 個） */
+@media (max-width:1007px){
+  .levels.has-ext{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+  .levels.has-ext .lvrow{display:contents}
+}
+@media (max-width:640px){
+  .levels.has-ext{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 .lv{border:0;border-radius:14px;padding:8px 2px;cursor:pointer;color:#2B2E4A;text-align:center;
   background:var(--c);opacity:.62;position:relative;white-space:nowrap;
   display:flex;align-items:center;justify-content:center;gap:4px;font-size:15px;font-weight:700}

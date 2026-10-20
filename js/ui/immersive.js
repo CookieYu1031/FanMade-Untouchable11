@@ -9,7 +9,7 @@ import { fitBoard, renderBoard } from './render-board.js';
 import { renderTray } from './render-tray.js';
 import { startDrag } from './interaction/drag.js';
 import { isFanOpen, setFanOpen } from './fan.js';
-import { PHONE_SIDE } from './piece-tools.js';
+import { isSmall, isPortrait } from './viewport.js';
 
 const root = document.documentElement, btn = $('btnImmersive');
 
@@ -27,14 +27,23 @@ function placeGroupBtn() {
   else helpBtn.parentNode.insertBefore(grpBtn, helpBtn);
 }
 
-// 直向視窗也能進入沉浸模式；但視窗太窄的直向（手機直拿，寬 < PHONE_SIDE）會蓋上純色底 + 「請將裝置轉為橫向」動畫，
+// 中、大視窗（寬 > 640px）直向也能使用沉浸模式；小視窗的直向（手機直拿，寬 <= 640px）點擊沉浸模式會蓋上純色底 + 「請將裝置轉為橫向」動畫，
 // 轉成橫向後提示自動消失（沉浸模式維持開啟）。點提示畫面可直接離開沉浸模式。
-const portraitMQ = window.matchMedia('(orientation:portrait)'), hint = $('rotateHint');
+// 反過來，沉浸模式中從橫向轉回小視窗直向時，會自動離開沉浸模式。
+const hint = $('rotateHint');
+const smallPortrait = () => isSmall() && isPortrait();
 function syncRotateHint() {
-  hint.hidden = !(state.immersive && portraitMQ.matches && window.innerWidth < PHONE_SIDE);
+  hint.hidden = !(state.immersive && smallPortrait());
 }
-portraitMQ.addEventListener('change', syncRotateHint);
-window.addEventListener('resize', syncRotateHint);
+let wasSmallPortrait = smallPortrait();
+function onViewportChange() {
+  const sp = smallPortrait(), turned = sp && !wasSmallPortrait;
+  wasSmallPortrait = sp;
+  if (turned && state.immersive) { exitImmersive(); return; }   // 橫向轉直向（手機）：自動離開沉浸模式
+  syncRotateHint();
+}
+window.matchMedia('(orientation:portrait)').addEventListener('change', onViewportChange);
+window.addEventListener('resize', onViewportChange);
 hint.addEventListener('click', () => exitImmersive());
 
 // 切換後重新計算圖板大小並重畫

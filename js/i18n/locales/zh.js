@@ -142,6 +142,8 @@ export default {
     'set.sfx':'音效',
     'set.extra':'擴展包',
     'set.extraDesc':'顯示額外關卡與大師榜',
+    'set.rank':'參與排行',
+    'set.rankDesc':'關閉後不計分、不上榜',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'帳戶',
@@ -150,8 +152,11 @@ export default {
     'acct.logout':'登出',
     'acct.syncing':'同步中…',
     'acct.synced':'已同步到雲端',
+    'acct.syncedAt':t=>`${t} 已同步`,
+    'acct.waiting':'等待自動同步',
     'acct.error':'同步失敗',
     'acct.retry':'重試',
+    'acct.syncNow':'立即同步',
     'acct.loginFail':'登入失敗，請稍後再試',
     'acct.logoutFail':'尚有紀錄未同步，請確認網路後再登出',
     'acct.syncFail':'無法連線到雲端，請稍後再試',

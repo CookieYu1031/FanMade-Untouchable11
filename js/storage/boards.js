@@ -42,7 +42,7 @@ export function persistBoards() {
   const m = levelSig();
   if (m !== lastMeta) { lastMeta = m; lt = now; changed = true; }
   Store.set(KEY_BOARDS, { version:2, level:state.level, group:{ ...state.group }, boards:nb, times, lt });
-  if (changed && Hooks.boards) Hooks.boards();   // 通知雲端同步（它會等玩家停手 3 秒才真正上傳）
+  if (changed && Hooks.boards) Hooks.boards();   // 通知雲端同步（盤面屬於延遲同步：等下一個定時點才真正上傳）
 }
 let persistTimer = null;
 export function schedulePersist() { clearTimeout(persistTimer); persistTimer = setTimeout(persistBoards, 250); }

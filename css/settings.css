@@ -33,8 +33,8 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .sgrp-vol::before{content:"";position:absolute;left:0;top:50%;height:48px;width:1px;transform:translateY(-50%);background:var(--line)}
 .sgrp{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:1 1 0;min-width:0}
 .sgrp>span,.sgrp>label{font-weight:700;font-size:14px;white-space:nowrap}
-/* 暱稱、語言列：與「背景、音量」列相同，同一行分兩格（等寬、中間分隔線） */
-.sgrp-nick #nickInput{flex:1 1 0;min-width:0;width:auto}
+/* 暱稱列：單獨一行，標籤在左、輸入框在右 */
+.srow-nick #nickInput{flex:1 1 0;min-width:0;width:auto;max-width:320px}
 .sgrp .vol{flex:1;min-width:0;justify-content:flex-end;gap:8px}
 .sgrp .vslider{width:auto;flex:1 1 60px;min-width:60px;max-width:150px}
 .sgrp .vol b{flex:none;width:42px;min-width:0;text-align:right;white-space:nowrap}   /* 固定寬度：不論 0% 或 100%，兩條滑桿長度都相同 */
@@ -43,7 +43,7 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @media (max-width:360px){.sgrp-extra{flex-direction:column;align-items:flex-start;gap:6px}}
 .sgrp-extra>span{white-space:normal;line-height:1.35}
 .sgrp-extra .sub{line-height:1.3}
-@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:0 9px}.sgrp-nick #nickInput{padding:0 6px;font-size:13px}select.sel{padding:0 30px 0 8px;font-size:13px}.selwrap::after{right:12px}.sgrp .vol{gap:4px}.sgrp .vol b{width:38px;font-size:12px}.sgrp .vslider{min-width:48px}}
+@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:0 9px}.srow-nick #nickInput{font-size:14px}select.sel{padding:0 30px 0 8px;font-size:13px}.selwrap::after{right:12px}.sgrp .vol{gap:4px}.sgrp .vol b{width:38px;font-size:12px}.sgrp .vslider{min-width:48px}}
 .srow .sub{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
 
 /* 帳戶列：未登入顯示說明與登入按鈕；已登入顯示頭像、名稱、同步狀態與登出 */
@@ -61,3 +61,15 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .btn.gbtn .gtxt.wrap{white-space:normal;text-align:left}   /* 縮到最小字級仍放不下才換行 */
 .srow-acct .acct-txt{flex:1 1 0}
 .srow-acct>.btn:not(.gbtn){flex:none}
+/* 窄螢幕：背景 / 語言列的語言格多分一點寬度，下拉選單才放得下完整的語言名稱（如 English） */
+@media (max-width:460px){.srow2 .sgrp-lang{flex:1.2 1 0}.sgrp-lang select.sel{padding:0 24px 0 6px}.sgrp-lang .selwrap::after{right:9px}}
+
+/* 同步狀態文字後面的手動同步按鈕：與文字同大小、同顏色（同步進行中停用並轉動） */
+.acct-txt small .syncbtn{display:inline-grid;place-items:center;vertical-align:-.2em;width:1.3em;height:1.3em;margin-left:5px;padding:0;border:0;border-radius:50%;background:none;color:inherit;cursor:pointer;text-decoration:none}
+.acct-txt small .syncbtn svg{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.acct-txt small .syncbtn:hover:not(:disabled){color:var(--ink)}
+.acct-txt small .syncbtn:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.acct-txt small .syncbtn:disabled{cursor:default;opacity:.6}
+.acct-txt small .syncbtn:disabled svg{animation:syncbob 1s ease-in-out infinite}
+@keyframes syncbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@media (prefers-reduced-motion:reduce){.acct-txt small .syncbtn:disabled svg{animation:none}}

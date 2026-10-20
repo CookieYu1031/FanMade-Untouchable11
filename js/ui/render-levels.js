@@ -41,4 +41,5 @@ export function renderLevels() {
   const main = LEVEL_ORDER.filter(l => !l.extra).map(btn).join('');   // 依 levels.json 的 order 排列（lv 是存檔編號，不一定等於顯示順序）
   const ext = settings.extra ? LEVEL_ORDER.filter(l => l.extra).map(btn).join('') : '';   // 獨立關卡另起一行
   els.levels.innerHTML = `<div class="lvrow">${main}</div>` + (ext ? `<div class="lvrow ext">${ext}</div>` : '');
+  els.levels.classList.toggle('has-ext', !!ext);   // 開啟額外關卡：中視窗合成 2 行、小視窗合成 3 行（見 css/levels.css）
 }

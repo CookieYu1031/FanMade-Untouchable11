@@ -71,6 +71,7 @@ function updateBtn() {
   const s = wantShare(), key = s ? 'share' : 'download';
   btnIcon.innerHTML = s ? ICON_SHARE : ICON_DL;
   btnLabel.setAttribute('data-i18n', key); btnLabel.textContent = t(key);
+  btn.setAttribute('data-i18n-title', key); btn.title = t(key); btn.setAttribute('aria-label', t(key));   // 小視窗只顯示圖示，名稱改由 title / aria-label 提供
 }
 updateBtn();
 

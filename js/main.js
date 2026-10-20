@@ -27,6 +27,7 @@ import './ui/modals/share.js';
 import './ui/modals/board-reset.js';
 import './ui/modals/settings.js';
 import './ui/modals/account.js';
+import './ui/sync-indicator.js';
 import './ui/modals/stats.js';
 import './ui/modals/rank.js';
 import './ui/modals/scroll-lock.js';

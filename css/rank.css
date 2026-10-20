@@ -1,12 +1,5 @@
-/* 排行榜：右下角獎盃工具列、排行榜視窗（黃色頂欄）、積分公式視窗 */
+/* 排行榜：排行榜視窗（黃色頂欄；開啟按鈕在解答冊標題列，統計與隱藏解答按鈕之間）、積分公式視窗 */
 :root{--yel:#FBE08A}
-
-/* 工具列形式，從視窗右側邊界靠近底部延伸出來（左側拼圖工具列的鏡像；直向、橫向視窗都固定在右下角） */
-.rtools{position:fixed;z-index:40;right:0;bottom:calc(64px + var(--sab));display:flex;flex-direction:column;align-items:center;gap:6px;
-  padding:8px 6px;padding-right:calc(6px + var(--sar));border-radius:22px 0 0 22px;background:var(--panel);
-  border:1px solid var(--line);border-right:0;box-shadow:-2px 2px 10px rgba(0,0,0,.15)}
-.rtools .ibtn{width:30px;height:30px}
-html.immersive .rtools{display:none}   /* 沉浸模式右下角是拼圖盤圓點 */
 
 /* 視窗：單欄（只有挑戰榜）/ 雙欄（額外關卡開啟：左挑戰榜、右大師榜） */
 .rankbox{width:min(440px,100%);max-height:100%;overflow:auto}
@@ -39,14 +32,23 @@ html.immersive .rtools{display:none}   /* 沉浸模式右下角是拼圖盤圓�
 .rnote:empty{display:none}
 .rnote{padding:10px 18px 14px;border-top:1px solid var(--line);font-size:11.5px;line-height:1.6;color:var(--muted)}
 
-/* 窄視窗：兩欄仍並排，字與邊距縮小 */
-@media (max-width:600px){
-  .rankbox.two .rmine{padding:12px 10px 10px}
-  .rankbox.two .rm-score{font-size:26px}
-  .rankbox.two .rm-head{min-height:2.9em}   /* 提示文字可能換成兩行，兩欄預留同樣高度讓排名清單對齊 */
-  .rankbox.two .rrow{grid-template-columns:28px minmax(0,1fr) auto;padding:0 8px;font-size:12px;gap:4px}
-  .rankbox.two .rmsg{padding:12px 10px}
-  .rankbox.two .rnote{padding:8px 10px 12px}
+/* 小視窗（<= 640px）：挑戰榜與大師榜改為上下放置；排名清單的高度與每列高度縮小（預設仍是你與前 3 位、後 1 位，共 5 列），避免視窗高度不足 */
+@media (max-width:640px){
+  .rankbox.two{width:min(440px,100%)}
+  .rankcols{grid-template-columns:minmax(0,1fr)}
+  .rcol+.rcol{border-left:0;border-top:1px solid var(--line)}
+  .rmine{padding:10px 16px 8px;gap:2px}
+  .rm-score{font-size:28px}
+  .rlist{height:150px}
+  .rrow{height:30px;font-size:12.5px;padding:0 16px;grid-template-columns:36px minmax(0,1fr) auto}
+  .rsent{height:22px}
+  .rmsg{padding:10px 16px;line-height:1.5}
+  .rnote{padding:8px 16px 10px}
+}
+@media (max-width:640px) and (max-height:640px){   /* 高度更矮：再縮小一點 */
+  .rlist{height:120px}
+  .rrow{height:24px;font-size:12px}
+  .rm-score{font-size:24px}
 }
 
 /* 積分公式：開啟額外關卡時左右分欄（左挑戰榜、右大師榜），否則單欄 */
@@ -68,8 +70,12 @@ html.immersive .rtools{display:none}   /* 沉浸模式右下角是拼圖盤圓�
 .rtab th:first-child{text-align:left}
 .rtab th:first-child,.rtab td:first-child{white-space:normal;overflow-wrap:anywhere}
 .rtab th:nth-child(2),.rtab td:nth-child(2),.rtab th:nth-child(3),.rtab td:nth-child(3){width:28%}   /* 同一欄的兩張表欄寬相同，佔比 / 首解積分、積分 / 全解上限才會上下對齊 */
-@media (max-width:600px){
-  .rinfobox.two .ricol{padding:12px 10px 16px}
-  .rtab{font-size:11.5px}
-  .rtab th,.rtab td{padding:4px 3px}
+/* 小視窗（<= 640px）：挑戰榜與大師榜改為上下放置 */
+@media (max-width:640px){
+  .rinfobox.two{width:min(440px,100%)}
+  .ricols{grid-template-columns:minmax(0,1fr)}
+  .ricol{padding:12px 16px 14px}
+  .ricol+.ricol{border-left:0;border-top:1px solid var(--line)}
+  .rtab{font-size:12px}
+  .rtab th,.rtab td{padding:4px 4px}
 }

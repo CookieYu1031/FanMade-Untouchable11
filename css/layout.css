@@ -2,16 +2,11 @@
 .stage{position:relative}
 /* ============ 版面 ============ */
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-bottom:36px}
-/* 窄螢幕（<760px）：單欄堆疊（底板一律橫式） */
-/* 中寬直向螢幕（760~1179px）：底板在上，拼圖盤在下方，其餘面板並排 */
-@media (min-width:760px) and (max-width:1179px) and (orientation:portrait){
-  .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
-  .side .panel{margin-bottom:0}
-  .side .panel{grid-column:1/-1}
-}
-/* 寬螢幕（>=1180px）或任何橫向視窗（寬 >= 600px）：底板在左，拼圖盤在右（高度與圖板區域相同，一個視窗看完），解答冊在下方整排
+/* 版面依視窗寬度分三級（js/ui/viewport.js 的 isSmall / isMedium / isLarge 與此處斷點一致）：
+   小（<= 640px，手機直向）：單欄堆疊，圖板在上、拼圖盤在下（底板一律橫式）
+   中（641~1007px，平板直向）、大（>= 1008px）：底板在左、拼圖盤在右（高度與圖板區域相同，一個視窗看完），解答冊在下方整排
    （條件要與 render-board.js 的 sideBySide 一致） */
-@media (min-width:1180px), (orientation:landscape) and (min-width:600px){
+@media (min-width:641px){
   /* 第一列：底板（左）與拼圖盤（右）等高；第二列：解答冊獨佔整排。
      用 display:contents 讓 aside 裡的面板直接成為 layout 的格子 */
   .layout{grid-template-columns:minmax(0,1fr) clamp(280px,36vw,420px);align-items:stretch}
