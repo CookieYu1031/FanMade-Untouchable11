@@ -2,10 +2,11 @@
  * 本機存檔格式：{ version:2, level, group, boards:{鍵:拼圖陣列}, times:{鍵:最後變更時間}, lt:關卡 / 組合最後變更時間 }
  *   times / lt 供雲端同步比對：換裝置登入時，每個盤面以「較晚變更」的那一份為準（見 cloud/sync.js） */
 import { Store, Hooks, KEY_BOARDS } from './store.js';
-import { LEVELS } from '../core/config.js';
+import { LEVELS, levelOf } from '../core/config.js';
 import { state, toNative, fromNative, freshPieces, absCells, keyLv, keyGrp, boardKey, isLocalBoardKey } from '../state/state.js';
 import { isTypedCode } from '../core/random-code.js';
 import { legacyBoard } from './legacy.js';
+import { migrateBoardData } from './migrate.js';
 
 // 盤面的鍵：一般關卡 = lv；有拼圖組合的關卡 = 「lv:組合代號」（見 state.js 的 boardKey）；group = 各關卡目前使用的組合
 const nativeBoards = () => Object.fromEntries(Object.keys(state.boards).map(k => [k, toNative(state.boards[k], keyLv(k))]));
@@ -34,13 +35,13 @@ function seedSig() {
 // 讀取本機存檔（雲端同步用）
 export function readBoardsStore() {
   const s = Store.get(KEY_BOARDS, null) || {};
-  return {
-    level: Number.isInteger(s.level) ? s.level : 1,
+  return migrateBoardData({   // 舊存檔的獵戶盤面鍵（12:a）換成 12.1:a
+    level: Number.isFinite(s.level) ? s.level : 1,
     group: (s.group && typeof s.group === 'object') ? s.group : {},
     boards: (s.boards && typeof s.boards === 'object') ? s.boards : {},
     times: (s.times && typeof s.times === 'object') ? s.times : {},
     lt: Number.isFinite(s.lt) ? s.lt : 0,
-  };
+  });
 }
 
 export function persistBoards() {
@@ -63,7 +64,7 @@ export const cancelPersist = () => clearTimeout(persistTimer);
 
 // 讀進來的資料一律檢查：格式、旋轉值、座標是否在底板內，不合格的拼圖回到拼圖盤
 export function sanitizeNative(arr, key) {
-  const lv = keyLv(key), L = LEVELS[lv - 1], out = freshPieces(lv, keyGrp(key));
+  const lv = keyLv(key), L = levelOf(lv), out = freshPieces(lv, keyGrp(key));
   if (!Array.isArray(arr)) return out;
   out.forEach(p => {
     const sp = arr.find(q => q && q.id === p.id); if (!sp) return;
@@ -82,6 +83,7 @@ export function sanitizeNative(arr, key) {
 //   level = true 時一併切到存檔記錄的關卡；存檔裡沒有的盤面視為全新（例如選擇「不合併」而捨棄本機紀錄）
 export function restoreBoards({ level = true } = {}) {
   const sb = Store.get(KEY_BOARDS, null);
+  if (sb && sb.boards && typeof sb.boards === 'object') migrateBoardData(sb);   // 舊存檔：獵戶的盤面、組合、所在關卡搬到 lv 12.1
   if (sb && sb.boards && typeof sb.boards === 'object') {
     const legacyB = sb.version !== 2;   // 舊版暫存盤面：換成新的拼圖代號
     const sg = sb.group;                // 有拼圖組合的關卡，上次使用哪一組（隨機挑戰：上次輸入的代碼）
@@ -91,7 +93,7 @@ export function restoreBoards({ level = true } = {}) {
     });
     // 隨機挑戰的盤面：存檔裡有哪些組合的盤面就還原哪些（鍵 = lv:原代碼；格式不對的略過）
     Object.keys(sb.boards).filter(k => isLocalBoardKey(k) && !(k in state.boards)).slice(0, KEEP_RANDOM + 4).forEach(k => {
-      const L = LEVELS[keyLv(k) - 1];
+      const L = levelOf(keyLv(k));
       if (L.codec.isCanon(keyGrp(k))) state.boards[k] = freshPieces(keyLv(k), keyGrp(k));
     });
     Object.keys(state.boards).forEach(k => {     // 鍵：lv，或有拼圖組合的「lv:組合」
@@ -99,7 +101,7 @@ export function restoreBoards({ level = true } = {}) {
       const next = b ? fromNative(sanitizeNative(legacyB ? legacyBoard(b) : b, k), keyLv(k)) : freshPieces(keyLv(k), keyGrp(k));
       if (JSON.stringify(next) !== JSON.stringify(state.boards[k])) { state.boards[k] = next; state.hist[k] = []; }   // 盤面被換掉：舊的「返回上一步」紀錄作廢
     });
-    if (level && LEVELS[Number(sb.level) - 1]) state.level = Number(sb.level);
+    if (level && levelOf(Number(sb.level))) state.level = Number(sb.level);
   }
   seedSig();
 }

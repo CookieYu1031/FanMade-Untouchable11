@@ -1,5 +1,4 @@
 /* English strings (level names live in data/levels.json) */
-import { grpLabel } from '../../core/roman.js';
 
 export default {
     // ── 共通 / ヘッダー・ツールチップ ──
@@ -7,7 +6,7 @@ export default {
     'tip.settings':'Settings',
     'tip.help':'How to play',
     'tip.special':'Level info',
-    'tip.group':'Choose piece set',
+    'tip.group':'Star chart',
     'tip.stats':'Statistics',
     'tip.undo':'Undo (Z)',
     'tip.reset':'Reset board',
@@ -49,11 +48,9 @@ export default {
     // ── 拼圖盤 ──
     'tray.title':'Pieces',
 
-    // ── 拼圖組合（皇冠挑戰） ──
-    'grp.title':'Piece sets',
-    'grp.tag':k => `Set ${grpLabel(k)}`,
-    'grp.n':n => `${n} pcs`,
-    'grp.solved':'Solved',
+    // ── 拼圖組合（摘星挑戰：星圖） ──
+    'grp.title':'Star chart',
+    'grp.solved':'Lit',
 
     // ── Random Challenge ──
     'tip.random':'Draw a random piece set',
@@ -108,7 +105,6 @@ export default {
     'rank.public':'Once signed in, your nickname and score are shown publicly on the leaderboard.',
     'ri.title':'Scoring formulas',
     'ri.extra':'Extra levels',
-    'ri.crown':n=>`${n}-piece set`,
     'ri.cols':['Level','First solve','All solved (cap)'],
     'ri.pcols':['Part','Share','Points'],
     'ri.theory':'Theoretical max',
@@ -127,12 +123,14 @@ export default {
     'sp.desc.h9':'Master Challenge',
     'sp.desc.h10':'Hazmat Cargo',
     'sp.desc.h11':'Hazmat Cargo 2',
-    'sp.desc.h12':'Crown Challenge',
+    'sp.desc.h12':'Dipper Challenge',
+    'sp.desc.h12.1':'Orion Challenge',
     'sp.desc.h13':'Random Challenge',
     'sp.desc.9':'<ul class="splist"><li>A spin-off designed by Carl Hoff based on "Untouchable 11"</li><li>Uses a 12x12 board and 11 pieces</li><li>Only 2 solutions</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>A puzzle designed by Carl Hoff</li><li>Uses an 11x11 board and 9 pieces</li><li>Only 1 unique solution, yet 3,761 near solutions</li></ul>',
     'sp.desc.11':'<ul class="splist"><li>A sequel designed by Carl Hoff based on "Hazmat Cargo"</li><li>Uses a 12*12 board and 9 pieces (heptominoes)</li><li>Again only 1 unique solution, but the near solutions soar to a staggering 26,226</li></ul>',
-    'sp.desc.12':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 14 different piece sets</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find earns a crown</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 7 different piece sets (11 pieces each)</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find lights up a star; neighboring stars join up into the Big Dipper</li></ul>',
+    'sp.desc.12.1':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 7 different piece sets (12 pieces each)</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find lights up a star; neighboring stars join up into Orion</li></ul>',
     'sp.desc.13':'<ul class=\"splist\"><li>A level designed from the conclusion in &quot;<a href=\"https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Untouchable 11</a>&quot;: on an 11x11 board, when 9 pieces are chosen from the 21 pieces, exactly one set has a unique solution, and every other set has multiple solutions</li><li>Uses an 11x11 board and randomly picks 9 of the 20 pieces (excluding the &quot;Hazmat Cargo&quot; set): 167,960 possible sets in total</li><li>Press the dice to draw a random set and play it; share the code with other players and they can take on the same set</li><li>You can also type any 4 characters (letters, digits or Chinese) and they will map to one of the sets</li><li>Solved puzzles are collected, but they do not earn leaderboard points</li></ul>',
 
     // ── 重置版圖視窗 ──

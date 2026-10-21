@@ -1,10 +1,8 @@
 /* 關卡選擇列（Lv1~8 與獨立關卡） */
 /* ============ 難度列 ============ */
-/* 全部關卡在同一個格線：中、大視窗（>= 641px）一行 8 格，小視窗（<= 640px）一行 4 格；.wide（大師 / 皇冠 / 隨機挑戰）佔兩格寬
-   額外關卡順序：大師(2) 危險貨物(1) 危險貨物2(1) 皇冠(2) 隨機(2)
-   中大視窗：2+1+1+2+2 = 8，剛好佔滿第二行；小視窗：大師/危險/危險2 = 4（第三行）、皇冠/隨機 = 4（第四行） */
-.levels{margin-bottom:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.lv.wide{grid-column:span 2}
+/* 全部關卡在同一個格線：中、大視窗（>= 641px）一行 8 格，小視窗（<= 640px）一行 4 格（每個按鈕一格寬）
+   額外關卡順序：大師挑戰、隨機挑戰、摘星:北斗、摘星:獵戶、危險貨物、危險貨物2（中大視窗：第二行 6 個；小視窗：第三行 4 個、第四行 2 個） */
+.levels{margin-bottom:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:1fr;gap:8px}   /* 每一列等高：任何按鈕換行都不會讓高度不一致 */
 @media (min-width:641px){.levels{grid-template-columns:repeat(8,minmax(0,1fr))}}
 .lv{border:0;border-radius:14px;padding:8px 2px;cursor:pointer;color:#2B2E4A;text-align:center;
   background:var(--c);opacity:.62;position:relative;white-space:nowrap;

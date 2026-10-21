@@ -3,7 +3,7 @@
  * 精度：所有分數內部一律用「整數 × 0.0001」（簡稱 u4）計算、儲存與排序，天然破同分；
  *       畫面只顯示無條件捨去後的整數（不提供查看小數位的方式）。
  * 這個檔案不碰畫面與網路，只負責「解答冊 → 分數」。 */
-import { LEVELS } from './config.js';
+import { levelOf } from './config.js';
 import { solvedGroups } from '../state/state.js';
 
 export const FULL = 10000;              // 兩個榜的理論滿分
@@ -43,7 +43,7 @@ export function baseScore(cs) {
 }
 
 // ---- 大師榜的額外關卡（上限合計 4000）----
-const finite = (F, M, N) => n => {          // 有限次方收斂（皇冠挑戰兩組共用）
+const finite = (F, M, N) => n => {          // 有限次方收斂（摘星挑戰兩關共用）
   n = Math.max(0, Math.min(Math.floor(n) || 0, N));
   if (n === 0) return 0;
   if (n >= N) return M;
@@ -51,8 +51,8 @@ const finite = (F, M, N) => n => {          // 有限次方收斂（皇冠挑戰
 };
 export const EXTRA = [
   { key:'master', lv:9,  N:2, M:470,  table:[0, 300, 470] },                          // 大師挑戰：首通 300、全清 470（第 2 組 +170）
-  { key:'crown11', lv:12, size:11, N:7, F:300, M:1200, f:finite(300, 1200, 7) },     // 皇冠挑戰 11 片組（每組一個唯一解）
-  { key:'crown12', lv:12, size:12, N:7, F:350, M:1400, f:finite(350, 1400, 7) },     // 皇冠挑戰 12 片組
+  { key:'star', lv:12,   N:7, F:300, M:1200, f:finite(300, 1200, 7) },              // 摘星:北斗（11 片 7 組，每組一個唯一解）
+  { key:'star', lv:12.1, N:7, F:350, M:1400, f:finite(350, 1400, 7) },              // 摘星:獵戶（12 片 7 組）
   { key:'hazmat', lv:10, N:1, M:380 },                                                // 危險貨物
   { key:'hazmat2', lv:11, N:1, M:550 },                                               // 危險貨物 2
 ];
@@ -73,20 +73,16 @@ export function computeScores(book) {
   });
   const c4 = toU4(sum), cs = c4 / U4, base = baseScore(cs);
 
-  // 額外關卡：皇冠挑戰的 n = 已解出幾組拼圖組合（依每組拼圖片數分成 11 片組 / 12 片組）
-  const crown = LEVELS.find(L => L.crown), crownList = crown ? list(crown.lv) : [];
-  const solved = crown ? solvedGroups(crown, crownList) : new Set();
-  const gsize = new Map((crown ? crown.groups : []).map(g => [g.key, g.ids.length]));
-  const cnt = size => [...solved].filter(k => gsize.get(k) === size).length;
+  // 額外關卡：摘星挑戰的 n = 該關已解出幾組拼圖組合（北斗 = lv 12、獵戶 = lv 12.1，各 7 組）
   let extra = 0, mt = ct;
   EXTRA.forEach(e => {
     const l = list(e.lv); l.forEach(it => { mt = Math.max(mt, Number(it.time) || 0); });
     if (e.key === 'master') extra += e.table[Math.min(l.length, e.N)];
-    else if (e.key === 'crown11' || e.key === 'crown12') extra += e.f(cnt(e.size));
+    else if (e.key === 'star') extra += e.f(solvedGroups(levelOf(e.lv), l).size);
     else extra += l.length >= 1 ? e.M : 0;
   });
   const m4 = toU4(base + extra);
-  const near = Object.keys(nr).reduce((a, lv) => a + (Array.isArray(nr[lv]) ? nr[lv].length : 0), 0);
+  const near = Object.keys(nr).reduce((a, lv) => a + (levelOf(lv) && levelOf(lv).near && Array.isArray(nr[lv]) ? nr[lv].length : 0), 0);   // 沒有近似解的關卡（摘星挑戰）不計
   return { c4, m4, base4: toU4(base), extra4: toU4(extra), near, ct, mt, levels };
 }
 

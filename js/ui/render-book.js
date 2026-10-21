@@ -3,10 +3,9 @@ import { t } from '../i18n/i18n.js';
 import { settings, saveSettings } from '../state/settings.js';
 import { rotateCW } from '../core/matrix.js';
 import { loadBook } from '../storage/book.js';
-import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups, itemTag } from '../state/state.js';
+import { state, curLevel, lvShort, nearTotal, colorOf, clamp, groupOfSig, solvedGroups, itemTag, starName } from '../state/state.js';
 import { $, els, escapeHtml } from './dom.js';
-import { cellRects, CROWN } from './svg.js';
-import { grpLabel } from '../core/roman.js';
+import { cellRects, STAR } from './svg.js';
 
 // 解答縮圖
 function sigSVG(sig) {
@@ -24,9 +23,9 @@ function sigSVG(sig) {
 const SVG_ATTR = 'viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
 export const EYE = `<svg ${SVG_ATTR}><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 export const EYE_OFF = `<svg ${SVG_ATTR}><path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.7A17 17 0 0 0 2 12s3.6 7 10 7a9.7 9.7 0 0 0 4.2-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>`;
-// 皇冠進度：每個拼圖組合一個皇冠，解出該組合的唯一解就點亮（書冊與統計表共用）
-export function crownsHTML(L, solved) {
-  return `<div class="crowns">${L.groups.map(g => `<i class="${solved.has(g.key) ? 'on' : ''}" title="${t('grp.tag', g.key)}">${CROWN}</i>`).join('')}</div>`;
+// 星星進度：每個拼圖組合一顆星，解出該組合的唯一解就點亮（書冊與統計表共用）
+export function starsHTML(L, solved) {
+  return `<div class="stars">${L.groups.map(g => `<i class="${solved.has(g.key) ? 'on' : ''}" title="${escapeHtml(starName(g.key))}">${STAR}</i>`).join('')}</div>`;
 }
 // 解答 / 近似解的顯示順序：玩家最新解出的在最左側（依收錄時間新→舊；時間相同則後收錄的在前）。縮圖與解答檢視共用
 export const newestFirst = list => list.map((it, i) => [it, i]).sort((a, b) => (b[0].time || 0) - (a[0].time || 0) || b[1] - a[1]).map(x => x[0]);
@@ -36,8 +35,8 @@ const MORE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke
 function thumbsHTML(list, near) {
   const L = curLevel();
   const items = newestFirst(list).slice(0, 60).map(it => {
-    const gk = groupOfSig(L, it.sig), tag = L.random ? itemTag(L, it) : gk ? t('grp.tag', gk) : '';   // 隨機挑戰：標註代碼（如 3K7Z、GOOD(3K7Z)）
-    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${tag ? '　' + escapeHtml(tag) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag${L.random ? ' code' : ''}">${L.random ? escapeHtml(tag) : grpLabel(gk)}</span>` : ''}</button>`;
+    const gk = groupOfSig(L, it.sig), tag = L.random ? itemTag(L, it) : gk ? starName(gk) : '';   // 隨機挑戰：標註代碼（如 3K7Z、GOOD(3K7Z)）
+    return `<button class="thumb" data-key="${it.sig}"${near ? ' data-near="1"' : ''} title="${t('book.view')}${tag ? '　' + escapeHtml(tag) : ''}">${sigSVG(it.disp || it.sig)}${gk ? `<span class="gtag${L.random ? ' code' : ''}">${escapeHtml(L.random ? tag : starName(gk))}</span>` : ''}</button>`;
   }).join('');
   return `<div class="tl">${items}</div><button class="tmore" type="button" hidden>${MORE}</button>`;
 }
@@ -83,9 +82,9 @@ export function renderBook() {
   hb.setAttribute('aria-label', hb.title);
   hb.setAttribute('aria-pressed', String(hidden));
 
-  const solved = L.crown ? solvedGroups(L, list) : null;   // 皇冠挑戰：收錄數 = 已解出幾種拼圖組合（每組只有 1 組唯一解）
+  const solved = L.groups ? solvedGroups(L, list) : null;   // 摘星挑戰：收錄數 = 已解出幾顆星（每組拼圖只有 1 組唯一解）
   let info = `<div class="book-count">${t('book.count', lvShort(L), (solved ? solved.size : list.length).toLocaleString(), L.total == null ? null : L.total.toLocaleString())}</div>`, thumbs = '';
-  if (solved) info += crownsHTML(L, solved);
+  if (solved) info += starsHTML(L, solved);
   if (hidden && list.length) info += `<p class="empty">${t('book.hidden')}</p>`;   // 只遮蔽「有收錄」的區塊；空的區塊照常顯示空白提示
   else if (!list.length) info += `<p class="empty">${t('book.empty')}</p>`;
   else thumbs = thumbsHTML(list, false);

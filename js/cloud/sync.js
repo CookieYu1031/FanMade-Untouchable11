@@ -18,6 +18,8 @@ import { readBoardsStore, persistBoards } from '../storage/boards.js';
 import { settings, sanitizeSettings, saveSettingsLocal } from '../state/settings.js';
 import { computeScores, challengeKey, masterKey } from '../core/score.js';
 import { isLocalBoardKey, syncRandomKeys } from '../state/state.js';
+import { splitStarBook, migrateBoardData, isMovedBoardKey } from '../storage/migrate.js';
+import { levelOf } from '../core/config.js';
 
 const CHUNK = 400, RETRY = 15000;
 const MERGE_DELAY = 200;      // 主動同步：同一瞬間的多個變動合併成一次（0.2 秒）
@@ -66,7 +68,7 @@ function bookToDocs(book) {   // Map: 文件 id -> JSON 字串（用字串比對
 }
 function docsToBook(datas) {
   const b = { version: 2, levels: {}, near: {} };
-  datas.filter(d => d && Number.isInteger(d.lv) && Number.isInteger(d.k) && Array.isArray(d.items))
+  datas.filter(d => d && Number.isFinite(d.lv) && Number.isInteger(d.k) && Array.isArray(d.items))
     .sort((x, y) => x.k - y.k)
     .forEach(d => { const root = d.near ? b.near : b.levels; (root[d.lv] = root[d.lv] || []).push(...d.items.map(normItem).filter(Boolean)); });
   return b;
@@ -118,7 +120,7 @@ function boardDiff() {
     diff[k] = boards[k];
   }
   // 隨機挑戰：雲端只留一份。雲端上的隨機盤面與目前代碼不符（玩家換了代碼）就刪除
-  const dels = [...bmirror.keys()].filter(k => isLocalBoardKey(k) && !(k in boards));
+  const dels = [...bmirror.keys()].filter(k => (isLocalBoardKey(k) && !(k in boards)) || isMovedBoardKey(k));   // 另外：皇冠挑戰拆成兩關之前的舊鍵（12:a~g）一併從雲端刪除
   const metaDiff = metaOf(lb) !== bmetaMirror && lb.lt > 0;
   return Object.keys(diff).length || dels.length || metaDiff ? { lb, diff, dels } : null;
 }
@@ -289,8 +291,9 @@ function flush() {
 // 設定 / 解答冊
 async function reconcileBook({ fs, db, uid, prev, same, cloudRev, local }) {
   const [bs, ss] = await Promise.all([fs.getDocs(fs.collection(db, 'users', uid, 'book')), fs.getDoc(fs.doc(db, 'users', uid, 'data', 'settings'))]);
-  const cloudBook = docsToBook(bs.docs.map(d => d.data()));
-  mirror = bookToDocs(cloudBook);
+  const rawBook = docsToBook(bs.docs.map(d => d.data()));
+  mirror = bookToDocs(rawBook);   // mirror = 雲端實際的文件內容
+  const cloudBook = splitStarBook(docsToBook(bs.docs.map(d => d.data())));   // 舊資料：皇冠挑戰的獵戶解答搬到 lv 12.1（與 mirror 不同 → 會補傳）
   const lc = countBook(local), localHas = lc.sol + lc.near > 0;
   let book = cloudBook, merge = true;
   if (!same && localHas) { merge = await handlers.askMerge(lc); if (merge) book = mergeBooks(cloudBook, local); }
@@ -324,7 +327,7 @@ async function reconcileBoards({ fs, db, uid, merge, pullLevel, cloudBrev }) {
     outBoards[k] = e.p; outTimes[k] = e.t;
   }
   let level = lb.level, group = lb.group, lt = lb.lt, takeLevel = false;
-  if (cloudMeta.lt > lb.lt && Number.isInteger(cloudMeta.level)) {
+  if (cloudMeta.lt > lb.lt && levelOf(cloudMeta.level)) {
     group = { ...lb.group, ...cloudMeta.group }; lt = cloudMeta.lt;
     if (pullLevel) { level = cloudMeta.level; takeLevel = true; }
   }
@@ -332,7 +335,9 @@ async function reconcileBoards({ fs, db, uid, merge, pullLevel, cloudBrev }) {
     const keep = readBoardsStore();
     Object.keys(keep.boards).filter(k => isLocalBoardKey(k) && !(k in outBoards)).forEach(k => { outBoards[k] = keep.boards[k]; outTimes[k] = keep.times[k] || 0; });
   }
-  Store.set(KEY_BOARDS, { version: 2, level, group, boards: outBoards, times: outTimes, lt });
+  const mig = migrateBoardData({ level, group: { ...group }, boards: outBoards, times: outTimes });   // 舊資料：獵戶的盤面鍵 12:a → 12.1:a
+  Store.set(KEY_BOARDS, { version: 2, level: mig.level, group: mig.group, boards: mig.boards, times: mig.times, lt });
+  level = mig.level;
   setSync({ uid, brev: cloudBrev, bdirty: false });
   return { applied: true, level: takeLevel };
 }

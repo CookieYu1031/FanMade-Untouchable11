@@ -34,8 +34,8 @@ export function evaluate() {
   const isNew = addSolution(book, L.lv, sig, null, disp, settings.nick, false, typed && typed !== curGroup(L) ? typed : null);
   if (isNew) saveBook(book);
   renderLevels(); renderBook();
-  const list = book.levels[L.lv] || [], n = L.crown ? solvedGroups(L, list).size : list.length;   // 皇冠挑戰：第幾個皇冠
-  const gt = curTag(L);   // 皇冠挑戰：「A組」；隨機挑戰：代碼
+  const list = book.levels[L.lv] || [], n = L.groups ? solvedGroups(L, list).size : list.length;   // 摘星挑戰：第幾顆星
+  const gt = curTag(L);   // 摘星挑戰：星名（如「天樞」）；隨機挑戰：代碼
   renderBoard();
   toast(isNew ? t('toast.new', lvShort(L) + (gt ? ' ' + gt : ''), n) : t('toast.dup'));
   if (isNew) Sfx.solve();

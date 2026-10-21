@@ -1,40 +1,45 @@
-/* 皇冠挑戰：拼圖組合視窗、解答縮圖的組合標籤、皇冠進度 */
+/* 摘星挑戰：星圖視窗、解答縮圖的星名標籤、星星進度 */
 
-/* ---- 拼圖組合視窗：每排一種片數（11 / 12），每個組合一顆膠囊按鈕 ---- */
+/* ---- 星圖視窗：一片星空，七顆星依星座位置排列（星空區長寬比固定 100:62，北斗與獵戶的視窗大小一致） ---- */
 #groupModal .box{width:min(520px,100%)}
-.grpbody{padding:16px 18px 14px}
-.grow{display:flex;align-items:center;gap:14px}
-.grow .gn{flex:none;width:46px;white-space:nowrap;text-align:center;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
-.gbtns{flex:1;min-width:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
-.gbtn{border:0;border-radius:999px;padding:8px 0;font-size:16px;font-weight:700;line-height:1.3;background:var(--bg);color:var(--ink);cursor:pointer}
-.gbtn:hover{box-shadow:inset 0 0 0 2px var(--ink)}
-.gbtn.done{background:#FBE08A;color:#2B2E4A}                 /* 已解出該組合的唯一解：黃底 + 皇冠（取代字母） */
-.gbtn.done svg{display:block;width:21px;height:21px;margin:0 auto}
-.gbtn.done path,.gbtn.done rect{fill:#F7C948;stroke:#8A5A00;stroke-width:1.5}
-.gbtn.on,.gbtn.on:hover{box-shadow:inset 0 0 0 3px var(--ink)}   /* 目前使用的組合（同關卡按鈕的選取樣式） */
-.gbtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.gsep{border:0;border-top:1px solid var(--line);margin:12px 0}
+.grpbody{padding:14px 16px 16px}
+.sky{position:relative;aspect-ratio:100/62;border-radius:14px;overflow:hidden;color:#E8ECFA;
+  background:radial-gradient(120% 100% at 50% 0%,#26325E 0%,#161C3A 55%,#0D1226 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.sky-bg{position:absolute;inset:0;width:100%;height:100%}
+.sky-bg .dust{fill:#fff}
+.sky-bg .links line{stroke:#F7C948;stroke-width:1.6;stroke-linecap:round;opacity:.85;vector-effect:non-scaling-stroke}
+.sky-cap{position:absolute;left:12px;top:8px;right:12px;display:flex;justify-content:space-between;align-items:baseline;font-size:12px;letter-spacing:.04em;color:#9DA6C8;pointer-events:none}
+.sky-cap b{font-variant-numeric:tabular-nums;color:#C9D0EC}
+.sk{position:absolute;transform:translate(-50%,-50%);border:0;background:none;padding:0;margin:0;width:26px;height:26px;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent}
+.sk svg{display:block;width:100%;height:100%;overflow:visible}
+.sk path{fill:#7C839B;stroke:#A9AFC4;stroke-width:1;transition:fill .2s}   /* 還沒解出：灰色星星 */
+.sk .sn{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:3px;font-size:14px;font-weight:700;white-space:nowrap;line-height:1.2;color:#B4BBD4;
+  text-shadow:0 0 3px #0D1226,0 0 3px #0D1226,0 0 6px #0D1226}
+.sk.lit path{fill:#FFD65A;stroke:#FFF1B8;filter:drop-shadow(0 0 5px rgba(255,214,90,.9))}   /* 已解出唯一解：點亮 */
+.sk.lit .sn{color:#FFE9A6}
+.sk:hover path{stroke:#fff}
+.sk.on::before{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid #fff;pointer-events:none}   /* 目前使用的組合：外圈 */
+.sk:focus-visible{outline:3px solid #fff;outline-offset:3px;border-radius:50%}
 @media (max-width:420px){
-  .grpbody{padding:14px 12px 12px}
-  .grow{gap:6px}.grow .gn{width:40px;font-size:16px}
-  .gbtns{gap:4px}
+  .grpbody{padding:12px 10px 12px}
+  .sk{width:22px;height:22px}
+  .sk .sn{font-size:12px;margin-left:2px}
 }
 
 /* ---- 圖板標題列：關卡名稱 + 組合 + 尺寸 ---- */
 #levelTitle .lvg{margin-right:1em;font-weight:500;white-space:nowrap}
 
-/* ---- 解答 / 近似解縮圖：左上角標註這組解答使用的拼圖組合 ---- */
+/* ---- 解答 / 近似解縮圖：左上角標註這組解答使用的拼圖組合（星名） ---- */
 .thumb{position:relative}
 .thumb .gtag{position:absolute;left:5px;top:5px;min-width:20px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center;
   background:var(--ink);color:var(--panel);font-size:12px;font-weight:700;line-height:1;pointer-events:none}
 
-/* ---- 皇冠進度：每種拼圖組合一個皇冠，解出該組合的唯一解就點亮 ---- */
-.crowns{display:flex;flex-wrap:wrap;gap:4px}
-.crowns i{display:block;width:18px;height:18px}
-.crowns svg{display:block;width:100%;height:100%}
-.crowns path,.crowns rect{fill:var(--bg);stroke:var(--line);stroke-width:1.4}
-.crowns i.on path,.crowns i.on rect{fill:#F7C948;stroke:#D79B12}
-.book-count+.crowns{margin-top:8px}
-/* 統計表：兩排各 7 個（上排 = 11 片的 Ⅰ~Ⅶ，下排 = 12 片的 ⅰ~ⅶ） */
-.pg .crowns{display:grid;grid-template-columns:repeat(7,max-content);gap:3px 4px}
-.pg .crowns i{width:16px;height:16px}
+/* ---- 星星進度：每種拼圖組合一顆星，解出該組合的唯一解就點亮 ---- */
+.stars{display:flex;flex-wrap:wrap;gap:4px}
+.stars i{display:block;width:18px;height:18px}
+.stars svg{display:block;width:100%;height:100%}
+.stars path{fill:var(--bg);stroke:var(--line);stroke-width:1.4}
+.stars i.on path{fill:#F7C948;stroke:#D79B12}
+.book-count+.stars{margin-top:8px}
+.pg .stars{flex-wrap:nowrap;gap:3px}   /* 統計表：7 顆星排一列 */
+.pg .stars i{width:16px;height:16px}

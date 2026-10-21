@@ -12,7 +12,7 @@ const solHead = L => L.random ? lvLong(L) : (L.title || lvLong(L));   // 隨機�
 function showSolution(list, idx, near) {
   const L = curLevel(), item = list[idx];
   state.viewItem = { item, L, near, list, idx };
-  $('solBar').style.background = LV_COLORS[L.lv - 1]; $('solBar').style.color = LV_INK[L.lv - 1];
+  $('solBar').style.background = LV_COLORS[L.lv]; $('solBar').style.color = LV_INK[L.lv];
   const gt = itemTag(L, item);   // 有拼圖組合的關卡：標題標註這組解答使用的組合（如「A組」；隨機挑戰標註代碼）
   $('solTitle').textContent = t('sol.title', solHead(L) + (gt ? ' ' + gt : ''), near);
   $('solView').innerHTML = solutionSVG(item.disp || item.sig, Math.min(window.innerWidth - 96, 540), Math.max(240, window.innerHeight * 0.55));

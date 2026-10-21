@@ -1,6 +1,6 @@
 /* 各關卡收錄進度表（正解；開啟「近似解」開關時，同一關卡再多一列近似解）
  *   分頁：第 1 頁 = Lv1~8；第 2 頁 = 獨立關卡（大師挑戰、危險貨物…，需開啟額外關卡）
- *   小視窗（<= 640px，手機直向）：「更多資訊」開啟時，收錄進度只顯示 % 數（不放進度條 / 圓點 / 皇冠），整張表不需要左右滑動；
+ *   小視窗（<= 640px，手機直向）：「更多資訊」開啟時，收錄進度只顯示 % 數（不放進度條 / 圓點 / 星星），整張表不需要左右滑動；
  *     視窗高度放不下 Lv1~8 整頁時，自動改成 Lv1~4 / Lv5~8 / 獨立關卡三頁
  *   換頁：視窗下方的左右箭頭（或鍵盤左右鍵），做法與解答檢視相同；沒有上（下）一頁時箭頭不可點按 */
 import { t } from '../../i18n/i18n.js';
@@ -9,7 +9,7 @@ import { loadBook } from '../../storage/book.js';
 import { settings, saveSettings } from '../../state/settings.js';
 import { state, lvTag, nearTotal, solvedGroups } from '../../state/state.js';
 import { $, pageDir } from '../dom.js';
-import { EYE, EYE_OFF, crownsHTML } from '../render-book.js';
+import { EYE, EYE_OFF, starsHTML } from '../render-book.js';
 import { isSmall } from '../viewport.js';
 
 function fmtPct(n, total) {   // 無條件捨去到小數點後 2 位；不足 0.01% 顯示 0.00%
@@ -27,12 +27,12 @@ const SOLID = 160;   // 表格區高度上限 = 視窗高度 - SOLID（與 index
 // 正解那一列的三格：解答組數、收錄組數、收錄進度
 function exactCells(L, book, compact) {
   const list = book.levels[L.lv] || [];
-  const solved = L.crown ? solvedGroups(L, list) : null;   // 皇冠挑戰：收錄組數 = 已解出幾種拼圖組合
+  const solved = L.groups ? solvedGroups(L, list) : null;   // 摘星挑戰：收錄組數 = 已解出幾顆星（幾種拼圖組合）
   const got = solved ? solved.size : list.length;
   const n = L.total == null ? got : Math.min(got, L.total);
   const prog = L.total == null ? '<span class="pct">—</span>'     // 總組數未知：只顯示收錄數
     : compact ? `<span class="pct">${fmtPct(n, L.total)}</span>`   // 小視窗：只顯示 % 數
-    : solved ? crownsHTML(L, solved)                     // 每種拼圖組合一個皇冠
+    : solved ? starsHTML(L, solved)                      // 每種拼圖組合一顆星
     : L.lv <= 6
     ? `<div class="pbar"><i style="width:${n / L.total * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, L.total)}</span>`
     : `<div class="dots">${Array.from({ length: L.total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;
@@ -51,9 +51,9 @@ function nearCells(L, book, compact) {
 // 某一頁的表格內容（表頭 + 各關卡列）
 function tableHTML(page, near, book, all, compact) {
   const head = `<thead><tr><th>${t('stat.lv')}</th><th>${t(near ? 'stat.totalNear' : 'stat.total')}</th><th>${t('stat.got')}</th><th class="c-prog">${t('stat.progress')}</th></tr></thead>`;
-  const tag = (L, span) => { const c = LV_COLORS[L.lv - 1]; return `<td${span > 1 ? ` rowspan="${span}"` : ''}><span class="lvtag" style="background:${c};color:${LV_INK[L.lv - 1]}">${lvTag(L)}</span></td>`; };
+  const tag = (L, span) => { const c = LV_COLORS[L.lv]; return `<td${span > 1 ? ` rowspan="${span}"` : ''}><span class="lvtag" style="background:${c};color:${LV_INK[L.lv]}">${lvTag(L)}</span></td>`; };
   const rows = all[page].map(L => {
-    const st = `style="--c:${LV_COLORS[L.lv - 1]}"`;
+    const st = `style="--c:${LV_COLORS[L.lv]}"`;
     if (!(near && L.near)) return `<tr ${st}>${tag(L, 1)}${exactCells(L, book, compact)}</tr>`;   // 沒有近似解的關卡維持一列
     return `<tr class="g1" ${st}>${tag(L, 2)}${exactCells(L, book, compact)}</tr><tr class="nr" ${st}>${nearCells(L, book, compact)}</tr>`;   // 關卡標籤佔兩列高度
   }).join('');

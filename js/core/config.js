@@ -14,11 +14,14 @@ export const PIECE = {};           // 代號 → 拼圖物件（所有類別共�
 const FAMILIES = {};              // 類別代號（hexo、hepto…）→ { key, name, nameEn, cells, byNo, idOf }
 export const COLORS = {};          // 色名 → { fill, edge }
 export const SLOT_COLORS = {};     // 槽位數 → 色名陣列
-export const LEVELS = [];          // 關卡陣列（索引 = lv - 1；lv 是存檔用的固定編號）
+export const LEVELS = [];          // 關卡陣列（依 levels.json 的撰寫順序；lv 是存檔用的固定編號，可以是小數如 12.1，一律用 levelOf(lv) 取關卡）
 export const LEVEL_ORDER = [];     // 關卡「顯示順序」（按鈕列、統計表依此排列；由 levels.json 的 order 決定）
-export const LV_COLORS = [];       // 各關卡的代表色
-export const LV_STOPS = [];       // 漸層色關卡的色碼陣列（一般關卡為 null；畫在 canvas 時用，見 gradFill）
-export const LV_INK = [];          // 各關卡色塊上的文字色
+const BY_LV = {};                  // lv → 關卡
+export const levelOf = lv => BY_LV[lv];
+export const LV_COLORS = {};       // lv → 各關卡的代表色
+export const LV_STOPS = {};        // lv → 漸層色關卡的色碼陣列（一般關卡為 null；畫在 canvas 時用，見 lvFill）
+export const LV_INK = {};          // lv → 各關卡色塊上的文字色
+export const STAR_NAMES = {};      // 摘星挑戰：拼圖組合代號 → { zh, en, ja } 星名（各關的組合代號不重複，見 buildLevels）
 export const CONFIG = { defaultTitle: 'Untouchable 11' };
 
 // 拼圖代號：解答簽章（盤面字元網格）以此單字元記錄每格屬於哪一片拼圖。
@@ -78,16 +81,18 @@ function buildPieces(data) {
 
 /* ---- 關卡：槽位 → 拼圖號碼（任何組別的拼圖都可使用） ----
  * 一般關卡：pieces = 各槽位的拼圖號碼。
- * 有「拼圖組合」的關卡（皇冠挑戰）：寫 groups = [{ key, pieces }, …]；L.pieces / L.ids 預設為第一組，
- *   實際使用哪一組由 state.group 決定（見 state.js 的 idsOf / curGroup）。
+ * 有「拼圖組合」的關卡（摘星挑戰）：寫 groups = [{ key, pieces, names }, …]；L.pieces / L.ids 預設為第一組，
+ *   實際使用哪一組由 state.group 決定（見 state.js 的 idsOf / curGroup）。names = 這組（一顆星）的各語言名稱；
+ *   sky = { stars:{ 組合代號:[x, y] }, lines:[[組合代號, 組合代號], …] }：星圖上每顆星的位置（0~100 × 0~70）與星座連線。
  * 隨機挑戰：寫 random = { pool, pick, exclude }；組合由玩家的 4 碼代碼決定（state.group 存玩家輸入的代碼）。 */
 function buildLevels(data) {
   const sets = data.slotSets || {};
   CONFIG.defaultTitle = data.defaultTitle || CONFIG.defaultTitle;
 
-  LEVELS.length = 0; LV_COLORS.length = 0; LV_STOPS.length = 0; LV_INK.length = 0; LEVEL_ORDER.length = 0;
+  LEVELS.length = 0; LEVEL_ORDER.length = 0;
+  [BY_LV, LV_COLORS, LV_STOPS, LV_INK, STAR_NAMES].forEach(o => Object.keys(o).forEach(k => delete o[k]));
   data.levels.forEach((src, i) => {
-    if (src.lv !== i + 1) throw new Error(`levels.json：第 ${i + 1} 關的 lv 應為 ${i + 1}`);
+    if (!Number.isFinite(src.lv) || BY_LV[src.lv]) throw new Error(`levels.json：第 ${i + 1} 關的 lv 缺少或重複`);
     const famKey = src.family || HEXO, fam = FAMILIES[famKey];   // 關卡使用哪一類拼圖（省略 = 六格骨牌）
     if (!fam) throw new Error(`levels.json：第 ${src.lv} 關的 family「${famKey}」不存在`);
     const check = (raw, what) => {
@@ -127,22 +132,31 @@ function buildLevels(data) {
         compo.add(sig);
         return { key: g.key, pieces: nums, ids };
       });
+      src.groups.forEach(g => {   // 星名（摘星挑戰）：各關的組合代號不可重複，星名才能只用代號查
+        if (STAR_NAMES[g.key]) throw new Error(`levels.json：組合代號 ${g.key} 在不同關卡重複`);
+        STAR_NAMES[g.key] = g.names || {};
+      });
+      if (src.sky) {
+        const st = src.sky.stars || {};
+        if (groups.some(g => !Array.isArray(st[g.key]) || st[g.key].length !== 2)) throw new Error(`levels.json：第 ${src.lv} 關的 sky.stars 必須為每個組合寫一個 [x, y]`);
+        if ((src.sky.lines || []).some(l => !Array.isArray(l) || l.length !== 2 || !st[l[0]] || !st[l[1]])) throw new Error(`levels.json：第 ${src.lv} 關的 sky.lines 只能連接 sky.stars 裡有的組合`);
+      }
       L = { ...src, family: famKey, groups, pieces: groups[0].pieces, ids: groups[0].ids };
     } else {
       const nums = check(src.pieces, '');
       L = { ...src, family: famKey, pieces: nums, ids: nums.map(fam.idOf).join('') };
     }
-    LEVELS.push(L);
+    LEVELS.push(L); BY_LV[L.lv] = L;
     const stops = Array.isArray(src.color) && src.color.length > 1 ? src.color : null;   // color 寫成陣列 = 由左至右的漸層
-    LV_COLORS.push(stops ? `linear-gradient(90deg, ${stops.join(', ')})` : src.color);
-    LV_STOPS.push(stops);
-    LV_INK.push(src.ink || '#2B2E4A');
+    LV_COLORS[L.lv] = stops ? `linear-gradient(90deg, ${stops.join(', ')})` : src.color;
+    LV_STOPS[L.lv] = stops;
+    LV_INK[L.lv] = src.ink || '#2B2E4A';
   });
   // 顯示順序：預設 = lv 順序；levels.json 的 order 可以把新關卡排到中間（必須剛好列出每一關一次）
   const order = Array.isArray(data.order) ? data.order : LEVELS.map(L => L.lv);
-  if (order.length !== LEVELS.length || new Set(order).size !== order.length || order.some(lv => !LEVELS[lv - 1]))
+  if (order.length !== LEVELS.length || new Set(order).size !== order.length || order.some(lv => !BY_LV[lv]))
     throw new Error('levels.json：order 必須剛好列出每一關的 lv 一次');
-  order.forEach(lv => LEVEL_ORDER.push(LEVELS[lv - 1]));
+  order.forEach(lv => LEVEL_ORDER.push(BY_LV[lv]));
 }
 
 function buildColors(data) {
@@ -165,8 +179,8 @@ export async function loadConfig() {
 
 // 在 canvas 上用關卡代表色填滿矩形（漸層關卡由左至右；一般關卡為單色）
 export function lvFill(c, lv, x, y, w, h) {
-  const stops = LV_STOPS[lv - 1];
+  const stops = LV_STOPS[lv];
   if (stops) { const g = c.createLinearGradient(x, 0, x + w, 0); stops.forEach((s, i) => g.addColorStop(i / (stops.length - 1), s)); c.fillStyle = g; }
-  else c.fillStyle = LV_COLORS[lv - 1];
+  else c.fillStyle = LV_COLORS[lv];
   c.fillRect(x, y, w, h);
 }

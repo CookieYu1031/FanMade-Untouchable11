@@ -20,7 +20,7 @@ function syncButton() {
   const v = t(key); btn.title = v; btn.setAttribute('aria-label', v);
   btn.setAttribute('aria-pressed', String(state.immersive));
 }
-// 皇冠挑戰的「拼圖組合」按鈕、隨機挑戰的「代碼框 + 骰子」平時在拼圖盤標題列；沉浸模式沒有拼圖盤標題列，改放到圖板標題列、「關卡資訊」按鈕左側
+// 摘星挑戰的「星圖」按鈕、隨機挑戰的「代碼框 + 骰子」平時在拼圖盤標題列；沉浸模式沒有拼圖盤標題列，改放到圖板標題列、「關卡資訊」按鈕左側
 const grpBtn = $('btnGroup'), rndBox = $('rndBox'), helpBtn = $('btnHelp'), infoBtn = $('btnSpecial');
 function placeGroupBtn() {
   if (state.immersive) { infoBtn.parentNode.insertBefore(rndBox, infoBtn); infoBtn.parentNode.insertBefore(grpBtn, infoBtn); }

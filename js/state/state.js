@@ -1,11 +1,11 @@
 /* 遊戲狀態 —— 目前關卡、各關卡盤面、拼圖姿態與座標換算
  *   pieceState = { id, rot(0~3), flip(bool), placed(bool), x, y }  ← (x,y) 為矩陣左上角在底板的格座標 */
-import { LEVELS, PIECE, COLORS, SLOT_COLORS, CONFIG } from '../core/config.js';
+import { LEVELS, levelOf, PIECE, COLORS, SLOT_COLORS, STAR_NAMES, CONFIG } from '../core/config.js';
 import { orient, cellsOf } from '../core/matrix.js';
 import { getLang, t } from '../i18n/i18n.js';
 import { isTypedCode } from '../core/random-code.js';
 
-/* ---- 拼圖組合（皇冠挑戰：L.groups = [{ key, pieces, ids }]；其他關卡沒有） ----
+/* ---- 拼圖組合（摘星挑戰：L.groups = [{ key, pieces, ids }]；其他關卡沒有） ----
  * 同一關有多組拼圖，每組各自保留一份盤面與「返回上一步」紀錄；目前使用哪一組記在 state.group[lv]。
  * ---- 隨機挑戰（L.random / L.codec）：組合由 4 碼代碼決定 ----
  * state.group[lv] 存的是「玩家輸入（或骰子抽出）的代碼」，可以是任意 4 個字；真正的組合是它映射後的「原代碼」（curGroup）。
@@ -24,14 +24,14 @@ export const idsOf = (L, grp) => {
 };
 // 盤面存放的鍵：一般關卡 = lv；有組合的關卡 = 「lv:組合代號」（隨機挑戰：「lv:原代碼」）
 export const boardKey = (lv = state.level, grp) => {
-  const L = LEVELS[lv - 1];
+  const L = levelOf(lv);
   if (L.random) return `${lv}:${grp == null ? curGroup(L) : L.codec.canon(grp)}`;
   return L.groups ? `${lv}:${grp == null ? curGroup(L) : grp}` : String(lv);
 };
-export const keyLv  = key => parseInt(key, 10);
+export const keyLv  = key => parseFloat(key);   // lv 可以是小數（如 12.1），「12.1:a」→ 12.1
 export const keyGrp = key => String(key).includes(':') ? String(key).split(':')[1] : null;
 // 隨機挑戰的盤面鍵會隨玩家抽到的組合不斷增加：本機最多留 12 份，雲端只留「目前代碼」的那一份（見 storage/boards.js、cloud/sync.js）
-export const isLocalBoardKey = key => { const L = LEVELS[keyLv(key) - 1]; return !!(L && L.random); };
+export const isLocalBoardKey = key => { const L = levelOf(keyLv(key)); return !!(L && L.random); };
 // 隨機挑戰上雲端的盤面只有一份：目前代碼（原代碼）對應的那份；lb = 本機存檔（readBoardsStore 的結果）
 export const syncRandomKeys = lb => new Set(LEVELS.filter(L => L.random && isTypedCode(lb.group[L.lv])).map(L => `${L.lv}:${L.codec.canon(lb.group[L.lv])}`));
 export const allBoardKeys = () => LEVELS.flatMap(L => L.groups ? L.groups.map(g => boardKey(L.lv, g.key)) : [boardKey(L.lv)]);   // 隨機挑戰只有「目前的組合」那一份，其餘用到才建立（見 curPieces）
@@ -45,7 +45,11 @@ export function groupOfSig(L, sig) {
 }
 // 解答冊清單裡已經解出哪些組合
 export const solvedGroups = (L, list) => new Set((list || []).map(it => groupOfSig(L, it.sig)).filter(Boolean));
-export const grpTag = (L, key) => L.random ? (key || '') : (L.groups && key) ? t('grp.tag', key) : '';
+export const grpTag = (L, key) => L.random ? (key || '') : (L.groups && key) ? starName(key) : '';
+// 摘星挑戰：這組（一顆星）目前語言的名稱（北斗 = 天樞…；英 / 日文 = α UMa…；缺少該語言時用中文，再沒有就用代號）
+// 星圖上顯示的名稱：所有語言都用拜耳命名（α UMa…），沒有就用原名
+export const skyLabel = key => (STAR_NAMES[key] || {}).bayer || starName(key);
+export const starName = key => { const n = STAR_NAMES[key] || {}; return n[getLang()] || n.zh || key; };
 // 隨機挑戰的代碼標註：輸入的代碼與原代碼相同 → 「3K7Z」；不同 → 「GOOD(3K7Z)」（英文字母一律顯示大寫）
 const fmtTag = (typed, canon) => { const u = String(typed || '').toUpperCase(); return u && u !== canon ? `${u}(${canon})` : canon; };
 export const curTag = (L = curLevel()) => L.random ? fmtTag(typedOf(L), curGroup(L)) : grpTag(L, curGroup(L));   // 標題列用：目前這組
@@ -58,7 +62,7 @@ export const colorOf = (id, L = curLevel(), grp) => {
   return COLORS[names[Math.max(0, ids.indexOf(id)) % names.length]];
 };
 
-export const freshPieces = (lv, grp) => idsOf(LEVELS[lv - 1], grp).split('').map(id => ({ id, rot:0, flip:false, placed:false, x:0, y:0 }));
+export const freshPieces = (lv, grp) => idsOf(levelOf(lv), grp).split('').map(id => ({ id, rot:0, flip:false, placed:false, x:0, y:0 }));
 export const state = {
   level: 1,
   boards: {},          // 每個難度各自保留一份盤面，切換難度不會遺失進度（鍵見 boardKey：有拼圖組合的關卡每一組各一份）
@@ -80,7 +84,7 @@ export function initState() {
   allBoardKeys().forEach(k => { state.boards[k] = freshPieces(keyLv(k), keyGrp(k)); });
 }
 
-export const curLevel  = () => LEVELS[state.level - 1];
+export const curLevel  = () => levelOf(state.level);
 export const lvName    = L => L.names[getLang()] || L.names.zh;
 // 關卡顯示名稱：Lv1~8 有等級編號；獨立關卡（大師挑戰、危險貨物）只顯示名稱
 export const lvLong    = L => L.extra ? lvName(L) : `Level ${L.lv} ${lvName(L)}`;
@@ -108,8 +112,8 @@ function rotatePieces(pieces, dir, W, H) {
 }
 export const clonePieces = ps => JSON.parse(JSON.stringify(ps));
 // 暫存槽與解答冊一律用簡報冊的原始方向存，讀取時再轉成目前顯示方向
-export const toNative   = (ps, lv) => { const L = LEVELS[lv - 1]; return state.rotated ? rotatePieces(ps, 'ccw', L.rows, L.cols) : clonePieces(ps); };
-export const fromNative = (ps, lv) => { const L = LEVELS[lv - 1]; return state.rotated ? rotatePieces(ps, 'cw', L.cols, L.rows) : clonePieces(ps); };
+export const toNative   = (ps, lv) => { const L = levelOf(lv); return state.rotated ? rotatePieces(ps, 'ccw', L.rows, L.cols) : clonePieces(ps); };
+export const fromNative = (ps, lv) => { const L = levelOf(lv); return state.rotated ? rotatePieces(ps, 'cw', L.cols, L.rows) : clonePieces(ps); };
 
 // 底板一律用橫式顯示（左右寬、上下窄），不論視窗寬度。
 // 第一次呼叫時把初始（簡報冊方向）的盤面整個轉成橫式；之後 want 恆為 true，不會再有變化。
@@ -117,7 +121,7 @@ export function applyMode() {
   const want = true;
   if (want === state.rotated) return false;
   Object.keys(state.boards).forEach(k => {
-    const L = LEVELS[keyLv(k) - 1];
+    const L = levelOf(keyLv(k));
     const rot = ps => want ? rotatePieces(ps, 'cw', L.cols, L.rows) : rotatePieces(ps, 'ccw', L.rows, L.cols);
     state.boards[k] = rot(state.boards[k]);
     state.hist[k] = (state.hist[k] || []).map(rot); // 復原堆疊裡的快照也要一起轉向

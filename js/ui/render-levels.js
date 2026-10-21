@@ -1,4 +1,4 @@
-/* 關卡選擇列（Lv1~8 一列；額外關卡接在後面，wide 的關卡佔兩格寬）與頁首標題 */
+/* 關卡選擇列（Lv1~8 一列；額外關卡接在後面）與頁首標題 */
 import { LEVEL_ORDER, LV_COLORS, LV_INK } from '../core/config.js';
 import { settings } from '../state/settings.js';
 import { state, curLevel, lvName, gameTitle, typedOf } from '../state/state.js';
@@ -44,16 +44,16 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitH
 
 export function renderLevels() {
   const root = document.documentElement, cur = curLevel();
-  root.style.setProperty('--lvc', LV_COLORS[state.level - 1]);
-  root.style.setProperty('--lvink', LV_INK[state.level - 1]);
+  root.style.setProperty('--lvc', LV_COLORS[state.level]);
+  root.style.setProperty('--lvink', LV_INK[state.level]);
   root.toggleAttribute('data-series', !!cur.extra);
   root.dataset.lv = cur.lv;   // 讓 CSS 能針對個別關卡微調（例如標題較長的危險貨物2）
   $('btnSpecial').hidden = !cur.extra;   // 獨立關卡才有「關卡資訊」按鈕（在圖板標題列）
-  $('btnGroup').hidden = !cur.groups;    // 有拼圖組合的關卡（皇冠挑戰）才有「選擇拼圖組合」按鈕（在拼圖盤標題列）
+  $('btnGroup').hidden = !cur.groups;    // 有拼圖組合的關卡（摘星挑戰）才有「星圖」按鈕（在拼圖盤標題列）
   $('rndBox').hidden = !cur.random;      // 隨機挑戰才有「代碼框 + 骰子」（在拼圖盤標題列、說明按鈕左側）
   if (cur.random && document.activeElement !== $('rndInput')) $('rndInput').value = typedOf(cur);   // 輸入框顯示玩家輸入（或骰子抽出）的代碼；正在輸入時不去動它
   fitHeroTitle(); document.title = gameTitle(cur);   // 額外難度會換標題
-  const btn = l => `<button class="lv${l.lv === state.level ? ' on' : ''}${l.wide ? ' wide' : ''}" data-lv="${l.lv}" style="--c:${LV_COLORS[l.lv - 1]};color:${LV_INK[l.lv - 1]}">`
+  const btn = l => `<button class="lv${l.lv === state.level ? ' on' : ''}" data-lv="${l.lv}" style="--c:${LV_COLORS[l.lv]};color:${LV_INK[l.lv]}">`
     + (l.extra ? `<b>${lvName(l)}</b>` : `<b>Lv${l.lv}</b><small>${lvName(l)}</small>`) + `</button>`;
   // 全部關卡放在同一個格線裡（大視窗每行 8 格、小視窗每行 4 格，見 css/levels.css），依 levels.json 的 order 排列（lv 是存檔編號，不一定等於顯示順序）
   els.levels.innerHTML = LEVEL_ORDER.filter(l => !l.extra || settings.extra).map(btn).join('');

@@ -7,7 +7,7 @@
 import { t } from '../../i18n/i18n.js';
 import { loadBook } from '../../storage/book.js';
 import { settings } from '../../state/settings.js';
-import { LEVELS } from '../../core/config.js';
+import { levelOf } from '../../core/config.js';
 import { lvTag, lvName } from '../../state/state.js';
 import { computeScores, fmtInt, FULL, BASE_MAX, EXTRA_MAX, CHALLENGE, EXTRA } from '../../core/score.js';
 import { cloud, pushRank, rankApi } from '../../cloud/sync.js';
@@ -165,7 +165,7 @@ function renderInfo() {
   const two = !!settings.extra;
   infoModal.querySelector('.rinfobox').classList.toggle('two', two);
   const cols = el('div', 'ricols'); cols.style.setProperty('--cols', two ? 2 : 1);
-  const tag = lv => lvTag(LEVELS[lv - 1]);
+  const tag = lv => lvTag(levelOf(lv));
 
   // 挑戰榜：理論值、每關首解積分、蒐集全解時的理論上限積分
   cols.append(infoCol(t('rank.challenge'), theory(),
@@ -181,11 +181,11 @@ function renderInfo() {
         [t('ri.extra'), pct(EXTRA_MAX), num(EXTRA_MAX)],
       ]),
       table(t('ri.cols'), [
-        [lvName(LEVELS[8]), '300', '470'],
-        [`${lvName(LEVELS[11])} · ${t('ri.crown', 11)}`, '300', '1,200'],
-        [`${lvName(LEVELS[11])} · ${t('ri.crown', 12)}`, '350', '1,400'],
-        [lvName(LEVELS[9]), String(ex('hazmat').M), String(ex('hazmat').M)],
-        [lvName(LEVELS[10]), String(ex('hazmat2').M), String(ex('hazmat2').M)],
+        [lvName(levelOf(9)), '300', '470'],
+        [lvName(levelOf(12)), '300', '1,200'],
+        [lvName(levelOf(12.1)), '350', '1,400'],
+        [lvName(levelOf(10)), String(ex('hazmat').M), String(ex('hazmat').M)],
+        [lvName(levelOf(11)), String(ex('hazmat2').M), String(ex('hazmat2').M)],
       ])));
   }
   body.append(cols);

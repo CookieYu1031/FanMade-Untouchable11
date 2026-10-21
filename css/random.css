@@ -21,5 +21,5 @@
 /* 窄視窗：代碼框略縮，標題列才放得下 */
 @media (max-width:360px){.rnd-in{width:84px;padding:0 4px}.rnd{gap:4px}}
 
-/* ---- 解答縮圖左上角的代碼標籤：比皇冠挑戰的組合標籤長（如 GOOD(3K7Z)），字級小一點 ---- */
+/* ---- 解答縮圖左上角的代碼標籤：比摘星挑戰的星名標籤長（如 GOOD(3K7Z)），字級小一點 ---- */
 .thumb .gtag.code{font-size:11px;letter-spacing:.02em;padding:0 7px;white-space:nowrap;max-width:calc(100% - 10px)}

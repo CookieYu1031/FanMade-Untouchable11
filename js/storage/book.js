@@ -1,12 +1,13 @@
 /* 解答冊 —— 讀寫、新增解答、驗證簽章（Level 1~8 與獨立關卡共用） */
 import { Store, Hooks, KEY_BOOK } from './store.js';
 import { legacyLevels } from './legacy.js';
+import { splitStarBook } from './migrate.js';
 
 export const loadBook  = () => {
   const b = Store.get(KEY_BOOK, null);
   if (!b || !b.levels) return { version:2, levels:{}, near:{} };
-  if (b.version === 2) return b;
-  const m = { version:2, levels:legacyLevels(b.levels), near:legacyLevels(b.near) };   // 舊版解答冊：自動轉換並存回
+  if (b.version === 2) { const had = (b.levels[12] || []).length; splitStarBook(b); if ((b.levels[12] || []).length !== had) Store.set(KEY_BOOK, b); return b; }   // 皇冠挑戰拆成北斗 / 獵戶：舊存檔裡獵戶的解答搬到 lv 12.1（只在有搬動時才寫回）
+  const m = splitStarBook({ version:2, levels:legacyLevels(b.levels), near:legacyLevels(b.near) });   // 舊版解答冊：自動轉換並存回
   Store.set(KEY_BOOK, m);
   return m;
 };

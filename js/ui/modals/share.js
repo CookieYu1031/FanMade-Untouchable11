@@ -24,7 +24,7 @@ function drawShareCanvas(item, L, nick, near) {
   const FONT = getLang() === 'ja' ? '"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif' : '"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif';
   c.fillStyle = K.bg; c.fillRect(0, 0, W, H);
   lvFill(c, L.lv, 0, 0, W, barH);          // 頂欄 = 難度顏色
-  c.fillStyle = LV_INK[L.lv - 1]; c.textBaseline = 'middle';
+  c.fillStyle = LV_INK[L.lv]; c.textBaseline = 'middle';
   const grp = groupOfSig(L, item.sig), gt = itemTag(L, item);   // 有拼圖組合的關卡：標註使用的組合，配色也用那一組的
   const rt = `${lvLong(L)}${gt ? ' ' + gt : ''}  ${L.cols} × ${L.rows}${near ? '  ' + t('near.tag') : ''}`;
   c.font = `700 22px ${FONT}`; c.textAlign = 'right'; c.fillText(rt, W - padX, barH / 2);
