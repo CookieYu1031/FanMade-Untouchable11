@@ -7,7 +7,7 @@
  *   開啟狀態只在這裡保存；拖曳開始（真的移動）時會自動收起，放下後維持收起（見 renderFan）。
  *   檔名沿用 fan.js 以維持 import 路徑；匯出的函式名稱（isFanOpen / setFanOpen / renderFan）也不變。 */
 import { PIECE } from '../core/config.js';
-import { state, curPieces, colorOf } from '../state/state.js';
+import { state, colorOf } from '../state/state.js';
 import { $, els } from './dom.js';
 import { miniSVG } from './svg.js';
 import { trayRows, trayCardRows, trayPerRow, trayUnit } from './render-tray.js';

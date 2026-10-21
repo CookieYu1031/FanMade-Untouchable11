@@ -17,7 +17,7 @@
     {"lv": 9, "names": {"zh": "大師挑戰", "en": "Master Challenge", "ja": "名人挑戦"}, "color": "#F7B3D0", "cols": 12, "rows": 12, "total": 2, "pieces": [12, 13, 6, 15, 16, 17, 18, 19, 20, 21, 8], "extra": true, "near": true, "title": "Untouchable 11: Master Challenge"},
     {"lv": 10, "names": {"zh": "危險貨物", "en": "Hazmat Cargo", "ja": "危険貨物"}, "color": "#D8DAE4", "cols": 11, "rows": 11, "total": 1, "pieces": [9, 12, 13, 15, 17, 18, 20, 21, 8], "extra": true, "near": 3761, "title": "Hazmat Cargo"},
     {"lv": 11, "names": {"zh": "危險貨物2", "en": "Hazmat Cargo 2", "ja": "危険貨物2"}, "color": "#8E91A4", "cols": 12, "rows": 12, "total": 1, "family": "hepto", "pieces": [1, 2, 3, 4, 5, 6, 7, 8, 9], "extra": true, "near": 26226, "title": "Hazmat Cargo 2"},
-    {"lv": 12, "names": {"zh": "北斗挑戰", "en": "Dipper Challenge", "ja": "北斗挑戦"}, "color": "#D2F0B5", "cols": 12, "rows": 12, "total": 7, "extra": true, "title": "Untouchable 11: Star Challenge", "sky": {"title": {"zh": "北斗七星", "en": "Dipper", "ja": "北斗"}, "stars": {"A": [76.4, 11.6], "B": [77.1, 28.3], "C": [55.1, 36.6], "D": [46.1, 26.3], "E": [29.6, 29.6], "F": [17.2, 32.8], "G": [7.0, 50.2]}, "lines": [["A", "B"], ["B", "C"], ["C", "D"], ["D", "A"], ["D", "E"], ["E", "F"], ["F", "G"]]}, "groups": [
+    {"lv": 12, "names": {"zh": "北斗挑戰", "en": "Dipper Challenge", "ja": "北斗挑戦"}, "color": "#D2F0B5", "cols": 12, "rows": 12, "total": 7, "extra": true, "title": "Star Challenge", "sky": {"title": {"zh": "北斗七星", "en": "Dipper", "ja": "北斗"}, "stars": {"A": [76.4, 11.6], "B": [77.1, 28.3], "C": [55.1, 36.6], "D": [46.1, 26.3], "E": [29.6, 29.6], "F": [17.2, 32.8], "G": [7.0, 50.2]}, "lines": [["A", "B"], ["B", "C"], ["C", "D"], ["D", "A"], ["D", "E"], ["E", "F"], ["F", "G"]]}, "groups": [
       {"key": "A", "pieces": [9, 10, 12, 13, 14, 15, 16, 17, 18, 20, 21], "names": {"zh": "天樞", "en": "Dubhe", "ja": "ドゥーベ", "bayer": "α UMa"}},
       {"key": "B", "pieces": [9, 10, 11, 13, 15, 17, 18, 19, 20, 21, 8], "names": {"zh": "天璇", "en": "Merak", "ja": "メラク", "bayer": "β UMa"}},
       {"key": "C", "pieces": [9, 10, 11, 12, 13, 15, 17, 18, 20, 21, 8], "names": {"zh": "天璣", "en": "Phecda", "ja": "フェクダ", "bayer": "γ UMa"}},
@@ -26,7 +26,7 @@
       {"key": "F", "pieces": [11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 1], "names": {"zh": "開陽", "en": "Mizar", "ja": "ミザール", "bayer": "ζ UMa"}},
       {"key": "G", "pieces": [9, 12, 13, 15, 16, 17, 18, 20, 21, 8, 4], "names": {"zh": "瑤光", "en": "Alkaid", "ja": "アルカイド", "bayer": "η UMa"}}
     ]},
-    {"lv": 12.1, "names": {"zh": "獵戶挑戰", "en": "Orion Challenge", "ja": "オリオン挑戦"}, "color": "#C4E3FB", "cols": 12, "rows": 12, "total": 7, "extra": true, "title": "Untouchable 11: Star Challenge", "sky": {"title": {"zh": "獵戶座", "en": "Orion", "ja": "オリオン座"}, "stars": {"a": [38, 12], "b": [70, 53], "c": [68, 14], "d": [66, 28], "e": [57, 35], "f": [45, 56], "g": [48, 42]}, "lines": [["a", "c"], ["a", "g"], ["c", "d"], ["d", "e"], ["e", "g"], ["g", "f"], ["d", "b"]]}, "groups": [
+    {"lv": 12.1, "names": {"zh": "獵戶挑戰", "en": "Orion Challenge", "ja": "オリオン挑戦"}, "color": "#C4E3FB", "cols": 12, "rows": 12, "total": 7, "extra": true, "title": "Star Challenge", "sky": {"title": {"zh": "獵戶座", "en": "Orion", "ja": "オリオン座"}, "stars": {"a": [38, 12], "b": [70, 53], "c": [68, 14], "d": [66, 28], "e": [57, 35], "f": [45, 56], "g": [48, 42]}, "lines": [["a", "c"], ["a", "g"], ["c", "d"], ["d", "e"], ["e", "g"], ["g", "f"], ["d", "b"]]}, "groups": [
       {"key": "a", "pieces": [5, 6, 10, 11, 13, 14, 2, 3, 4, 7, 8, 1], "names": {"zh": "參宿四", "en": "Betelgeuse", "ja": "ベテルギウス", "bayer": "α Ori"}},
       {"key": "b", "pieces": [5, 6, 10, 11, 13, 18, 2, 3, 4, 7, 8, 1], "names": {"zh": "參宿七", "en": "Rigel", "ja": "リゲル", "bayer": "β Ori"}},
       {"key": "c", "pieces": [5, 6, 9, 11, 12, 13, 18, 21, 2, 3, 4, 1], "names": {"zh": "參宿五", "en": "Bellatrix", "ja": "ベラトリックス", "bayer": "γ Ori"}},
@@ -35,6 +35,6 @@
       {"key": "f", "pieces": [5, 10, 11, 12, 14, 16, 2, 3, 4, 7, 8, 1], "names": {"zh": "參宿六", "en": "Saiph", "ja": "サイフ", "bayer": "κ Ori"}},
       {"key": "g", "pieces": [5, 6, 9, 11, 14, 16, 19, 2, 3, 7, 8, 1], "names": {"zh": "參宿一", "en": "Alnitak", "ja": "アルニタク", "bayer": "ζ Ori"}}
     ]},
-    {"lv": 13, "names": {"zh": "隨機挑戰", "en": "Random Challenge", "ja": "ランダム挑戦"}, "color": "#FFF5C8", "cols": 11, "rows": 11, "extra": true, "title": "Hazmat Cargo: Random Challenge", "random": {"pool": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "pick": 9, "exclude": [[9, 12, 13, 15, 17, 18, 20, 21, 8]]}}
+    {"lv": 13, "names": {"zh": "隨機挑戰", "en": "Random Challenge", "ja": "ランダム挑戦"}, "color": "#FFF5C8", "cols": 11, "rows": 11, "extra": true, "title": "Random Challenge", "random": {"pool": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "pick": 9, "exclude": [[9, 12, 13, 15, 17, 18, 20, 21, 8]]}}
   ]
 }

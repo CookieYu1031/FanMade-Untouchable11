@@ -81,7 +81,6 @@ export default {
     'share':'Share',
     'download':'Download',
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
-    'share.done':'Share image created',
     'share.fail':'Could not create the image',
     'share.saved':'Image downloaded',
     'anon':'Anonymous',
@@ -131,7 +130,7 @@ export default {
     'sp.desc.11':'<ul class="splist"><li>A sequel designed by Carl Hoff based on "Hazmat Cargo"</li><li>Uses a 12*12 board and 9 pieces (heptominoes)</li><li>Again only 1 unique solution, but the near solutions soar to a staggering 26,226</li></ul>',
     'sp.desc.12':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 7 different piece sets (11 pieces each)</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find lights up a star; neighboring stars join up into the Big Dipper</li></ul>',
     'sp.desc.12.1':'<ul class="splist"><li>A level designed based on the content of &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>&quot;</li><li>Uses a 12x12 board and 7 different piece sets (12 pieces each)</li><li>Every piece set has only one unique solution</li><li>Each unique solution you find lights up a star; neighboring stars join up into Orion</li></ul>',
-    'sp.desc.13':'<ul class=\"splist\"><li>A level designed from the conclusion in &quot;<a href=\"https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Untouchable 11</a>&quot;: on an 11x11 board, when 9 pieces are chosen from the 21 pieces, exactly one set has a unique solution, and every other set has multiple solutions</li><li>Uses an 11x11 board and randomly picks 9 of the 20 pieces (excluding the &quot;Hazmat Cargo&quot; set): 167,960 possible sets in total</li><li>Press the dice to draw a random set and play it; share the code with other players and they can take on the same set</li><li>You can also type any 4 characters (letters, digits or Chinese) and they will map to one of the sets</li><li>Solved puzzles are collected, but they do not earn leaderboard points</li></ul>',
+    'sp.desc.13':'<ul class="splist"><li>A level designed from the conclusion in &quot;<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>&quot;: on an 11x11 board, when 9 pieces are chosen from the 21 pieces, exactly one set has a unique solution, and every other set has multiple solutions</li><li>Uses an 11x11 board and randomly picks 9 of the 20 pieces (excluding the &quot;Hazmat Cargo&quot; set): 167,960 possible sets in total</li><li>Press the dice to draw a random set and play it; share the code with other players and they can take on the same set</li><li>You can also type any 4 characters (letters, digits or Chinese) and they will map to one of the sets</li><li>Solved puzzles are collected, but they do not earn leaderboard points</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'Reset board',
@@ -146,7 +145,6 @@ export default {
     'set.theme':'Theme',
     'theme.light':'Light',
     'theme.dark':'Dark',
-    'set.vol':'Volume',
     'set.music':'Music',
     'set.sfx':'SFX',
     'set.extra':'Expansion pack',
@@ -187,5 +185,4 @@ export default {
     'toast.new':(lv, n) => `Solved! New solution saved (${lv}, #${n})`,
     'toast.dup':'Solved! This solution is already in your book (rotations and mirrors count as the same).',
     'toast.near':'Near solution +1',
-    'toast.cloudFail':'Could not erase cloud data. Check your connection and try again.',
 };

@@ -139,10 +139,15 @@ const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme
 export const hasWaiting = () => pending.size > 0 || bWaiting;
 export const nextTick = (now = Date.now()) => Math.floor(now / TICK) * TICK + TICK;
 let tickTimer = null, tickDue = 0;
+let quietTick = false, quietGen = 0;   // quietTick：這個定時點的同步是登入帶出的補傳，不顯示同步動畫
 function armTick() {   // 排定下一個定時點統一同步（已排定就不重複）
   if (tickTimer || !cloud.user || !ready) return;
   tickDue = nextTick();
-  tickTimer = setTimeout(() => { tickTimer = null; syncNow(); }, Math.max(0, tickDue - Date.now()) + 50);
+  tickTimer = setTimeout(() => {
+    tickTimer = null;
+    if (quietTick) { quietTick = false; cloud.quiet = true; const g = ++quietGen; syncNow().finally(() => { if (g === quietGen) cloud.quiet = false; }); }
+    else syncNow();
+  }, Math.max(0, tickDue - Date.now()) + 50);
 }
 const clearTick = () => { clearTimeout(tickTimer); tickTimer = null; };
 // 立刻把所有待同步的項目（主動 + 等待中的延遲項目）一次送出
@@ -371,11 +376,15 @@ async function reconcile(user, opts = {}) {
 async function onUser(user, quiet = true) {   // quiet：登入 / 開啟網頁時的同步不顯示設定按鈕的同步動畫
   ready = false; pending.clear(); clearTimeout(timer); clearTimeout(bTimer); clearTick(); bWaiting = false; failed.push = failed.boards = false;
   if (!user) { cloud.user = null; setStatus('out'); return; }
-  cloud.user = user; cloud.quiet = quiet; setStatus('syncing');
+  cloud.user = user; cloud.quiet = quiet; quietGen++; quietTick = false; setStatus('syncing');
   reconciling = true;
-  try { await reconcile(user); ready = true; priMirror = priKey(); okIfHealthy(); if (bWaiting || pending.size) armTick(); pushRank(); }   // 沒有變動的登入也要確認排行榜資料是最新的（本機簽章相同就不會寫入）
+  try { await reconcile(user); ready = true; priMirror = priKey(); okIfHealthy(); if (bWaiting || pending.size) { quietTick = quiet; armTick(); } pushRank(); }   // 沒有變動的登入也要確認排行榜資料是最新的（本機簽章相同就不會寫入）
   catch (e) { console.error('cloud sync failed', e); setStatus('error'); handlers.notify('acct.syncFail'); }
-  finally { reconciling = false; cloud.quiet = false; }
+  finally {
+    reconciling = false;
+    if (quiet) { const g = ++quietGen; setTimeout(() => { if (g === quietGen) cloud.quiet = false; }, 1500); }   // 登入套用雲端資料後 0.2 秒內送出的補傳也算登入同步，多保持 1.5 秒靜默
+    else cloud.quiet = false;
+  }
 }
 export const retry = () => cloud.user && onUser(cloud.user, false);
 // 手動同步（設定頁的按鈕）：先把所有待同步的項目一次送出，再檢查雲端有沒有別台裝置的新進度

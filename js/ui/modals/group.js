@@ -5,7 +5,7 @@
  *   視窗大小固定（星空區的長寬比一定），北斗與獵戶的視窗大小一致。 */
 import { t } from '../../i18n/i18n.js';
 import { loadBook } from '../../storage/book.js';
-import { state, curLevel, curGroup, solvedGroups, starName, skyLabel } from '../../state/state.js';
+import { state, curLevel, curGroup, solvedGroups, skyLabel } from '../../state/state.js';
 import { getLang } from '../../i18n/i18n.js';
 import { $, escapeHtml } from '../dom.js';
 import { refresh } from '../render.js';

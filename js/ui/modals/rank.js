@@ -50,7 +50,6 @@ const setMsg = (col, text, retry) => {
 // ---------- 載入排名 ----------
 async function loadBoard(b, col, sc, tk) {
   const alive = () => tk === token && modal.classList.contains('open');
-  const list = col.querySelector('.rlist');
   setMsg(col, t('rank.loading'));
   try {
     const { fs, db } = await rankApi();

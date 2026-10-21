@@ -37,7 +37,6 @@ export function trayRows(L = curLevel()) {
   }
   return rows;
 }
-export const trayRowCount = () => trayRows().length;
 // 卡片高度（格）：依本關拼圖的最大高度（六格最高 3 格、七格 3 格）；每一行一律用同一個高度，不論一般或長拼圖
 export const trayCardRows = () => Math.max(3, ...curPieces().map(p => PIECE[p.id].matrix.length));
 export function renderTray() {

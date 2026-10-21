@@ -5,12 +5,9 @@
 export const BP_SMALL_MAX = 640;
 export const BP_LARGE_MIN = 1008;
 const small = window.matchMedia(`(max-width:${BP_SMALL_MAX}px)`);
-const large = window.matchMedia(`(min-width:${BP_LARGE_MIN}px)`);
 const portrait = window.matchMedia('(orientation:portrait)');
 
 export const isSmall = () => small.matches;
-export const isLarge = () => large.matches;
-export const isMedium = () => !small.matches && !large.matches;
 export const isPortrait = () => portrait.matches;
 // 左側工具列是否貼著圖板區域的左邊框（否則固定在視窗左側）：大視窗，或高度很矮的橫向視窗（如手機橫放）。與 css/board.css 一致
 const attached = window.matchMedia(`(min-width:${BP_LARGE_MIN}px), (orientation:landscape) and (max-height:520px)`);

@@ -81,7 +81,6 @@ export default {
     'share':'シェア',
     'download':'ダウンロード',
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
-    'share.done':'シェア用画像を作成しました',
     'share.fail':'画像を作成できませんでした',
     'share.saved':'画像をダウンロードしました',
     'anon':'匿名プレイヤー',
@@ -131,7 +130,7 @@ export default {
     'sp.desc.11':'<ul class="splist"><li>Carl Hoff が『危険貨物』をもとに設計した続編</li><li>12*12の盤面と9個のピース（七連ミノ）を使用</li><li>こちらも唯一解は1通りだけですが、近似解はなんと26226通り</li></ul>',
     'sp.desc.12':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の内容に基づいて設計されたステージ</li><li>12x12の盤面と7通りのピースの組み合わせ（11ピース）を使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに星が1つ点灯し、隣り合う星はつながって北斗七星になる</li></ul>',
     'sp.desc.12.1':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の内容に基づいて設計されたステージ</li><li>12x12の盤面と7通りのピースの組み合わせ（12ピース）を使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに星が1つ点灯し、隣り合う星はつながってオリオン座になる</li></ul>',
-    'sp.desc.13':'<ul class=\"splist\"><li>『<a href=\"https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Untouchable 11</a>』にある「11x11の盤面で、21種類のピースから9個を選んで解くと、唯一解を持つ組み合わせはただ1つで、それ以外の組み合わせはすべて複数の解を持つ」という結論に基づいて設計されたステージ</li><li>11x11の盤面を使い、20種類のピースから9種類をランダムに選びます（『危険貨物』の組み合わせを除く、全167,960通り）</li><li>サイコロを振ってランダムに選んで遊べます。コードを他のプレイヤーに共有すれば、同じ組み合わせに挑戦できます</li><li>好きな4文字（英数字・漢字など）を入力することもでき、いずれかの組み合わせに対応します</li><li>解くと収録されますが、ランキングのポイントは獲得できません</li></ul>',
+    'sp.desc.13':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>』にある「11x11の盤面で、21種類のピースから9個を選んで解くと、唯一解を持つ組み合わせはただ1つで、それ以外の組み合わせはすべて複数の解を持つ」という結論に基づいて設計されたステージ</li><li>11x11の盤面を使い、20種類のピースから9種類をランダムに選びます（『危険貨物』の組み合わせを除く、全167,960通り）</li><li>サイコロを振ってランダムに選んで遊べます。コードを他のプレイヤーに共有すれば、同じ組み合わせに挑戦できます</li><li>好きな4文字（英数字・漢字など）を入力することもでき、いずれかの組み合わせに対応します</li><li>解くと収録されますが、ランキングのポイントは獲得できません</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'盤面をリセット',
@@ -146,7 +145,6 @@ export default {
     'set.theme':'背景',
     'theme.light':'明',
     'theme.dark':'暗',
-    'set.vol':'音量',
     'set.music':'音楽',
     'set.sfx':'効果音',
     'set.extra':'拡張パック',
@@ -187,5 +185,4 @@ export default {
     'toast.new':(lv, n) => `クリア！新しい解答を保存しました（${lv} ${n}件目）`,
     'toast.dup':'クリア！この解答はすでに保存済みです（回転・反転して同じになるものは同一と見なします）',
     'toast.near':'近似解+1',
-    'toast.cloudFail':'クラウドのデータを消去できませんでした。接続を確認してもう一度お試しください',
 };

@@ -81,7 +81,6 @@ export default {
     'share':'分享',
     'download':'下載',
     'share.credit':'https://cookieyu1031.github.io/FanMade-Untouchable11',
-    'share.done':'已產生分享圖片',
     'share.fail':'無法產生圖片',
     'share.saved':'已下載圖片',
     'anon':'匿名玩家',
@@ -131,7 +130,7 @@ export default {
     'sp.desc.11':'<ul class="splist"><li>Carl Hoff 基於《危險貨物》設計之續作</li><li>使用12*12圖板、9片拼圖(七格骨牌)</li><li>一樣僅有1組唯一解，但近似解卻來到了誇張的26226組</li></ul>',
     'sp.desc.12':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、7組不同的拼圖組合(11片拼圖)</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可點亮一顆星，相鄰的星會連成北斗七星</li></ul>',
     'sp.desc.12.1':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、7組不同的拼圖組合(12片拼圖)</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可點亮一顆星，相鄰的星會連成獵戶座</li></ul>',
-    'sp.desc.13':'<ul class=\"splist\"><li>依據《<a href=\"https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Untouchable 11</a>》中關於「11*11版圖下，21種拼圖任取9個求解，得出僅有一組僅存在唯一解，且其餘組合皆具有多組種解」的結論而設計之關卡</li><li>使用11x11圖板，從20種拼圖中隨機取用9種(危險貨物那組除外，一共 167,960 種組合)</li><li>按下骰子進行隨機抽選遊玩，若將代碼分享給其他玩家，就能挑戰同一組拼圖</li><li>也可以自行輸入任意 4 個字（中英皆可），會對應到其中一組</li><li>解出後會收錄，但不會獲得排行榜積分</li></ul>',
+    'sp.desc.13':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>》中關於「11*11版圖下，21種拼圖任取9個求解，得出僅有一組僅存在唯一解，且其餘組合皆具有多組種解」的結論而設計之關卡</li><li>使用11x11圖板，從20種拼圖中隨機取用9種(危險貨物那組除外)</li><li>按下骰子隨機抽一組遊玩，將代碼分享出去，就能挑戰同一組拼圖</li><li>也可以自行輸入任意 4 個字（中英皆可），會對應到其中一組</li><li>解出後會收錄，但不會獲得排行榜積分</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'重置版圖',
@@ -146,7 +145,6 @@ export default {
     'set.theme':'背景',
     'theme.light':'亮',
     'theme.dark':'暗',
-    'set.vol':'音量',
     'set.music':'音樂',
     'set.sfx':'音效',
     'set.extra':'擴展包',
@@ -187,5 +185,4 @@ export default {
     'toast.new':(lv, n) => `過關！新解答已收錄（${lv} 第 ${n} 組）`,
     'toast.dup':'過關！已收錄過該解答（旋轉或鏡向後相同也視為同一組）',
     'toast.near':'近似解+1',
-    'toast.cloudFail':'無法清除雲端資料，請確認網路後再試',
 };

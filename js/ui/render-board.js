@@ -1,6 +1,4 @@
 /* 底板 —— 格子大小計算與底板 SVG（格線、拼圖、違規警示、標題列） */
-import { PIECE } from '../core/config.js';
-import { t } from '../i18n/i18n.js';
 import { layoutTools, toolsReserveBottom } from './piece-tools.js';
 import { analyze } from '../game/analyze.js';
 import { schedulePersist } from '../storage/boards.js';

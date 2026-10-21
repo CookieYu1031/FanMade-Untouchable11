@@ -2,7 +2,7 @@
 .stage{position:relative}
 /* ============ 版面 ============ */
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding-bottom:36px}
-/* 版面依視窗寬度分三級（js/ui/viewport.js 的 isSmall / isMedium / isLarge 與此處斷點一致）：
+/* 版面依視窗寬度分三級（js/ui/viewport.js 的 BP_SMALL_MAX / BP_LARGE_MIN 與此處斷點一致）：
    小（<= 640px，手機直向）：單欄堆疊，圖板在上、拼圖盤在下（底板一律橫式）
    中（641~1007px，平板直向）、大（>= 1008px）：底板在左、拼圖盤在右（高度與圖板區域相同，一個視窗看完），解答冊在下方整排
    （條件要與 render-board.js 的 sideBySide 一致） */

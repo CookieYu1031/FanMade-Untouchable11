@@ -2,7 +2,7 @@
  *   pieceState = { id, rot(0~3), flip(bool), placed(bool), x, y }  ← (x,y) 為矩陣左上角在底板的格座標 */
 import { LEVELS, levelOf, PIECE, COLORS, SLOT_COLORS, STAR_NAMES, CONFIG } from '../core/config.js';
 import { orient, cellsOf } from '../core/matrix.js';
-import { getLang, t } from '../i18n/i18n.js';
+import { getLang } from '../i18n/i18n.js';
 import { isTypedCode } from '../core/random-code.js';
 
 /* ---- 拼圖組合（摘星挑戰：L.groups = [{ key, pieces, ids }]；其他關卡沒有） ----

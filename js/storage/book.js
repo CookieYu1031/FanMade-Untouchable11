@@ -11,7 +11,6 @@ export const loadBook  = () => {
   Store.set(KEY_BOOK, m);
   return m;
 };
-export const saveBookLocal = b => Store.set(KEY_BOOK, b);   // 只寫本機（套用雲端資料時用）
 export const saveBook  = b => { Store.set(KEY_BOOK, b); if (Hooks.book) Hooks.book(); };   // 寫本機並通知雲端同步
 // 加入一組解答到解答冊物件，回傳是否為新解
 // sig = 去除旋轉鏡射後的標準簽章（用來判斷是否同一組）；disp = 玩家實際拼出的擺法（縮圖與檢視用，才不會鏡像顛倒）
