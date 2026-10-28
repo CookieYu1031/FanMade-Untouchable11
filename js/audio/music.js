@@ -37,7 +37,7 @@ export const Music = (() => {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
     ctx = new AC();
     out = ctx.createGain(); out.gain.value = 0; out.connect(ctx.destination);
-    if ('mediaSession' in navigator) { try { navigator.mediaSession.metadata = new MediaMetadata({ title: 'Untouchable 11', artist: 'BGM' }); } catch (e) {} }
+    if ('mediaSession' in navigator) { try { navigator.mediaSession.metadata = new MediaMetadata({ title: 'Untouchable 11', artist: 'BGM' }); } catch { /* 不支援媒體工作階段：忽略 */ } }
     ctx.onstatechange = () => {
       if (ctx.state === 'running') routeMedia();
       else if (wanted()) ctx.resume().catch(() => {});             // 被系統中斷（來電、切換 App）後自動恢復
@@ -59,9 +59,9 @@ export const Music = (() => {
       const a = new Audio(); a.srcObject = mdNode.stream; a.setAttribute('playsinline', '');
       const p = a.play(); if (!p || !p.then) return;
       mediaBusy = true;
-      p.then(() => { media = a; mediaOk = true; mediaBusy = false; try { out.disconnect(ctx.destination); } catch (e) {} })
+      p.then(() => { media = a; mediaOk = true; mediaBusy = false; try { out.disconnect(ctx.destination); } catch { /* 已斷開：忽略 */ } })
        .catch(() => { mediaBusy = false; });
-    } catch (e) { mediaBusy = false; }
+    } catch { mediaBusy = false; }
   }
   function env(g, t0, peak, att, hold, rel) {
     g.gain.setValueAtTime(0.0001, t0);

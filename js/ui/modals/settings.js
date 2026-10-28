@@ -16,9 +16,13 @@ const setModal = $('setModal');
 // 問題回報：手機 / 平板用 mailto（交給裝置預設的郵件程式）；桌機不呼叫系統郵件程式，改在新分頁開 Gmail 網頁版寫信。主旨依目前語言，換語言時一併更新
 const REPORT_MAIL = '830601ryan2@gmail.com';
 const reportLink = $('setReport');
-const isDesktop = () => !/Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent)
-  && !(/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)   // iPadOS 會偽裝成 Mac
-  && matchMedia('(pointer:fine)').matches;
+// 優先用 User-Agent Client Hints 的 mobile 旗標；不支援的瀏覽器（Safari / Firefox）才退回字串判斷
+const isDesktop = () => {
+  const uaMobile = navigator.userAgentData && navigator.userAgentData.mobile;
+  const mobile = typeof uaMobile === 'boolean' ? uaMobile
+    : /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);   // iPadOS 會偽裝成 Mac
+  return !mobile && matchMedia('(pointer:fine)').matches;
+};
 const syncReportLink = () => {
   const su = encodeURIComponent(t('set.reportSubject'));
   if (isDesktop()) {

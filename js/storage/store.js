@@ -11,20 +11,20 @@ export const Store = {
   mem: {}, // localStorage 不可用時的記憶體備援
   get(k, fallback) {
     try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; }
-    catch (e) { return k in this.mem ? this.mem[k] : fallback; }
+    catch { return k in this.mem ? this.mem[k] : fallback; }
   },
   set(k, v) {
     this.mem[k] = v;
-    try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 忽略：改用記憶體 */ }
+    try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* 忽略：改用記憶體 */ }
   },
   remove(k) {
     delete this.mem[k];
-    try { localStorage.removeItem(k); } catch (e) { /* 忽略 */ }
+    try { localStorage.removeItem(k); } catch { /* 忽略 */ }
   },
   // 清除本遊戲在這台裝置上的所有資料
   clearAll() {
     this.mem = {};
-    try { Object.keys(localStorage).filter(k => k.startsWith(PREFIX)).forEach(k => localStorage.removeItem(k)); } catch (e) { /* 忽略 */ }
+    try { Object.keys(localStorage).filter(k => k.startsWith(PREFIX)).forEach(k => localStorage.removeItem(k)); } catch { /* 忽略 */ }
   },
 };
 // 雲端同步掛鉤：存檔函式寫入本機後會呼叫（由 cloud/sync.js 登入後註冊，未登入時為空）

@@ -59,7 +59,7 @@ export function detectLang() {
     if (base === 'pt') return 'pt-BR';   // 葡萄牙語只提供巴西版，葡萄牙（pt-PT）也使用
     if (base === 'en') return rest.some(s => EN_UK.test(s)) ? 'en-GB' : 'en';
   }
-  let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+  let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch { /* 無法取得時區：改用預設語言 */ }
   return TZ[tz] || DEFAULT_LANG;
 }
 // 存檔 / 雲端裡的語言代碼不合法（或從沒設定過）→ 自動偵測
@@ -82,6 +82,7 @@ export function applyI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   document.querySelectorAll('[data-i18n-title]').forEach(el => { const v = t(el.dataset.i18nTitle); el.title = v; el.setAttribute('aria-label', v); });
+  document.querySelectorAll('[data-i18n-label]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nLabel)));
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.dispatchEvent(new Event('i18n'));   // 通知動態產生的內容（如帳戶列）重畫成新語言
 }

@@ -13,7 +13,7 @@ export const Sfx = (() => {
       if (ctx.state === 'suspended') ctx.resume();
       master.gain.value = Math.pow(settings.vol / 10, 1.6) * 0.5;
       return ctx;
-    } catch (e) { return null; }
+    } catch { return null; }
   }
   function tone(f0, f1, dur, type, peak, delay = 0) {
     const c = ensure(); if (!c) return;

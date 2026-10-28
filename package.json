@@ -1,0 +1,27 @@
+{
+  "name": "untouchable11",
+  "version": "1.0.0",
+  "description": "Untouchable 11 —— 線上益智遊戲（純靜態網站，ES modules，無打包步驟）",
+  "private": true,
+  "type": "module",
+  "license": "SEE LICENSE IN NOTICE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CookieYu1031/untouchable11.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "npx --yes serve . -l 8080",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "validate": "node scripts/validate.mjs",
+    "check": "npm run validate && npm run lint"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0"
+  }
+}

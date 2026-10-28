@@ -18,7 +18,7 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .langbtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .langcur{display:flex;align-items:center;gap:8px;min-width:0}
 .langcur span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.flag{flex:none;width:24px;height:16px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.flag{flex:none;height:16px;width:auto;aspect-ratio:3/2;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
 /* 國旗矩陣（2 列 × 6 欄）：點語言按鈕向下展開，滑鼠懸停 / 鍵盤聚焦在國旗上時顯示語言名稱 */
 .langlist{position:absolute;z-index:20;top:calc(100% + 4px);right:0;display:grid;grid-template-columns:repeat(6,46px);gap:6px;width:max-content;max-width:calc(100vw - 16px);margin:0;padding:6px;
   background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
@@ -28,7 +28,7 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .langlist .lopt:hover{border-color:var(--ink)}
 .langlist .lopt:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
 .langlist .lopt[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-.langlist .flag{width:30px;height:20px}
+.langlist .flag{height:20px;width:auto}
 /* 語言名稱提示：第一列顯示在矩陣上方、第二列顯示在下方（都在矩陣外，不會蓋住其他國旗）；最左 / 最右欄靠邊對齊，避免超出畫面 */
 .langlist .lopt::after{content:attr(data-name);position:absolute;z-index:1;left:50%;transform:translateX(-50%);padding:4px 9px;border-radius:6px;background:var(--ink);color:var(--panel);
   font-size:12px;font-weight:700;line-height:1.3;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s}
@@ -89,7 +89,7 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .srow-acct .acct-txt{flex:1 1 0}
 .srow-acct>.btn:not(.gbtn){flex:none}
 /* 窄螢幕：背景 / 語言列的語言格多分一點寬度，下拉選單才放得下完整的語言名稱（如 English） */
-@media (max-width:460px){.srow2 .sgrp-lang{flex:1.2 1 0}.sgrp-lang select.sel{padding:0 24px 0 6px}.sgrp-lang .selwrap::after{right:9px}.sgrp-lang .langbtn{padding:0 22px 0 6px;font-size:13px}.langcur{gap:6px}.flag{width:20px;height:13.5px}.langlist{grid-template-columns:repeat(6,minmax(0,40px));gap:5px;padding:5px}.langlist .lopt{height:36px}.langlist .flag{width:26px;height:17px}}
+@media (max-width:460px){.srow2 .sgrp-lang{flex:1.2 1 0}.sgrp-lang select.sel{padding:0 24px 0 6px}.sgrp-lang .selwrap::after{right:9px}.sgrp-lang .langbtn{padding:0 22px 0 6px;font-size:13px}.langcur{gap:6px}.flag{height:13.5px;width:auto}.langlist{grid-template-columns:repeat(6,minmax(0,40px));gap:5px;padding:5px}.langlist .lopt{height:36px}.langlist .flag{height:17px;width:auto}}
 
 /* 同步狀態文字後面的手動同步按鈕：與文字同大小、同顏色（同步進行中停用並轉動） */
 .acct-txt small .syncbtn{display:inline-grid;place-items:center;vertical-align:-.2em;width:1.3em;height:1.3em;margin-left:5px;padding:0;border:0;border-radius:50%;background:none;color:inherit;cursor:pointer;text-decoration:none}

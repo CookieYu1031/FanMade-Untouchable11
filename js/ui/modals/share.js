@@ -63,7 +63,7 @@ const isMobile = () => {
   return window.matchMedia('(pointer:coarse)').matches && !window.matchMedia('(hover:hover) and (pointer:fine)').matches;   // 觸控為主（含 iPad），排除接了滑鼠的電腦
 };
 // 用一個空的 PNG 檔探測瀏覽器是否支援「分享檔案」
-const canShareFile = () => { try { return !!(navigator.share && navigator.canShare && navigator.canShare({ files: [new File([''], 'a.png', { type: 'image/png' })] })); } catch (e) { return false; } };
+const canShareFile = () => { try { return !!(navigator.share && navigator.canShare && navigator.canShare({ files: [new File([''], 'a.png', { type: 'image/png' })] })); } catch { return false; } };
 const wantShare = () => isMobile() && canShareFile();
 
 // 依裝置換圖示與文字（語言切換後 applyI18n 會依 data-i18n 重新填字，所以只要換 key）

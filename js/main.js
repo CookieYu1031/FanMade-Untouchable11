@@ -32,6 +32,7 @@ import './ui/sync-indicator.js';
 import './ui/modals/stats.js';
 import './ui/modals/rank.js';
 import './ui/modals/scroll-lock.js';
+import './ui/modals/a11y.js';
 
 function showLoadError(err) {
   console.error(err);
@@ -48,6 +49,8 @@ async function boot() {
   applyMode();
   restoreBoards();   // 還原上次各關卡的盤面與所在關卡（自動暫存；已登入者之後會再與雲端對帳）
   if (curLevel().extra && !settings.extra) state.level = 8;
+  // 行動瀏覽器切到背景 / 關閉分頁時不一定會觸發 pagehide，以 visibilitychange 為主、pagehide 為輔（兩者都是 bfcache 友善的做法，不使用 unload）
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') persistBoards(); });
   window.addEventListener('pagehide', persistBoards);
   refresh();
   hideLoader();   // 第一次繪製完成：收起載入畫面（至少顯示 2 秒）
@@ -55,5 +58,3 @@ async function boot() {
   initCloud();   // 曾登入過才會載入 Firebase 並還原登入狀態
 }
 boot();
-
-

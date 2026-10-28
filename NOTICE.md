@@ -1,7 +1,7 @@
 # NOTICE（授權範圍與第三方聲明）
 
 ## 非官方聲明
-本專案為非營利粉絲致敬作品，**未經《Untouchable 11》原作者授權或背書**，與原作者及實體發行商
+本專案為非營利粉絲致敬作品，與原作者及實體發行商
 無任何商業合作關係。若權利人有任何疑慮，請透過
 [GitHub Issues](https://github.com/CookieYu1031/untouchable11/issues) 聯絡，將立即處理或移除。
 

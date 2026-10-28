@@ -1,0 +1,23 @@
+# 相依套件與建置產物
+node_modules/
+dist/
+coverage/
+
+# 編輯器 / 系統檔
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# 記錄檔與本機環境變數
+*.log
+npm-debug.log*
+.env
+.env.*
+!.env.example
+
+# Firebase 本機快取
+.firebase/
+firebase-debug.log
