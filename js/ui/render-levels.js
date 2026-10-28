@@ -52,7 +52,7 @@ export function renderLevels() {
   $('btnGroup').hidden = !cur.groups;    // 有拼圖組合的關卡（摘星挑戰）才有「星圖」按鈕（在拼圖盤標題列）
   $('rndBox').hidden = !cur.random;      // 隨機挑戰才有「代碼框 + 骰子」（在拼圖盤標題列、說明按鈕左側）
   if (cur.random && document.activeElement !== $('rndInput')) $('rndInput').value = typedOf(cur);   // 輸入框顯示玩家輸入（或骰子抽出）的代碼；正在輸入時不去動它
-  fitHeroTitle(); document.title = gameTitle(cur);   // 額外難度會換標題
+  fitHeroTitle();   // 分頁標題（<title>）固定為「Untouchable 11」，只有頁首標題欄會隨關卡改變
   const btn = l => `<button class="lv${l.lv === state.level ? ' on' : ''}" data-lv="${l.lv}" style="--c:${LV_COLORS[l.lv]};color:${LV_INK[l.lv]}">`
     + (l.extra ? `<b>${lvName(l)}</b>` : `<b>Lv${l.lv}</b><small>${lvName(l)}</small>`) + `</button>`;
   // 全部關卡放在同一個格線裡（大視窗每行 8 格、小視窗每行 4 格，見 css/levels.css），依 levels.json 的 order 排列（lv 是存檔編號，不一定等於顯示順序）

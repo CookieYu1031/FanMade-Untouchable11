@@ -34,7 +34,7 @@
 - `js/`：依功能分檔（ES modules），進入點 `main.js`
   - 音效（`js/audio/sfx.js`）與背景音樂（`js/audio/music.js`）都是 Web Audio 即時合成，沒有使用任何音檔或他人作品，因此沒有音樂版權問題
   - `core/` 設定載入、矩陣工具、隨機挑戰的代碼編碼（`random-code.js`）　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄
-  - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（中、英、日）　`audio/` 音效　`cloud/` Google 登入與雲端同步
+  - `storage/` 存檔、解答冊、歷史、舊版遷移　`i18n/` 多語系（繁中、簡中、日、韓、English(US)、English(UK)；第一次開啟時依瀏覽器偏好語言 / 地區自動選擇，偵測不到就用 English(US)；缺少翻譯的字串一律退回英文；各語言字體、國旗與新增語言的步驟見 `i18n/i18n.js` 開頭、`ui/flags.js`）　`audio/` 音效　`cloud/` Google 登入與雲端同步
     - 雲端同步分兩類：主動同步（收錄新解答與排行積分同一批、暱稱、參與排行）立刻送出；延遲同步（盤面、其他設定）等下一個每 5 分鐘的定時點，或被主動同步順帶送出；詳見 `js/cloud/sync.js` 開頭註解
   - `ui/viewport.js`：視窗分級（小 ≤ 640px／中 641~1007px／大 ≥ 1008px），斷點與 `css/` 的 `@media` 一致
   - `ui/` 繪製、互動（拖曳、旋轉）、各視窗、鍵盤、沉浸模式（`immersive.js` 切換、`fan.js` 繪製右下角圓點彈出的小型拼圖盤）

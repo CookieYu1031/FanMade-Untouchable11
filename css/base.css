@@ -25,7 +25,12 @@ html{scroll-padding-top:var(--sat)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55}
+/* 各語言字體（Google Fonts 在 index.html 載入；同一組堆疊也定義在 js/i18n/i18n.js 的 LANG_INFO.font，分享圖用） */
+html[lang="zh-Hans"] body{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Noto Sans TC",system-ui,sans-serif}
 html[lang="ja"] body{font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif}
+html[lang="ko"] body{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans TC",system-ui,sans-serif;word-break:keep-all;overflow-wrap:break-word}   /* 韓文以空格分詞：不要在字詞中間斷行 */
+html:is([lang="fr"],[lang="de"],[lang="es"],[lang="pt-BR"],[lang="it"],[lang="ru"]) body{font-family:"Noto Sans","Noto Sans TC",system-ui,sans-serif}   /* 拉丁 / 西里爾字母語言；長字（如德文複合字）可自動斷字 */
+html:is([lang="fr"],[lang="de"],[lang="es"],[lang="pt-BR"],[lang="it"],[lang="ru"]) .lv{hyphens:auto}
 button{font:inherit;color:inherit}
 .wrap{max-width:1280px;margin:0 auto;padding:0 16px}
 

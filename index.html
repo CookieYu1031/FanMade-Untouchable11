@@ -21,8 +21,8 @@
 <script>
 function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ window.dispatchEvent(new Event('resize')); }); }
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all';u11FontsLoaded()">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all';u11FontsLoaded()">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"></noscript>
 <!-- 載入畫面（#loader）：樣式與內容全部內嵌，不依賴其他 CSS / JS；由 js/ui/loader.js 在第一次繪製完成後收起 -->
 <style>
 #loader{--ld-bg:#F3F5FB;--ld-ink:#2B2E4A;--ld-mut:#6B6F8F;--ld-blue:#A9CFF7;
@@ -33,6 +33,10 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
   transition:opacity .28s ease-out,visibility 0s linear .28s}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #loader{--ld-bg:#1B1D32;--ld-mut:#A3A8CC}}
 :root[data-theme="dark"] #loader{--ld-bg:#1B1D32;--ld-mut:#A3A8CC}
+html[lang="zh-Hans"] #loader{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Noto Sans TC",system-ui,sans-serif}
+html[lang="ja"] #loader{font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif}
+html[lang="ko"] #loader{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans TC",system-ui,sans-serif}
+html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lang="pt-BR"] #loader,html[lang="it"] #loader,html[lang="ru"] #loader{font-family:"Noto Sans","Noto Sans TC",system-ui,sans-serif}
 #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
 #loader *{box-sizing:border-box}
 /* 與頁首相同的色塊標題 */
@@ -55,13 +59,38 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
   var set = {};
   try { set = JSON.parse(localStorage.getItem('untouchable11.settings.v1')) || {}; } catch (e) {}
   if (set.theme === 'light' || set.theme === 'dark') document.documentElement.setAttribute('data-theme', set.theme);
-  var l = String(set.lang || navigator.language || 'zh').toLowerCase(), k = l.indexOf('ja') === 0 ? 'ja' : l.indexOf('en') === 0 ? 'en' : 'zh';
-  var T = {
+  var ok = { en:1, 'en-GB':1, zh:1, 'zh-CN':1, ja:1, ko:1, fr:1, de:1, es:1, 'pt-BR':1, it:1, ru:1 }, k = ok[set.lang] ? set.lang : '';
+  if (!k) {   // 還沒設定過：偵測瀏覽器偏好語言，邏輯同 js/i18n/i18n.js 的 detectLang()（精簡版），偵測不到就用 en
+    var ps = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language], uk = /^(gb|uk|ie|au|nz|in|za|sg|hk|my|ng|ke|pk|bd|lk|mt|cy)$/, tw = /^(tw|hk|mo|hant)$/;
+    for (var i = 0; i < ps.length && !k; i++) {
+      var q = String(ps[i] || '').toLowerCase().split('-'), r = q.slice(1);
+      if (q[0] === 'zh') k = r.some(function (x) { return tw.test(x); }) ? 'zh' : 'zh-CN';
+      else if (q[0] === 'ja') k = 'ja'; else if (q[0] === 'ko') k = 'ko';
+      else if (q[0] === 'pt') k = 'pt-BR';
+      else if (/^(fr|de|es|it|ru)$/.test(q[0])) k = q[0];
+      else if (q[0] === 'en') k = r.some(function (x) { return uk.test(x); }) ? 'en-GB' : 'en';
+    }
+    if (!k) { var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+      k = { 'Asia/Taipei':'zh', 'Asia/Hong_Kong':'zh', 'Asia/Macau':'zh', 'Asia/Shanghai':'zh-CN', 'Asia/Tokyo':'ja', 'Asia/Seoul':'ko', 'Europe/London':'en-GB', 'Europe/Dublin':'en-GB', 'Australia/Sydney':'en-GB', 'Pacific/Auckland':'en-GB',
+        'Europe/Paris':'fr', 'Europe/Berlin':'de', 'Europe/Vienna':'de', 'Europe/Zurich':'de', 'Europe/Madrid':'es', 'America/Mexico_City':'es', 'America/Bogota':'es', 'America/Argentina/Buenos_Aires':'es',
+        'America/Sao_Paulo':'pt-BR', 'Europe/Rome':'it', 'Europe/Moscow':'ru' }[tz] || 'en'; }
+  }
+  var TX = {
     zh: { load:'載入中…', slow:'網路較慢，仍在載入，請稍候…', fail:'載入時間比預期久，請檢查網路連線後重新整理頁面。', reload:'重新整理' },
+    'zh-CN': { load:'加载中…', slow:'网络较慢，仍在加载，请稍候…', fail:'加载时间比预期久，请检查网络连接后刷新页面。', reload:'刷新页面' },
     en: { load:'Loading…', slow:'Slow connection, still loading…', fail:'Loading is taking longer than expected. Please check your connection and reload.', reload:'Reload' },
-    ja: { load:'読み込み中…', slow:'回線が遅いようです。読み込みを続けています…', fail:'読み込みに時間がかかっています。接続を確認して再読み込みしてください。', reload:'再読み込み' }
-  }[k];
-  document.documentElement.lang = k === 'zh' ? 'zh-Hant' : k;
+    ja: { load:'読み込み中…', slow:'回線が遅いようです。読み込みを続けています…', fail:'読み込みに時間がかかっています。接続を確認して再読み込みしてください。', reload:'再読み込み' },
+    ko: { load:'불러오는 중…', slow:'연결이 느립니다. 계속 불러오는 중…', fail:'불러오는 데 시간이 오래 걸립니다. 연결을 확인한 뒤 새로고침해 주세요.', reload:'새로고침' },
+    fr: { load:'Chargement…', slow:'Connexion lente, chargement en cours…', fail:'Le chargement prend plus de temps que prévu. Vérifiez votre connexion, puis rechargez la page.', reload:'Recharger' },
+    de: { load:'Wird geladen …', slow:'Langsame Verbindung, es lädt noch …', fail:'Das Laden dauert länger als erwartet. Bitte prüfe deine Verbindung und lade die Seite neu.', reload:'Neu laden' },
+    es: { load:'Cargando…', slow:'Conexión lenta, sigue cargando…', fail:'La carga está tardando más de lo esperado. Revisa tu conexión y recarga la página.', reload:'Recargar' },
+    'pt-BR': { load:'Carregando…', slow:'Conexão lenta, ainda carregando…', fail:'O carregamento está demorando mais que o esperado. Verifique sua conexão e recarregue a página.', reload:'Recarregar' },
+    it: { load:'Caricamento…', slow:'Connessione lenta, caricamento in corso…', fail:'Il caricamento sta richiedendo più del previsto. Controlla la connessione e ricarica la pagina.', reload:'Ricarica' },
+    ru: { load:'Загрузка…', slow:'Медленное соединение, загрузка продолжается…', fail:'Загрузка идёт дольше, чем ожидалось. Проверьте подключение и обновите страницу.', reload:'Обновить' }
+  };
+  var T = TX[k] || TX.en;   // 沒有該語言的載入文字 → 英文
+  var H = { zh:'zh-Hant', 'zh-CN':'zh-Hans', ja:'ja', ko:'ko', en:'en-US', 'en-GB':'en-GB', fr:'fr', de:'de', es:'es', 'pt-BR':'pt-BR', it:'it', ru:'ru' };
+  document.documentElement.lang = H[k];
   window.__u11Loader = T;
 })();
 </script>
@@ -295,8 +324,8 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
 </div>
 
 <div class="modal" id="setModal">
-  <div class="box" style="width:min(560px,100%);max-height:100%;overflow:auto">
-    <div class="panel" style="margin:0;border:0;border-radius:0">
+  <div class="box" style="width:min(560px,100%)">
+    <div class="panel" style="margin:0;border:0;border-radius:18px 18px 0 0">
       <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="set.title"></span><button class="ibtn" id="setClose" style="width:30px;height:30px" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
     <div class="setbody">
@@ -306,7 +335,7 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
       </div>
       <div class="srow srow2">
         <div class="sgrp"><span data-i18n="set.theme"></span><div class="seg" id="segTheme"><button data-theme="light" data-i18n-title="theme.light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button data-theme="dark" data-i18n-title="theme.dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></div></div>
-        <div class="sgrp sgrp-vol sgrp-lang"><label for="selLang" data-i18n="set.lang"></label><div class="selwrap"><select id="selLang" class="sel"><option value="zh">中文</option><option value="en">English</option><option value="ja">日本語</option></select></div></div>
+        <div class="sgrp sgrp-vol sgrp-lang"><label for="selLang" data-i18n="set.lang"></label><div class="selwrap" id="langPick"><button type="button" class="sel langbtn" id="selLang" aria-haspopup="listbox" aria-expanded="false" aria-controls="langList"><span class="langcur" id="langCur"></span></button><div class="langlist" id="langList" role="listbox" aria-label="Language" tabindex="-1" data-nosound hidden></div></div></div>
       </div>
       <div class="srow srow2">
         <div class="sgrp sgrp-v"><span data-i18n="set.music"></span><div class="vol"><b id="musicNum"></b><div class="vslider"><input type="range" id="musicRange" min="0" max="10" step="1" data-nosound aria-label="Music volume"></div></div></div>
@@ -318,6 +347,8 @@ function u11FontsLoaded(){ if (document.fonts && document.fonts.ready) document.
       </div>
     </div>
   </div>
+  <!-- 視窗框之外的小字：問題回報（mailto 連結，主旨由 js/ui/modals/settings.js 依語言填入） -->
+  <a class="set-report" id="setReport" href="mailto:830601ryan2@gmail.com" data-i18n="set.report"></a>
 </div>
 
 <div class="modal" id="boardResetModal">

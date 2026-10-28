@@ -1,11 +1,11 @@
 /* 設定視窗的畫面同步（語言、背景、獨立關卡開關、音樂 / 音效音量） */
-import { getLang } from '../../i18n/i18n.js';
 import { settings, effTheme } from '../../state/settings.js';
 import { $ } from '../dom.js';
+import { syncLangPicker } from './lang-picker.js';
 
 export function renderSettings() {
   $('nickInput').value = settings.nick;
-  $('selLang').value = getLang();
+  syncLangPicker();
   const eff = effTheme();
   document.querySelectorAll('#segTheme button').forEach(b => b.classList.toggle('on', b.dataset.theme === eff));
   $('swExtra').setAttribute('aria-checked', String(!!settings.extra));

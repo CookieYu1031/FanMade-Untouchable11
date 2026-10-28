@@ -18,7 +18,7 @@ export default {
     'tip.immersive':'没入モード',
     'tip.immersiveOff':'没入モードを終了（Esc）',
     'tip.rotateHint':'デバイスを横向きにしてください（タップで没入モードを終了）',
-    'tip.fan':'ピース盤（スペースキー）',
+    'tip.fan':'ピース置き場（スペースキー）',
 
     // ── 規則與資訊視窗 ──
     'info.title':'ルールと情報',
@@ -43,7 +43,7 @@ export default {
     'key.flip':'反転',
     'key.return':'ピースを戻す',
     'key.undo':'一つ戻る',
-    'key.tray':'ピース盤（没入モード）',
+    'key.tray':'ピース置き場（没入モード）',
 
     // ── 拼圖盤 ──
     'tray.title':'ピース置き場',
@@ -95,7 +95,7 @@ export default {
     'rank.pos':n=>`${n} 位`,
     'rank.login':'ログインするとランキングに参加できます',
     'rank.loginBtn':'ログイン',
-    'rank.zero':'いずれかのステージをクリアすると順位が付きます',
+    'rank.zero':'いずれかのレベルをクリアすると順位が付きます',
     'rank.pending':'得点を同期中です。少し待ってから開き直してください',
     'rank.loading':'読み込み中…',
     'rank.empty':'まだランキングに載っているプレイヤーがいません',
@@ -103,8 +103,8 @@ export default {
     'rank.retry':'再試行',
     'rank.public':'ログインすると、ニックネームと得点がランキングに公開されます。',
     'ri.title':'得点の計算式',
-    'ri.extra':'追加ステージ',
-    'ri.cols':['ステージ','初解答','全解答（上限）'],
+    'ri.extra':'追加レベル',
+    'ri.cols':['レベル','初解答','全解答（上限）'],
     'ri.pcols':['構成','割合','得点'],
     'ri.theory':'理論値',
 
@@ -119,7 +119,7 @@ export default {
 
     // ── 關卡資訊視窗 ──
     'sp.title':'レベル情報',
-    'sp.desc.h9':'名人挑戦',
+    'sp.desc.h9':'マスター挑戦',
     'sp.desc.h10':'危険貨物',
     'sp.desc.h11':'危険貨物2',
     'sp.desc.h12':'北斗挑戦',
@@ -127,10 +127,10 @@ export default {
     'sp.desc.h13':'ランダム挑戦',
     'sp.desc.9':'<ul class="splist"><li>Carl Hoff が『Untouchable 11』をもとに設計した派生作品</li><li>12x12の盤面と11個のピースを使用</li><li>正解はわずか2通り</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>Carl Hoff が設計した作品</li><li>11x11の盤面と9個のピースを使用</li><li>唯一解は1通りだけですが、近似解は3761通り</li></ul>',
-    'sp.desc.11':'<ul class="splist"><li>Carl Hoff が『危険貨物』をもとに設計した続編</li><li>12*12の盤面と9個のピース（七連ミノ）を使用</li><li>こちらも唯一解は1通りだけですが、近似解はなんと26226通り</li></ul>',
-    'sp.desc.12':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の内容に基づいて設計されたステージ</li><li>12x12の盤面と7通りのピースの組み合わせ（11ピース）を使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに星が1つ点灯し、隣り合う星はつながって北斗七星になる</li></ul>',
-    'sp.desc.12.1':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の内容に基づいて設計されたステージ</li><li>12x12の盤面と7通りのピースの組み合わせ（12ピース）を使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに星が1つ点灯し、隣り合う星はつながってオリオン座になる</li></ul>',
-    'sp.desc.13':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>』にある「11x11の盤面で、21種類のピースから9個を選んで解くと、唯一解を持つ組み合わせはただ1つで、それ以外の組み合わせはすべて複数の解を持つ」という結論に基づいて設計されたステージ</li><li>11x11の盤面を使い、20種類のピースから9種類をランダムに選びます（『危険貨物』の組み合わせを除く、全167,960通り）</li><li>サイコロを振ってランダムに選んで遊べます。コードを他のプレイヤーに共有すれば、同じ組み合わせに挑戦できます</li><li>好きな4文字（英数字・漢字など）を入力することもでき、いずれかの組み合わせに対応します</li><li>解くと収録されますが、ランキングのポイントは獲得できません</li></ul>',
+    'sp.desc.11':'<ul class="splist"><li>Carl Hoff が『危険貨物』をもとに設計した続編</li><li>12x12の盤面と9個のピース（ヘプトミノ）を使用</li><li>こちらも唯一解は1通りだけですが、近似解はなんと26226通り</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の内容に基づいて設計されたレベル</li><li>12x12の盤面と7通りのピースの組み合わせ（11ピース）を使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに星が1つ点灯し、隣り合う星はつながって北斗七星になる</li></ul>',
+    'sp.desc.12.1':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>』の内容に基づいて設計されたレベル</li><li>12x12の盤面と7通りのピースの組み合わせ（12ピース）を使用</li><li>どの組み合わせも唯一解はちょうど1通り</li><li>唯一解を1つ見つけるごとに星が1つ点灯し、隣り合う星はつながってオリオン座になる</li></ul>',
+    'sp.desc.13':'<ul class="splist"><li>『<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>』にある「11x11の盤面で、21種類のピースから9個を選んで解くと、唯一解を持つ組み合わせはただ1つで、それ以外の組み合わせはすべて複数の解を持つ」という結論に基づいて設計されたレベル</li><li>11x11の盤面を使い、20種類のピースから9種類をランダムに選びます（『危険貨物』の組み合わせを除く、全167,960通り）</li><li>サイコロを振ってランダムに選んで遊べます。コードを他のプレイヤーに共有すれば、同じ組み合わせに挑戦できます</li><li>好きな4文字（英数字・漢字など）を入力することもでき、いずれかの組み合わせに対応します</li><li>解くと収録されますが、ランキングのポイントは獲得できません</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'盤面をリセット',
@@ -139,22 +139,24 @@ export default {
 
     // ── 設定視窗 ──
     'set.title':'設定',
-    'set.nick':'名前',
+    'set.nick':'ニックネーム',
     'set.nickPh':'ニックネームを入力',
     'set.lang':'言語',
-    'set.theme':'背景',
-    'theme.light':'明',
-    'theme.dark':'暗',
+    'set.theme':'テーマ',
+    'theme.light':'ライト',
+    'theme.dark':'ダーク',
     'set.music':'音楽',
     'set.sfx':'効果音',
     'set.extra':'拡張パック',
-    'set.extraDesc':'追加ステージとマスターランキングを表示',
+    'set.extraDesc':'追加レベルとマスターランキングを表示',
     'set.rank':'ランキング参加',
     'set.rankDesc':'オフ：得点集計・順位の対象外',
+    'set.report':'不具合を報告',
+    'set.reportSubject':'Untouchable 11 不具合の報告',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'アカウント',
-    'acct.hint':'ログインすると、設定・解答・各ステージの進行状況が自動でクラウドに同期されます',
+    'acct.hint':'ログインすると、設定・解答・各レベルの進行状況が自動でクラウドに同期されます',
     'acct.google':'Googleでログイン',
     'acct.logout':'ログアウト',
     'acct.syncing':'同期中…',

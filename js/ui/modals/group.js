@@ -6,7 +6,7 @@
 import { t } from '../../i18n/i18n.js';
 import { loadBook } from '../../storage/book.js';
 import { state, curLevel, curGroup, solvedGroups, skyLabel } from '../../state/state.js';
-import { getLang } from '../../i18n/i18n.js';
+import { pickLang } from '../../i18n/i18n.js';
 import { $, escapeHtml } from '../dom.js';
 import { refresh } from '../render.js';
 import { STAR } from '../svg.js';
@@ -34,7 +34,7 @@ function renderGroups() {
   }).join('');
   $('groupBody').innerHTML = `<div class="sky">`
     + `<svg class="sky-bg" viewBox="0 0 ${SKY_W} ${SKY_H}" preserveAspectRatio="none" aria-hidden="true"><g class="dust">${dust(L.lv)}</g><g class="links">${lines}</g></svg>`
-    + `<div class="sky-cap"><span>${escapeHtml(L.sky.title[getLang()] || L.sky.title.zh)}</span><b>${done.size} / ${L.groups.length}</b></div>${stars}</div>`;
+    + `<div class="sky-cap"><span>${escapeHtml(pickLang(L.sky.title))}</span><b>${done.size} / ${L.groups.length}</b></div>${stars}</div>`;
 }
 
 $('btnGroup').addEventListener('click', () => {

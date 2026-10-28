@@ -4,14 +4,41 @@
 .srow label,.srow>span{font-weight:700;font-size:14px}
 #nickInput{text-align:right;width:min(240px,60%);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 10px;font:inherit}
 /* 暱稱輸入框、語言選單、背景亮暗切換：同高（36px） */
-#nickInput,select.sel,.srow .seg{height:36px;box-sizing:border-box}
+#nickInput,select.sel,.langbtn,.srow .seg{height:36px;box-sizing:border-box}
 /* 語言下拉選單 */
 /* 語言下拉選單：與暱稱輸入框同風格（圓角、底色、邊線），箭頭用自繪線條並與右邊框留出距離 */
-.selwrap{position:relative;flex:1 1 0;min-width:0;max-width:150px;margin-left:auto}
+.selwrap{position:relative;flex:1 1 0;min-width:0;max-width:160px;margin-left:auto}
 .selwrap::after{content:"";position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
 select.sel{-webkit-appearance:none;appearance:none;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 34px 0 12px;font:inherit;cursor:pointer;color-scheme:light dark}
 select.sel:hover{border-color:var(--ink)}
 select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+/* 語言選單（國旗 + 語言名稱）：按鈕外觀與原本的下拉選單一致；清單是自製的 listbox（見 js/ui/modals/lang-picker.js） */
+.langbtn{display:flex;align-items:center;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 34px 0 10px;font:inherit;text-align:left;cursor:pointer}
+.langbtn:hover{border-color:var(--ink)}
+.langbtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.langcur{display:flex;align-items:center;gap:8px;min-width:0}
+.langcur span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flag{flex:none;width:24px;height:16px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+/* 國旗矩陣（2 列 × 6 欄）：點語言按鈕向下展開，滑鼠懸停 / 鍵盤聚焦在國旗上時顯示語言名稱 */
+.langlist{position:absolute;z-index:20;top:calc(100% + 4px);right:0;display:grid;grid-template-columns:repeat(6,46px);gap:6px;width:max-content;max-width:calc(100vw - 16px);margin:0;padding:6px;
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.langlist[hidden]{display:none}
+.langlist.up{top:auto;bottom:calc(100% + 4px)}
+.langlist .lopt{position:relative;display:grid;place-items:center;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--bg);cursor:pointer}
+.langlist .lopt:hover{border-color:var(--ink)}
+.langlist .lopt:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.langlist .lopt[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.langlist .flag{width:30px;height:20px}
+/* 語言名稱提示：第一列顯示在矩陣上方、第二列顯示在下方（都在矩陣外，不會蓋住其他國旗）；最左 / 最右欄靠邊對齊，避免超出畫面 */
+.langlist .lopt::after{content:attr(data-name);position:absolute;z-index:1;left:50%;transform:translateX(-50%);padding:4px 9px;border-radius:6px;background:var(--ink);color:var(--panel);
+  font-size:12px;font-weight:700;line-height:1.3;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s}
+.langlist .lopt:nth-child(-n+6)::after{bottom:calc(100% + 11px)}
+.langlist .lopt:nth-child(n+7)::after{top:calc(100% + 11px)}
+.langlist .lopt:nth-child(6n+1)::after{left:0;transform:none}
+.langlist .lopt:nth-child(6n)::after{left:auto;right:0;transform:none}
+.langlist .lopt:focus-visible::after{opacity:1;visibility:visible}
+@media (hover:hover){.langlist .lopt:hover::after{opacity:1;visibility:visible}}
+.selwrap:has(.langbtn[aria-expanded="true"])::after{transform:translateY(-30%) rotate(225deg)}
 .sdesc{padding:2px 18px 0;font-size:12.5px;color:var(--muted);white-space:pre-line}
 /* 音量、收錄進度表、手機跳轉按鈕 */
 .vol{display:flex;align-items:center;gap:12px}
@@ -62,7 +89,7 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .srow-acct .acct-txt{flex:1 1 0}
 .srow-acct>.btn:not(.gbtn){flex:none}
 /* 窄螢幕：背景 / 語言列的語言格多分一點寬度，下拉選單才放得下完整的語言名稱（如 English） */
-@media (max-width:460px){.srow2 .sgrp-lang{flex:1.2 1 0}.sgrp-lang select.sel{padding:0 24px 0 6px}.sgrp-lang .selwrap::after{right:9px}}
+@media (max-width:460px){.srow2 .sgrp-lang{flex:1.2 1 0}.sgrp-lang select.sel{padding:0 24px 0 6px}.sgrp-lang .selwrap::after{right:9px}.sgrp-lang .langbtn{padding:0 22px 0 6px;font-size:13px}.langcur{gap:6px}.flag{width:20px;height:13.5px}.langlist{grid-template-columns:repeat(6,minmax(0,40px));gap:5px;padding:5px}.langlist .lopt{height:36px}.langlist .flag{width:26px;height:17px}}
 
 /* 同步狀態文字後面的手動同步按鈕：與文字同大小、同顏色（同步進行中停用並轉動） */
 .acct-txt small .syncbtn{display:inline-grid;place-items:center;vertical-align:-.2em;width:1.3em;height:1.3em;margin-left:5px;padding:0;border:0;border-radius:50%;background:none;color:inherit;cursor:pointer;text-decoration:none}
@@ -73,3 +100,29 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .acct-txt small .syncbtn:disabled svg{animation:syncbob 1s ease-in-out infinite}
 @keyframes syncbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @media (prefers-reduced-motion:reduce){.acct-txt small .syncbtn:disabled svg{animation:none}}
+
+/* 設定視窗：不出現捲軸 —— 視窗框不裁切內容（語言選單可以伸出框外），較矮的螢幕改用緊湊版面讓整個視窗放得下 */
+#setModal .box{overflow:visible}
+#setModal{grid-template-columns:minmax(0,1fr)}   /* 欄寬鎖在畫面內：否則英 / 德 / 葡文等較長的文字會把整個視窗撐得比螢幕寬（關閉鈕被擠出畫面） */
+@media (max-height:620px){
+  .setbody{padding-top:0}
+  .setbody .srow{min-height:52px;padding:7px 0}
+  .setbody .srow-acct{min-height:56px}
+  .sgrp-vol::before{height:36px}
+  .sgrp-extra .sub{margin-top:0}
+}
+@media (max-height:460px){
+  #setModal .panel>h2{height:38px}
+  .setbody .srow{min-height:44px;padding:4px 0;gap:8px}
+  .setbody .srow-acct{min-height:48px}
+  .sgrp-v{flex-direction:row;align-items:center;gap:8px}   /* 音量滑桿不再上下堆疊，省一半高度 */
+  .sgrp-v .vol{justify-content:flex-end}
+}
+
+/* 設定視窗框之外（正下方）的「問題回報」小字：與視窗框一起垂直置中，貼在框的下緣之外 */
+#setModal.open{align-content:center}
+#setModal .set-report{justify-self:center;margin-top:10px;padding:4px 10px;border-radius:6px;font-size:12px;line-height:1.4;
+  color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(0,0,0,.35);text-decoration:underline;text-underline-offset:2px}
+#setModal .set-report:hover{color:#fff}
+#setModal .set-report:focus-visible{outline:2px solid #fff;outline-offset:1px}
+@media (max-height:620px){#setModal .set-report{margin-top:4px;padding:2px 10px}}

@@ -21,7 +21,7 @@ export const levelOf = lv => BY_LV[lv];
 export const LV_COLORS = {};       // lv → 各關卡的代表色
 export const LV_STOPS = {};        // lv → 漸層色關卡的色碼陣列（一般關卡為 null；畫在 canvas 時用，見 lvFill）
 export const LV_INK = {};          // lv → 各關卡色塊上的文字色
-export const STAR_NAMES = {};      // 摘星挑戰：拼圖組合代號 → { zh, en, ja } 星名（各關的組合代號不重複，見 buildLevels）
+export const STAR_NAMES = {};      // 摘星挑戰：拼圖組合代號 → { zh, zh-CN, ja, ko, en } 星名（各關的組合代號不重複，見 buildLevels）
 export const CONFIG = { defaultTitle: 'Untouchable 11' };
 
 // 拼圖代號：解答簽章（盤面字元網格）以此單字元記錄每格屬於哪一片拼圖。

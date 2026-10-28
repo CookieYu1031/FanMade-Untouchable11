@@ -2,7 +2,7 @@
  *   pieceState = { id, rot(0~3), flip(bool), placed(bool), x, y }  ← (x,y) 為矩陣左上角在底板的格座標 */
 import { LEVELS, levelOf, PIECE, COLORS, SLOT_COLORS, STAR_NAMES, CONFIG } from '../core/config.js';
 import { orient, cellsOf } from '../core/matrix.js';
-import { getLang } from '../i18n/i18n.js';
+import { pickLang } from '../i18n/i18n.js';
 import { isTypedCode } from '../core/random-code.js';
 
 /* ---- 拼圖組合（摘星挑戰：L.groups = [{ key, pieces, ids }]；其他關卡沒有） ----
@@ -49,7 +49,7 @@ export const grpTag = (L, key) => L.random ? (key || '') : (L.groups && key) ? s
 // 摘星挑戰：這組（一顆星）目前語言的名稱（北斗 = 天樞…；英 / 日文 = α UMa…；缺少該語言時用中文，再沒有就用代號）
 // 星圖上顯示的名稱：所有語言都用拜耳命名（α UMa…），沒有就用原名
 export const skyLabel = key => (STAR_NAMES[key] || {}).bayer || starName(key);
-export const starName = key => { const n = STAR_NAMES[key] || {}; return n[getLang()] || n.zh || key; };
+export const starName = key => pickLang(STAR_NAMES[key]) || key;
 // 隨機挑戰的代碼標註：輸入的代碼與原代碼相同 → 「3K7Z」；不同 → 「GOOD(3K7Z)」（英文字母一律顯示大寫）
 const fmtTag = (typed, canon) => { const u = String(typed || '').toUpperCase(); return u && u !== canon ? `${u}(${canon})` : canon; };
 export const curTag = (L = curLevel()) => L.random ? fmtTag(typedOf(L), curGroup(L)) : grpTag(L, curGroup(L));   // 標題列用：目前這組
@@ -85,7 +85,7 @@ export function initState() {
 }
 
 export const curLevel  = () => levelOf(state.level);
-export const lvName    = L => L.names[getLang()] || L.names.zh;
+export const lvName    = L => pickLang(L.names);
 // 關卡顯示名稱：Lv1~8 有等級編號；獨立關卡（大師挑戰、危險貨物）只顯示名稱
 export const lvLong    = L => L.extra ? lvName(L) : `Level ${L.lv} ${lvName(L)}`;
 export const lvShort   = L => L.extra ? lvName(L) : `Level ${L.lv}`;

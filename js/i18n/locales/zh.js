@@ -37,7 +37,7 @@ export default {
     // ── 操作說明視窗 ──
     'help.title':'操作說明',
     'help.l1':'拖曳拼圖以移動；點擊方框內的拼圖可選取它',
-    'help.l2':'拖曳拼圖時，點擊左側工具列按鈕(或快捷鍵)可改變拼圖狀態',
+    'help.l2':'拖曳拼圖時，點擊左側工具列按鈕（或快捷鍵）可改變拼圖狀態',
     'key.ccw':'左轉 90°',
     'key.cw':'右轉 90°',
     'key.flip':'鏡像',
@@ -67,13 +67,13 @@ export default {
     'book.hide':'隱藏解答',
     'book.show':'顯示解答',
     'book.hidden':'解答已隱藏',
-    'book.empty':'還沒有解答(會自動收錄)，點擊縮圖以查看',
+    'book.empty':'還沒有解答（會自動收錄），點擊縮圖以查看',
     'book.view':'查看這組解答',
     'book.more':'顯示其餘解答',
     'book.less':'收合',
     'near.tag':'近似解',
     'near.count':(n, m, note) => `<span class="bc-l">近似解<small class="bc-note">${note}</small></span><span class="bc-r">已收錄 <b>${m == null ? n : n + '/' + m}</b> 組</span>`,
-    'near.empty':'還沒有近似解(會自動收錄)',
+    'near.empty':'還沒有近似解（會自動收錄）',
     'near.desc':'*近似解允許一個角觸碰',
 
     // ── 解答檢視視窗 / 分享 ──
@@ -127,14 +127,14 @@ export default {
     'sp.desc.h13':'隨機挑戰',
     'sp.desc.9':'<ul class="splist"><li>Carl Hoff 基於《Untouchable 11》設計之衍伸作</li><li>使用12x12圖板、11片拼圖</li><li>僅有2組正解</li></ul>',
     'sp.desc.10':'<ul class="splist"><li>Carl Hoff 所設計之作品</li><li>使用11x11圖板、9片拼圖</li><li>僅有1組唯一解，卻有3761組近似解</li></ul>',
-    'sp.desc.11':'<ul class="splist"><li>Carl Hoff 基於《危險貨物》設計之續作</li><li>使用12*12圖板、9片拼圖(七格骨牌)</li><li>一樣僅有1組唯一解，但近似解卻來到了誇張的26226組</li></ul>',
-    'sp.desc.12':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、7組不同的拼圖組合(11片拼圖)</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可點亮一顆星，相鄰的星會連成北斗七星</li></ul>',
-    'sp.desc.12.1':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、7組不同的拼圖組合(12片拼圖)</li><li>每組拼圖組皆僅有一個唯一解</li><li>每解出一個唯一解 可點亮一顆星，相鄰的星會連成獵戶座</li></ul>',
-    'sp.desc.13':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>》中關於「11*11版圖下，21種拼圖任取9個求解，得出僅有一組僅存在唯一解，且其餘組合皆具有多組種解」的結論而設計之關卡</li><li>使用11x11圖板，從20種拼圖中隨機取用9種(危險貨物那組除外)</li><li>按下骰子隨機抽一組遊玩，將代碼分享出去，就能挑戰同一組拼圖</li><li>也可以自行輸入任意 4 個字（中英皆可），會對應到其中一組</li><li>解出後會收錄，但不會獲得排行榜積分</li></ul>',
+    'sp.desc.11':'<ul class="splist"><li>Carl Hoff 基於《危險貨物》設計之續作</li><li>使用12x12圖板、9片拼圖（七格骨牌）</li><li>一樣僅有1組唯一解，但近似解卻來到了誇張的26226組</li></ul>',
+    'sp.desc.12':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、7組不同的拼圖組合（11片拼圖）</li><li>每組拼圖組合皆僅有一個唯一解</li><li>每解出一個唯一解，可點亮一顆星，相鄰的星會連成北斗七星</li></ul>',
+    'sp.desc.12.1':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable11</a>》的內容，所設計之關卡</li><li>使用12x12圖板、7組不同的拼圖組合（12片拼圖）</li><li>每組拼圖組合皆僅有一個唯一解</li><li>每解出一個唯一解，可點亮一顆星，相鄰的星會連成獵戶座</li></ul>',
+    'sp.desc.13':'<ul class="splist"><li>依據《<a href="https://www.gathering4gardner.org/g4g13gift/puzzles/HoffCarl-GiftExchange-FromUntouchable11toHazmatCargo-G4G13.pdf" target="_blank" rel="noopener noreferrer">Untouchable 11</a>》中關於「11x11版圖下，從21種拼圖中任取9個求解，僅有一組組合具有唯一解，其餘組合皆有多組解」的結論而設計之關卡</li><li>使用11x11圖板，從20種拼圖中隨機取用9種（危險貨物那組除外）</li><li>按下骰子隨機抽一組遊玩，將代碼分享出去，就能挑戰同一組拼圖</li><li>也可以自行輸入任意 4 個字（中英皆可），會對應到其中一組</li><li>解出後會收錄，但不會獲得排行榜積分</li></ul>',
 
     // ── 重置版圖視窗 ──
     'brd.title':'重置版圖',
-    'brd.desc':'確定要重置目前等級的版圖嗎？\n版圖上的拼圖會全部回到拼圖盤，且無法復原。',
+    'brd.desc':'確定要重置目前關卡的版圖嗎？\n版圖上的拼圖會全部回到拼圖盤，且無法復原。',
     'brd.confirm':'確認重置',
 
     // ── 設定視窗 ──
@@ -142,15 +142,17 @@ export default {
     'set.nick':'暱稱',
     'set.nickPh':'輸入暱稱',
     'set.lang':'語言',
-    'set.theme':'背景',
-    'theme.light':'亮',
-    'theme.dark':'暗',
+    'set.theme':'主題',
+    'theme.light':'淺色',
+    'theme.dark':'深色',
     'set.music':'音樂',
     'set.sfx':'音效',
     'set.extra':'擴展包',
     'set.extraDesc':'顯示額外關卡與大師榜',
     'set.rank':'參與排行',
     'set.rankDesc':'關閉後不計分、不上榜',
+    'set.report':'問題回報',
+    'set.reportSubject':'Untouchable 11 問題回報',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'帳戶',
@@ -183,6 +185,6 @@ export default {
     'toast.reset':'已重置版圖',
     'toast.noUndo':'沒有可返回的步驟',
     'toast.new':(lv, n) => `過關！新解答已收錄（${lv} 第 ${n} 組）`,
-    'toast.dup':'過關！已收錄過該解答（旋轉或鏡向後相同也視為同一組）',
+    'toast.dup':'過關！已收錄過該解答（旋轉或鏡像後相同也視為同一組）',
     'toast.near':'近似解+1',
 };

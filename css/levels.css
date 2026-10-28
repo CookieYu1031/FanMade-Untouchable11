@@ -6,16 +6,22 @@
 @media (min-width:641px){.levels{grid-template-columns:repeat(8,minmax(0,1fr))}}
 .lv{border:0;border-radius:14px;padding:8px 2px;cursor:pointer;color:#2B2E4A;text-align:center;
   background:var(--c);opacity:.62;position:relative;white-space:nowrap;
-  display:flex;align-items:center;justify-content:center;gap:4px;font-size:15px;font-weight:700}
+  display:flex;align-items:center;justify-content:center;gap:4px;font-size:15px;font-weight:700;
+  min-height:44px}   /* 所有語言都有最低高度：按鈕不會因為單行文字而太矮（也符合觸控目標大小） */
 .lv b,.lv small{display:inline;font-size:15px;font-weight:700}
 .lv:hover{box-shadow:inset 0 0 0 2px var(--ink)}
 .lv.on,.lv.on:hover{opacity:1;box-shadow:inset 0 0 0 3px var(--ink)}
 .lv:focus-visible,.btn:focus-visible,.card:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-html[lang="en"] .lv,html[lang="ja"] .lv{white-space:normal;line-height:1.15}   /* 英 / 日文名稱較長：任何寬度都允許換行，避免超出按鈕（如 1 格寬的 Hazmat Cargo 2） */
+html:not(:lang(zh)) .lv{white-space:normal;line-height:1.15}   /* 中文以外的語言名稱較長：任何寬度都允許換行，避免超出按鈕（如 1 格寬的 Hazmat Cargo 2） */
+/* 拉丁 / 西里爾字母語言（英、法、德、西、葡、義、俄）名稱長，8 欄的橫排在 760~1279px 會超出按鈕 → 這個範圍也改成上下堆疊（Lv 在上、名稱在下） */
+@media (min-width:760px) and (max-width:1279px){
+  html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .lv{flex-direction:column;gap:0;padding:6px 2px;white-space:normal;line-height:1.15;text-align:center}
+  html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .lv b,html:not(:lang(zh)):not(:lang(ja)):not(:lang(ko)) .lv small{overflow-wrap:anywhere;word-break:normal;max-width:100%}
+}
 @media (max-width:759px){
-  html[lang="en"] .lv,html[lang="ja"] .lv{flex-direction:column;gap:0;padding:6px 2px}
-  html[lang="en"] .lv b,html[lang="en"] .lv small,html[lang="ja"] .lv b,html[lang="ja"] .lv small{font-size:13px}
+  html:not(:lang(zh)) .lv{flex-direction:column;gap:0;padding:6px 2px}
+  html:not(:lang(zh)) .lv b,html:not(:lang(zh)) .lv small{font-size:13px}
   /* 英文名稱較長（如 Master Challenge、Hazmat Cargo）：允許換行，避免超出按鈕寬度 */
-  html[lang="en"] .lv,html[lang="ja"] .lv{white-space:normal;line-height:1.15;text-align:center}
-  html[lang="en"] .lv b,html[lang="en"] .lv small,html[lang="ja"] .lv b,html[lang="ja"] .lv small{overflow-wrap:anywhere;word-break:normal;max-width:100%}
+  html:not(:lang(zh)) .lv{white-space:normal;line-height:1.15;text-align:center}
+  html:not(:lang(zh)) .lv b,html:not(:lang(zh)) .lv small{overflow-wrap:anywhere;word-break:normal;max-width:100%}
 }
