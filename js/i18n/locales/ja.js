@@ -156,11 +156,16 @@ export default {
     'set.music':'音楽',
     'set.sfx':'効果音',
     'set.extra':'拡張パック',
-    'set.extraDesc':'追加レベルとマスターランキングを表示',
+    'set.extraDesc':'オン：追加レベルとマスターランキングを解放',
     'set.rank':'ランキング参加',
-    'set.rankDesc':'オフ：得点集計・順位の対象外',
+    'set.rankDesc':'オン：得点を記録しランキングに反映',
     'set.report':'不具合を報告',
     'set.reportSubject':'Untouchable 11 不具合の報告',
+    'lang.title':'言語を選択',
+    'lang.recTitle':'現在の言語とおすすめ',
+    'lang.rec':'おすすめの言語',
+    'lang.all':'すべての言語',
+    'lang.sort':'並び順を切り替え',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'アカウント',

@@ -156,11 +156,16 @@ export default {
     'set.music':'音乐',
     'set.sfx':'音效',
     'set.extra':'扩展包',
-    'set.extraDesc':'显示额外关卡与大师榜',
+    'set.extraDesc':'开启额外关卡与大师榜',
     'set.rank':'参与排行',
-    'set.rankDesc':'关闭后不计分、不上榜',
+    'set.rankDesc':'开启时记录积分并排名',
     'set.report':'问题反馈',
     'set.reportSubject':'Untouchable 11 问题反馈',
+    'lang.title':'选择语言',
+    'lang.recTitle':'当前语言与推荐',
+    'lang.rec':'推荐语言',
+    'lang.all':'一般语言',
+    'lang.sort':'切换排序',
 
     // ── 设置 / 账户与云端同步（Google 登录、合并记录、退出登录） ──
     'acct.title':'账户',

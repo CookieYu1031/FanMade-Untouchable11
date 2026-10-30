@@ -48,7 +48,7 @@
 html[lang="zh-Hans"] #loader{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Noto Sans TC",system-ui,sans-serif}
 html[lang="ja"] #loader{font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif}
 html[lang="ko"] #loader{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans TC",system-ui,sans-serif}
-html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lang="pt-BR"] #loader,html[lang="it"] #loader,html[lang="ru"] #loader{font-family:"Noto Sans","Noto Sans TC",system-ui,sans-serif}
+html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lang="pt-BR"] #loader,html[lang="it"] #loader,html[lang="ru"] #loader,html[lang="nl"] #loader,html[lang="pl"] #loader,html[lang="sv"] #loader,html[lang="cs"] #loader{font-family:"Noto Sans","Noto Sans TC",system-ui,sans-serif}
 #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
 #loader *{box-sizing:border-box}
 /* 與頁首相同的色塊標題 */
@@ -70,8 +70,10 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
 (function(){
   var set = {};
   try { set = JSON.parse(localStorage.getItem('untouchable11.settings.v1')) || {}; } catch (e) {}
-  if (set.theme === 'light' || set.theme === 'dark') document.documentElement.setAttribute('data-theme', set.theme);
-  var ok = { en:1, 'en-GB':1, zh:1, 'zh-CN':1, ja:1, ko:1, fr:1, de:1, es:1, 'pt-BR':1, it:1, ru:1 }, k = ok[set.lang] ? set.lang : '';
+  var dk = set.theme !== 'light';   // 主題預設暗色
+  document.documentElement.setAttribute('data-theme', dk ? 'dark' : 'light');
+  Array.prototype.forEach.call(document.querySelectorAll('meta[name="theme-color"]'), function (m) { m.content = dk ? '#1B1D32' : '#F3F5FB'; });
+  var ok = { en:1, 'en-GB':1, zh:1, 'zh-CN':1, ja:1, ko:1, fr:1, de:1, es:1, 'pt-BR':1, it:1, ru:1, nl:1, pl:1, sv:1, cs:1 }, k = ok[set.lang] ? set.lang : '';
   if (!k) {   // 還沒設定過：偵測瀏覽器偏好語言，邏輯同 js/i18n/i18n.js 的 detectLang()（精簡版），偵測不到就用 en
     var ps = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language], uk = /^(gb|uk|ie|au|nz|in|za|sg|hk|my|ng|ke|pk|bd|lk|mt|cy)$/, tw = /^(tw|hk|mo|hant)$/;
     for (var i = 0; i < ps.length && !k; i++) {
@@ -79,13 +81,14 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
       if (q[0] === 'zh') k = r.some(function (x) { return tw.test(x); }) ? 'zh' : 'zh-CN';
       else if (q[0] === 'ja') k = 'ja'; else if (q[0] === 'ko') k = 'ko';
       else if (q[0] === 'pt') k = 'pt-BR';
-      else if (/^(fr|de|es|it|ru)$/.test(q[0])) k = q[0];
+      else if (/^(fr|de|es|it|ru|nl|pl|sv|cs)$/.test(q[0])) k = q[0];
       else if (q[0] === 'en') k = r.some(function (x) { return uk.test(x); }) ? 'en-GB' : 'en';
     }
     if (!k) { var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
       k = { 'Asia/Taipei':'zh', 'Asia/Hong_Kong':'zh', 'Asia/Macau':'zh', 'Asia/Shanghai':'zh-CN', 'Asia/Tokyo':'ja', 'Asia/Seoul':'ko', 'Europe/London':'en-GB', 'Europe/Dublin':'en-GB', 'Australia/Sydney':'en-GB', 'Pacific/Auckland':'en-GB',
         'Europe/Paris':'fr', 'Europe/Berlin':'de', 'Europe/Vienna':'de', 'Europe/Zurich':'de', 'Europe/Madrid':'es', 'America/Mexico_City':'es', 'America/Bogota':'es', 'America/Argentina/Buenos_Aires':'es',
-        'America/Sao_Paulo':'pt-BR', 'Europe/Rome':'it', 'Europe/Moscow':'ru' }[tz] || 'en'; }
+        'America/Sao_Paulo':'pt-BR', 'Europe/Rome':'it', 'Europe/Moscow':'ru',
+        'Europe/Amsterdam':'nl', 'Europe/Warsaw':'pl', 'Europe/Stockholm':'sv', 'Europe/Prague':'cs' }[tz] || 'en'; }
   }
   var TX = {
     zh: { load:'載入中…', slow:'網路較慢，仍在載入，請稍候…', fail:'載入時間比預期久，請檢查網路連線後重新整理頁面。', reload:'重新整理' },
@@ -98,10 +101,14 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
     es: { load:'Cargando…', slow:'Conexión lenta, sigue cargando…', fail:'La carga está tardando más de lo esperado. Revisa tu conexión y recarga la página.', reload:'Recargar' },
     'pt-BR': { load:'Carregando…', slow:'Conexão lenta, ainda carregando…', fail:'O carregamento está demorando mais que o esperado. Verifique sua conexão e recarregue a página.', reload:'Recarregar' },
     it: { load:'Caricamento…', slow:'Connessione lenta, caricamento in corso…', fail:'Il caricamento sta richiedendo più del previsto. Controlla la connessione e ricarica la pagina.', reload:'Ricarica' },
-    ru: { load:'Загрузка…', slow:'Медленное соединение, загрузка продолжается…', fail:'Загрузка идёт дольше, чем ожидалось. Проверьте подключение и обновите страницу.', reload:'Обновить' }
+    ru: { load:'Загрузка…', slow:'Медленное соединение, загрузка продолжается…', fail:'Загрузка идёт дольше, чем ожидалось. Проверьте подключение и обновите страницу.', reload:'Обновить' },
+    nl: { load:'Laden…', slow:'Trage verbinding, nog bezig met laden…', fail:'Het laden duurt langer dan verwacht. Controleer je verbinding en laad de pagina opnieuw.', reload:'Opnieuw laden' },
+    pl: { load:'Ładowanie…', slow:'Wolne połączenie, nadal się ładuje…', fail:'Ładowanie trwa dłużej, niż oczekiwano. Sprawdź połączenie i odśwież stronę.', reload:'Odśwież' },
+    sv: { load:'Laddar…', slow:'Långsam anslutning, laddar fortfarande…', fail:'Det tar längre tid än väntat att ladda. Kontrollera din anslutning och ladda om sidan.', reload:'Ladda om' },
+    cs: { load:'Načítání…', slow:'Pomalé připojení, stále se načítá…', fail:'Načítání trvá déle, než se čekalo. Zkontrolujte připojení a stránku obnovte.', reload:'Obnovit' }
   };
   var T = TX[k] || TX.en;   // 沒有該語言的載入文字 → 英文
-  var H = { zh:'zh-Hant', 'zh-CN':'zh-Hans', ja:'ja', ko:'ko', en:'en-US', 'en-GB':'en-GB', fr:'fr', de:'de', es:'es', 'pt-BR':'pt-BR', it:'it', ru:'ru' };
+  var H = { zh:'zh-Hant', 'zh-CN':'zh-Hans', ja:'ja', ko:'ko', en:'en-US', 'en-GB':'en-GB', fr:'fr', de:'de', es:'es', 'pt-BR':'pt-BR', it:'it', ru:'ru', nl:'nl', pl:'pl', sv:'sv', cs:'cs' };
   document.documentElement.lang = H[k];
   window.__u11Loader = T;
 })();
@@ -338,16 +345,16 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
 <div class="modal" id="setModal">
   <div class="box" style="width:min(560px,100%)">
     <div class="panel" style="margin:0;border:0;border-radius:18px 18px 0 0">
-      <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="set.title"></span><button type="button" class="ibtn ibtn--sm" id="setClose" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+      <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="set.title" id="setTitle"></span><span data-i18n="lang.title" id="langTitle" hidden></span><button type="button" class="ibtn ibtn--sm" id="setClose" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
     </div>
-    <div class="setbody">
+    <div class="setbody" id="setBody">
       <div class="srow srow-acct" id="acctBox"></div>
       <div class="srow srow-nick">
         <label for="nickInput" data-i18n="set.nick"></label><input id="nickInput" maxlength="20" autocomplete="off" data-i18n-ph="set.nickPh">
       </div>
       <div class="srow srow2">
         <div class="sgrp"><span data-i18n="set.theme"></span><div class="seg" id="segTheme"><button type="button" data-theme="light" data-i18n-title="theme.light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button><button type="button" data-theme="dark" data-i18n-title="theme.dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></div></div>
-        <div class="sgrp sgrp-vol sgrp-lang"><label for="selLang" data-i18n="set.lang"></label><div class="selwrap" id="langPick"><button type="button" class="sel langbtn" id="selLang" aria-haspopup="listbox" aria-expanded="false" aria-controls="langList"><span class="langcur" id="langCur"></span></button><div class="langlist" id="langList" role="listbox" data-i18n-label="a11y.lang" tabindex="-1" data-nosound hidden></div></div></div>
+        <div class="sgrp sgrp-vol sgrp-lang"><label for="selLang" data-i18n="set.lang"></label><button type="button" class="langbtn" id="selLang" aria-expanded="false" aria-controls="langBody"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.4 4 5.5 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.5-4-9s1.4-6.6 4-9z"/></svg><span id="langCur"></span></button></div>
       </div>
       <div class="srow srow2">
         <div class="sgrp sgrp-v"><span data-i18n="set.music"></span><div class="vol"><b id="musicNum"></b><div class="vslider"><input type="range" id="musicRange" min="0" max="10" step="1" data-nosound data-i18n-label="a11y.music"></div></div></div>
@@ -358,9 +365,28 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
         <div class="sgrp sgrp-vol sgrp-extra"><span><span data-i18n="set.rank"></span><small class="sub" data-i18n="set.rankDesc"></small></span><button type="button" class="switch" id="swRank" role="switch" aria-checked="true" data-i18n-title="set.rank"><i></i></button></div>
       </div>
     </div>
+      <!-- 語言選擇畫面：點語言按鈕後取代上面的設定內容（標題列、視窗大小不變），選了語言就回到設定畫面（見 js/ui/modals/lang-picker.js） -->
+      <div class="langbody" id="langBody" hidden>
+        <div class="lhead" id="langRecTitle" data-i18n="lang.recTitle"></div>
+        <div class="lgrid lrec" id="langRec" role="radiogroup" data-i18n-label="lang.rec"></div>
+        <div class="lsep"></div>
+        <button type="button" class="lsort" id="langSort" data-i18n-label="lang.sort" data-nosound></button>
+        <div class="lgrid lall" id="langAll" role="radiogroup" data-i18n-label="lang.all"></div>
+      </div>
   </div>
-  <!-- 視窗框之外的小字：問題回報（mailto 連結，主旨由 js/ui/modals/settings.js 依語言填入） -->
-  <a class="set-report" id="setReport" href="mailto:830601ryan2@gmail.com" data-i18n="set.report"></a>
+  <!-- 視窗框下方的固定區域：平常是問題回報小字；語言選擇畫面時小字變透明且點不到（區域與佔位保留，視窗不會跑版），翻頁列疊在同一個位置 -->
+  <div class="set-foot">
+    <!-- 語言選擇的翻頁列（視窗外下方中間，取代問題回報小字；樣式沿用統計視窗的 .navbar）；只有一頁時隱藏 -->
+    <div class="navbar" id="langNav" hidden>
+      <div class="navgrp">
+        <button class="navbtn" id="langPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="navpg" id="langPg" aria-live="polite"></span>
+        <button class="navbtn" id="langNext" type="button" disabled data-nosound data-i18n-label="a11y.next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    <!-- 視窗框之外的小字：問題回報（mailto 連結，主旨由 js/ui/modals/settings.js 依語言填入） -->
+    <a class="set-report" id="setReport" href="mailto:830601ryan2@gmail.com" data-i18n="set.report"></a>
+  </div>
 </div>
 
 <div class="modal" id="boardResetModal">

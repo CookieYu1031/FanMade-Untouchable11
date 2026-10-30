@@ -132,7 +132,7 @@ let timer = null, chain = Promise.resolve();
 const failed = { push: false, boards: false };   // 哪一類上次失敗（都成功才顯示「已同步」）
 const okIfHealthy = () => { if (failed.push || failed.boards) return; cloud.lastSync = Date.now(); setSync({ lastSync: cloud.lastSync }); setStatus('ok'); };
 const setSync = patch => Store.set(KEY_SYNC, { ...(Store.get(KEY_SYNC, {}) || {}), ...patch });
-const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme || '', extra: !!settings.extra, rank: settings.rank !== false, near: !!settings.near, hideBook: !!settings.hideBook, vol: settings.vol, musicVol: settings.musicVol });
+const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme, extra: !!settings.extra, rank: settings.rank === true, near: !!settings.near, hideBook: !!settings.hideBook, vol: settings.vol, musicVol: settings.musicVol });
 
 // 定時點：下一個「每 5 分鐘」的整點時刻（不含現在）
 // 是否有變動在等待同步（延遲同步的項目，或即將送出的主動同步）
@@ -161,7 +161,7 @@ function queue(items, immediate) {
   else armTick();
 }
 // 暱稱與參與排行會改變排行榜資料，屬於主動同步；其他設定（語言、背景、音量…）屬於延遲同步
-const priKey = () => (settings.nick || '') + '\u0000' + (settings.rank !== false);
+const priKey = () => (settings.nick || '') + '\u0000' + (settings.rank === true);
 let priMirror = '';
 Hooks.book = () => queue(['book', 'rank'], true);   // 收錄新解答：解答與排行積分同一批寫入
 Hooks.settings = () => { if (priKey() !== priMirror) queue(['settings', 'rank'], true); else queue(['settings'], false); };

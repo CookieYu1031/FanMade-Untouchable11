@@ -10,7 +10,7 @@ import { renderLevels } from '../render-levels.js';
 import { renderBook } from '../render-book.js';
 import { setLevel } from '../level-select.js';
 import { renderSettings, renderVol } from './settings-view.js';
-import { initLangPicker } from './lang-picker.js';
+import { initLangPicker, isLangView, closeLangView } from './lang-picker.js';
 
 const setModal = $('setModal');
 // 問題回報：手機 / 平板用 mailto（交給裝置預設的郵件程式）；桌機不呼叫系統郵件程式，改在新分頁開 Gmail 網頁版寫信。主旨依目前語言，換語言時一併更新
@@ -47,12 +47,12 @@ $('swRank').addEventListener('click', () => {
   // 登入時：參與排行屬於主動同步，立刻與設定一起同步（關閉 → 刪除榜上資料；重新開啟 → 重新計算並上傳），見 js/cloud/sync.js
 });
 $('btnSettings').addEventListener('click', () => { renderSettings(); setModal.classList.add('open'); });
-$('setClose').addEventListener('click', () => setModal.classList.remove('open'));
+$('setClose').addEventListener('click', () => { if (isLangView()) closeLangView(); else setModal.classList.remove('open'); });   // 語言選擇畫面裡的 ✕ = 回到設定畫面
 setModal.addEventListener('click', e => { if (e.target === setModal) setModal.classList.remove('open'); });
 // 暱稱：輸入中只存本機；輸入完成（離開輸入框 / 按 Enter）才同步，暱稱變更屬於主動同步，不會每打一個字就送出一次
 $('nickInput').addEventListener('input', e => { settings.nick = e.target.value.trim().slice(0, 20); saveSettingsLocal(); });
 $('nickInput').addEventListener('change', () => saveSettings());
-initLangPicker(lang => {   // 語言選單（國旗 + 語言）選了新語言
+initLangPicker(lang => {   // 語言選擇畫面點了新語言
   settings.lang = lang; setLang(settings.lang); saveSettings();
   applyI18n(); refresh(); renderSettings();
 });

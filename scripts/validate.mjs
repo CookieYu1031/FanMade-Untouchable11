@@ -2,7 +2,7 @@
 //  1. data/*.json 可解析，關卡 lv 不重複、每個關卡都有各語言名稱
 //  2. 六格 / 七格骨牌每片的格數正確
 //  3. 各語言檔的 key 與繁中（zh）完全一致，index.html 用到的 data-i18n key 都存在
-//  4. 每個語言都有國旗，且所有國旗外框比例一致（3:2）
+//  4. 語言清單：每個語言都有語言檔與必要欄位（ISO 代碼、原名稱…），代碼不重複
 //  5. index.html 的 id 不重複、本機 CSS / JS / 圖片參照的檔案都存在
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,7 +19,7 @@ let pieces, levels;
 try { pieces = readJson('data/pieces.json'); levels = readJson('data/levels.json'); readJson('data/colors.json'); }
 catch (e) { fail(`資料檔無法解析：${e.message}`); }
 
-const LANG_CODES = ['zh', 'zh-CN', 'ja', 'ko', 'en', 'fr', 'de', 'es', 'pt-BR', 'it', 'ru'];   // levels.json 要求的名稱語言（en-GB 退回 en）
+const LANG_CODES = ['zh', 'zh-CN', 'ja', 'ko', 'en', 'fr', 'de', 'es', 'pt-BR', 'it', 'ru', 'nl', 'pl', 'sv', 'cs'];   // levels.json 要求的名稱語言（en-GB 退回 en）
 
 if (levels) {
   const seen = new Set();
@@ -61,14 +61,14 @@ for (const [lang, dict] of Object.entries(locales)) {
 const html = fs.readFileSync(rel('index.html'), 'utf8');
 for (const m of html.matchAll(/data-i18n(?:-[a-z]+)?="([^"]+)"/g)) if (!baseKeys.has(m[1])) fail(`index.html：data-i18n key「${m[1]}」不存在於語言檔`);
 
-// ── 4. 國旗 ──
-const { FLAGS } = await import(pathToFileURL(rel('js/ui/flags.js')));   // flags.js 在載入時就會檢查每面旗是否 3:2
+// ── 4. 語言清單 ──
 const { LANG_INFO } = await import(pathToFileURL(rel('js/i18n/i18n.js')));
-for (const l of Object.keys(LANG_INFO)) {
-  if (!FLAGS[l]) { fail(`flags.js：語言 ${l} 沒有國旗`); continue; }
-  const vb = FLAGS[l].match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);
-  if (!vb || Math.abs(vb[1] / vb[2] - 1.5) > 1e-6) fail(`flags.js：${l} 的外框不是 3:2`);
+for (const [l, info] of Object.entries(LANG_INFO)) {
+  if (!locales[l]) fail(`i18n.js：語言 ${l} 沒有對應的 locales/${l}.js`);
+  for (const k of ['code', 'label', 'html', 'locale', 'font']) if (!info[k]) fail(`i18n.js：LANG_INFO.${l} 缺少 ${k}`);
 }
+const codes = Object.values(LANG_INFO).map(i => i.code);
+for (const c of new Set(codes.filter((v, i) => codes.indexOf(v) !== i))) fail(`i18n.js：語言代碼「${c}」重複`);
 
 // ── 5. index.html 結構 ──
 const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
@@ -83,4 +83,4 @@ if (errors.length) {
   console.error(`✖ 驗證失敗（${errors.length} 項）\n` + errors.map(e => '  - ' + e).join('\n'));
   process.exit(1);
 }
-console.log('✔ 驗證通過：資料檔、多語系、國旗、index.html');
+console.log('✔ 驗證通過：資料檔、多語系、語言清單、index.html');

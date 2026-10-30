@@ -156,11 +156,16 @@ export default {
     'set.music':'음악',
     'set.sfx':'효과음',
     'set.extra':'확장팩',
-    'set.extraDesc':'추가 레벨과 마스터 랭킹 표시',
+    'set.extraDesc':'켜면 추가 레벨과 마스터 랭킹 사용',
     'set.rank':'랭킹 참여',
-    'set.rankDesc':'끄면 점수 미계산·랭킹 제외',
+    'set.rankDesc':'켜면 점수를 기록하고 랭킹에 반영',
     'set.report':'문제 신고',
     'set.reportSubject':'Untouchable 11 문제 신고',
+    'lang.title':'언어 선택',
+    'lang.recTitle':'현재 언어 및 추천',
+    'lang.rec':'추천 언어',
+    'lang.all':'모든 언어',
+    'lang.sort':'정렬 순서 전환',
 
     // ── 설정 / 계정과 클라우드 동기화 (Google 로그인, 기록 병합, 로그아웃) ──
     'acct.title':'계정',

@@ -3,42 +3,16 @@
 .srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;min-height:68px;border-bottom:1px dashed var(--line)}   /* 各列等高（文字換行時才會變高） */
 .srow label,.srow>span{font-weight:700;font-size:14px}
 #nickInput{text-align:right;width:min(240px,60%);border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 10px;font:inherit}
-/* 暱稱輸入框、語言選單、背景亮暗切換：同高（36px） */
-#nickInput,select.sel,.langbtn,.srow .seg{height:36px;box-sizing:border-box}
-/* 語言下拉選單 */
-/* 語言下拉選單：與暱稱輸入框同風格（圓角、底色、邊線），箭頭用自繪線條並與右邊框留出距離 */
-.selwrap{position:relative;flex:1 1 0;min-width:0;max-width:160px;margin-left:auto}
-.selwrap::after{content:"";position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
-select.sel{-webkit-appearance:none;appearance:none;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 34px 0 12px;font:inherit;cursor:pointer;color-scheme:light dark}
-select.sel:hover{border-color:var(--ink)}
-select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-/* 語言選單（國旗 + 語言名稱）：按鈕外觀與原本的下拉選單一致；清單是自製的 listbox（見 js/ui/modals/lang-picker.js） */
-.langbtn{display:flex;align-items:center;width:100%;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 34px 0 10px;font:inherit;text-align:left;cursor:pointer}
+/* 暱稱輸入框、語言按鈕、背景亮暗切換：同高（36px） */
+#nickInput,.langbtn,.srow .seg{height:36px;box-sizing:border-box}
+/* 語言按鈕（🌐 + ISO 代碼）：點下去開「選擇語言」視窗（見 js/ui/modals/lang-picker.js）。與暱稱輸入框同風格、同高；
+   整格與左邊的「主題」各佔一半寬，代碼很短，不會擠壓主題欄 */
+/* 寬度與左邊的主題切換按鈕（兩顆各 16px 內距 + 18px 圖示）一致 */
+.langbtn{display:flex;align-items:center;justify-content:center;gap:6px;flex:none;width:102px;margin-left:auto;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 6px;font:inherit;font-weight:700;cursor:pointer}
 .langbtn:hover{border-color:var(--ink)}
 .langbtn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.langcur{display:flex;align-items:center;gap:8px;min-width:0}
-.langcur span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.flag{flex:none;height:16px;width:auto;aspect-ratio:3/2;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
-/* 國旗矩陣（2 列 × 6 欄）：點語言按鈕向下展開，滑鼠懸停 / 鍵盤聚焦在國旗上時顯示語言名稱 */
-.langlist{position:absolute;z-index:20;top:calc(100% + 4px);right:0;display:grid;grid-template-columns:repeat(6,46px);gap:6px;width:max-content;max-width:calc(100vw - 16px);margin:0;padding:6px;
-  background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
-.langlist[hidden]{display:none}
-.langlist.up{top:auto;bottom:calc(100% + 4px)}
-.langlist .lopt{position:relative;display:grid;place-items:center;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--bg);cursor:pointer}
-.langlist .lopt:hover{border-color:var(--ink)}
-.langlist .lopt:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
-.langlist .lopt[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
-.langlist .flag{height:20px;width:auto}
-/* 語言名稱提示：第一列顯示在矩陣上方、第二列顯示在下方（都在矩陣外，不會蓋住其他國旗）；最左 / 最右欄靠邊對齊，避免超出畫面 */
-.langlist .lopt::after{content:attr(data-name);position:absolute;z-index:1;left:50%;transform:translateX(-50%);padding:4px 9px;border-radius:6px;background:var(--ink);color:var(--panel);
-  font-size:12px;font-weight:700;line-height:1.3;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s}
-.langlist .lopt:nth-child(-n+6)::after{bottom:calc(100% + 11px)}
-.langlist .lopt:nth-child(n+7)::after{top:calc(100% + 11px)}
-.langlist .lopt:nth-child(6n+1)::after{left:0;transform:none}
-.langlist .lopt:nth-child(6n)::after{left:auto;right:0;transform:none}
-.langlist .lopt:focus-visible::after{opacity:1;visibility:visible}
-@media (hover:hover){.langlist .lopt:hover::after{opacity:1;visibility:visible}}
-.selwrap:has(.langbtn[aria-expanded="true"])::after{transform:translateY(-30%) rotate(225deg)}
+.langbtn svg{flex:none;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.langbtn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sdesc{padding:2px 18px 0;font-size:12.5px;color:var(--muted);white-space:pre-line}
 /* 音量、收錄進度表、手機跳轉按鈕 */
 .vol{display:flex;align-items:center;gap:12px}
@@ -70,7 +44,7 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @media (max-width:360px){.sgrp-extra{flex-direction:column;align-items:flex-start;gap:6px}}
 .sgrp-extra>span{white-space:normal;line-height:1.35}
 .sgrp-extra .sub{line-height:1.3}
-@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:0 9px}.srow-nick #nickInput{font-size:14px}select.sel{padding:0 30px 0 8px;font-size:13px}.selwrap::after{right:12px}.sgrp .vol{gap:4px}.sgrp .vol b{width:38px;font-size:12px}.sgrp .vslider{min-width:48px}}
+@media (max-width:460px){.srow2 .sgrp:first-child{padding-right:8px}.sgrp-vol{padding-left:8px}.sgrp{gap:6px}.srow2 .seg button{padding:0 9px}.srow-nick #nickInput{font-size:14px}.sgrp .vol{gap:4px}.sgrp .vol b{width:38px;font-size:12px}.sgrp .vslider{min-width:48px}}
 .srow .sub{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
 
 /* 帳戶列：未登入顯示說明與登入按鈕；已登入顯示頭像、名稱、同步狀態與登出 */
@@ -88,8 +62,8 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .btn.gbtn .gtxt.wrap{white-space:normal;text-align:left}   /* 縮到最小字級仍放不下才換行 */
 .srow-acct .acct-txt{flex:1 1 0}
 .srow-acct>.btn:not(.gbtn){flex:none}
-/* 窄螢幕：背景 / 語言列的語言格多分一點寬度，下拉選單才放得下完整的語言名稱（如 English） */
-@media (max-width:460px){.srow2 .sgrp-lang{flex:1.2 1 0}.sgrp-lang select.sel{padding:0 24px 0 6px}.sgrp-lang .selwrap::after{right:9px}.sgrp-lang .langbtn{padding:0 22px 0 6px;font-size:13px}.langcur{gap:6px}.flag{height:13.5px;width:auto}.langlist{grid-template-columns:repeat(6,minmax(0,40px));gap:5px;padding:5px}.langlist .lopt{height:36px}.langlist .flag{height:17px;width:auto}}
+/* 窄螢幕：語言按鈕同步縮小 */
+@media (max-width:460px){.langbtn{width:74px;padding:0 3px;gap:3px;font-size:12px}.langbtn svg{width:14px;height:14px}}   /* 窄螢幕主題按鈕內距縮為 9px，寬度跟著縮 */
 
 /* 同步狀態文字後面的手動同步按鈕：與文字同大小、同顏色（同步進行中停用並轉動） */
 .acct-txt small .syncbtn{display:inline-grid;place-items:center;vertical-align:-.2em;width:1.3em;height:1.3em;margin-left:5px;padding:0;border:0;border-radius:50%;background:none;color:inherit;cursor:pointer;text-decoration:none}
@@ -121,8 +95,30 @@ select.sel:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 /* 設定視窗框之外（正下方）的「問題回報」小字：與視窗框一起垂直置中，貼在框的下緣之外 */
 #setModal.open{align-content:center}
-#setModal .set-report{justify-self:center;margin-top:10px;padding:4px 10px;border-radius:6px;font-size:12px;line-height:1.4;
+#setModal .set-report{display:block;margin-top:10px;padding:4px 10px;border-radius:6px;font-size:12px;line-height:1.4;
   color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(0,0,0,.35);text-decoration:underline;text-underline-offset:2px}
 #setModal .set-report:hover{color:#fff}
 #setModal .set-report:focus-visible{outline:2px solid #fff;outline-offset:1px}
-@media (max-height:620px){#setModal .set-report{margin-top:4px;padding:2px 10px}}
+@media (max-height:620px){#setModal .set-report{margin-top:4px;padding:2px 10px}#setModal .set-foot{min-height:30px}#setModal .set-foot .navbar{top:4px}}
+
+
+/* 語言選擇畫面：在設定視窗內取代 .setbody（高度由 JS 鎖成與設定內容相同），翻頁列在視窗外下方中間 */
+.langbody{--lr:44px;--lg:8px;display:flex;flex-direction:column;padding:14px 16px 16px;overflow:hidden}
+.lhead{flex:none;margin:0 0 8px 2px;color:var(--muted);font-size:14px;font-weight:700}
+.lgrid{display:grid;grid-template-columns:repeat(var(--lc,4),minmax(0,1fr));gap:var(--lg);grid-auto-rows:var(--lr)}
+.lall{flex:1 1 0;min-height:0;overflow:hidden;align-content:start}
+.lsep{flex:none;height:2px;margin:12px 0 4px;border-radius:2px;background:var(--line)}
+.lsort{flex:none;align-self:flex-start;margin:0 0 6px -4px;padding:2px 8px;border:0;border-radius:6px;background:none;color:var(--muted);font-size:14px;font-weight:700;cursor:pointer}
+.lsort:hover{color:var(--ink)}
+.lsort:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.lopt{display:grid;place-items:center;min-width:0;padding:0 6px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font-size:14px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lopt span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (hover:hover){.lopt:hover{border-color:var(--muted)}}
+.lopt:focus-visible{outline:3px solid var(--ink);outline-offset:1px}
+.lopt[aria-checked="true"]{border-color:var(--ink);background:var(--panel);font-weight:700;box-shadow:inset 0 0 0 1px var(--ink)}
+#setModal .set-foot{position:relative;justify-self:center;display:flow-root;min-height:35px}   /* flow-root：小字的上邊距不會穿出區域外而讓高度算成 0；min-height 鎖住佔位（上邊距 10 + 小字 25） */
+#setModal .set-foot .navbar{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:max-content}   /* 翻頁列疊在問題回報小字的位置，不佔額外高度 */
+.set-report.ghost{visibility:hidden;pointer-events:none}   /* 語言選擇畫面：保留區域與佔位，只是看不見、點不到 */
+@media (max-width:460px){.langbody{padding:12px 12px 14px}.lopt{font-size:13px}}
+@media (max-height:620px){.langbody{padding:8px 14px 10px}.lhead{margin-bottom:4px}}
+@media (max-height:460px){.langbody{--lr:36px;--lg:6px}.lsep{margin:8px 0 2px}}

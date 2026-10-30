@@ -156,11 +156,16 @@ export default {
     'set.music':'Music',
     'set.sfx':'SFX',
     'set.extra':'Expansion pack',
-    'set.extraDesc':'Show extra levels and the Master leaderboard',
+    'set.extraDesc':'When on: extra levels and the Master leaderboard',
     'set.rank':'Join leaderboard',
-    'set.rankDesc':'When off: no scoring, no ranking',
+    'set.rankDesc':'When on: scores are recorded and ranked',
     'set.report':'Report a problem',
     'set.reportSubject':'Untouchable 11 – Problem report',
+    'lang.title':'Choose language',
+    'lang.recTitle':'Current & suggested',
+    'lang.rec':'Suggested languages',
+    'lang.all':'All languages',
+    'lang.sort':'Toggle sort order',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'Account',
