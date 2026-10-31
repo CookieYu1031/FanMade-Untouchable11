@@ -1,0 +1,64 @@
+/* 問題回報視窗（玩家）與管理員面板 */
+/* ============ 問題回報（玩家）============ */
+#reportModal .rptbox{width:min(640px,100%)}
+.rptform{display:flex;flex-direction:column;gap:12px;padding:14px}
+.rptform input,.rptform textarea{width:100%;margin:0;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);padding:11px 14px;font:inherit;font-size:15px}
+.rptform input:focus-visible,.rptform textarea:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.rptform textarea{height:clamp(140px,34vh,300px);resize:none;line-height:1.5}
+.rpt-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.rpt-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rpt-note{font-size:12.5px;color:var(--muted)}
+.rpt-mail{font-size:12.5px;color:var(--muted);text-decoration:underline;text-underline-offset:2px;width:fit-content}
+.rpt-mail:hover{color:var(--ink)}
+.rpt-mail:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.rpt-send{flex:none;min-width:96px;padding:9px 18px}
+
+/* ============ 管理員面板 ============ */
+#adminModal .adminbox{width:min(820px,100%);display:flex;flex-direction:column;max-height:100%}
+.admtabs{display:flex;justify-content:space-between;gap:8px;padding:12px 14px 0}
+.admtabs-l{display:flex;gap:6px}
+.admtab{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 18px;cursor:pointer;font-weight:700;font-size:14px;-webkit-tap-highlight-color:transparent}
+.admtab[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.admtab:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.admtab .dot{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#F28B8B;color:#2B2E4A;font-size:11px;line-height:18px;text-align:center}
+.admbody{margin:10px 14px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto;height:min(480px,calc(100vh - 190px));min-height:220px;display:flex;flex-direction:column;gap:10px}
+.admcols{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:12px;align-items:stretch;flex:1 1 auto;min-height:0}   /* 卡片拉長到只剩下註解（三行）的空間 */
+.admcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);min-width:0;display:flex;flex-direction:column;justify-content:space-between}
+.admcard h3{margin:0 0 8px;text-align:center;font-size:15px}
+.admrow{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:13.5px;font-variant-numeric:tabular-nums}
+.admrow span:first-child{color:var(--muted);white-space:nowrap}
+.admrow b{font-weight:700;text-align:right}
+.admtable{flex:1 1 auto;width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.admtable th,.admtable td{text-align:center;padding:2px 6px;border-bottom:1px dashed var(--line)}
+.admtable thead th{font-size:12px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line)}
+.admtable tbody th{text-align:left;font-weight:400;color:var(--muted);white-space:nowrap}
+.admtable td{font-weight:700}
+.admtable tbody tr:last-child th,.admtable tbody tr:last-child td{border-bottom:0}
+html[dir="rtl"] .admtable tbody th{text-align:right}
+.admnote{flex:none;margin:0 2px;font-size:12px;color:var(--muted);line-height:1.5;min-height:4.5em}   /* 固定三行（每句一行）；小視窗放不下時自動換行 */
+.admnote p{margin:0}
+.admstate{padding:28px 0;text-align:center;color:var(--muted)}
+.admstate button{margin-left:8px}
+/* 問題回報：左側清單、右側內容 */
+.admrep{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,8fr);gap:12px;height:100%;min-height:0}
+.admlist{display:flex;flex-direction:column;gap:8px;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:8px;min-height:0}
+.admitem{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:8px 10px;cursor:pointer;min-width:0;-webkit-tap-highlight-color:transparent}
+.admitem[aria-current="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.admitem b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admitem small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admitem .who{align-self:flex-end;font-size:12px;color:var(--ink)}
+.admdetail{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:0;overflow:auto}
+.admdetail h3{margin:0 56px 8px 0;font-size:16px;overflow-wrap:anywhere}
+.admdetail p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;font-size:14px}
+.admdetail .meta{margin-top:auto;padding-top:12px;text-align:right;font-size:13px}
+.admdetail .meta small{display:block;color:var(--muted)}
+.admdetail .okbtn{position:absolute;top:10px;right:12px;width:40px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer;display:grid;place-items:center;padding:0}
+.admdetail .okbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.admdetail .okbtn:hover{background:var(--mint);color:#2B2E4A}
+@media (hover:hover){.admtab:hover,.admitem:hover,.admdetail .okbtn:hover{border-color:var(--ink)}}
+@media (max-width:700px){
+  .admcols{--n:1!important}
+  .admrep{grid-template-columns:1fr;grid-template-rows:minmax(110px,2fr) minmax(0,3fr)}
+  .admtab{padding:8px 12px}
+}
+html[dir="rtl"] .admitem{text-align:right}

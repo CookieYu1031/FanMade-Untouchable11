@@ -27,6 +27,11 @@ npm run check      # 提交前檢查 = 資料 / 多語系 / 語言清單驗證 +
 ```
 編輯器格式見 `.editorconfig`；開發規範見 [CONTRIBUTING.md](CONTRIBUTING.md)，安全回報與設計見 [SECURITY.md](SECURITY.md)。CI（`.github/workflows/ci.yml`）會在每次 push / PR 執行相同檢查。
 
+## 管理員面板與站內問題回報
+- 管理員身分**不寫在程式碼裡**：登入後網站讀取 Firestore 的 `admins/{你的 uid}` 文件，存在才會把標題欄的「Fan-made」換成「Admin-Panel」按鈕；權限由 `firestore.rules` 把關（非管理員讀不到任何統計與回報，`admins` 集合也無法從網站端寫入）。
+- 設定步驟（一次性）：① 把 `firestore.rules` 貼到 Firebase 主控台 → Firestore → 規則並發布　② 用要當管理員的 Google 帳戶登入網站一次　③ Firebase 主控台 → Authentication → 使用者，複製該帳戶的「使用者 UID」　④ Firestore → 資料 → 新增集合 `admins`，文件 ID 填剛才的 UID，欄位隨意（例如 `a` = `true`）。
+- 統計資料來源：`visitors` / `visits`（`js/cloud/visit.js` 以 REST 記錄的匿名裝置造訪）、`members`（登入者的註冊日與各關已解組數，`js/cloud/sync.js`）、`reports`（玩家從設定視窗下方「問題回報」送出，需登入）。管理員面板（`js/ui/modals/admin.js`）只有繁體中文與英文。
+
 ## 結構
 - 專案設定：`package.json`（腳本與開發相依）、`eslint.config.js`、`.editorconfig`、`.gitattributes`、`.gitignore`、`.github/workflows/ci.yml`（CI）、`scripts/validate.mjs`（資料 / 多語系 / 語言清單 / HTML 驗證）、`manifest.webmanifest`（可安裝為 PWA）、`robots.txt` 與 `sitemap.xml`（SEO）
 - `index.html`：頁面結構（所有視窗的 HTML），以及內嵌的載入畫面（`#loader`；由 `js/ui/loader.js` 在第一次繪製完成後收起）
@@ -39,7 +44,7 @@ npm run check      # 提交前檢查 = 資料 / 多語系 / 語言清單驗證 +
     - 有「拼圖組合」的關卡（北斗挑戰 lv 12 = A~G、獵戶挑戰 lv 12.1 = a~g，各 7 組）寫 `groups`：每組 `{key, pieces, names}`（`names` = 這顆星的各語言名稱），各組的拼圖組成不可相同（解答冊靠盤面上出現的拼圖判斷解答屬於哪一組），組合代號在所有關卡間不可重複；每組各自保留盤面與返回上一步紀錄；`sky` = `{stars:{代號:[x, y]}, lines:[[代號, 代號]…]}` 是星圖視窗裡每顆星的位置（0~100 × 0~62）與星座連線（兩端都點亮才連線）；收錄進度以「每顆星」顯示；摘星兩關沒有近似解（不寫 `near`）
     - 舊版皇冠挑戰（lv 12 同時放 A~G 與 a~g）的存檔由 `js/storage/migrate.js` 自動拆分：獵戶的解答 / 盤面 / 目前組合搬到 lv 12.1（本機與雲端資料套用時都會執行，可重複執行）
   - `colors.json`：色盤與「槽位數 → 顏色序」
-- `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、rank、group、random、hint、immersive、rtl）；載入順序見 index.html，順序會影響覆蓋關係
+- `css/`：依區域分檔（base、components、hero、levels、layout、board、tray、book、help、solution、modals、settings、stats、rank、group、random、hint、immersive、admin、rtl）；載入順序見 index.html，順序會影響覆蓋關係
 - `js/`：依功能分檔（ES modules），進入點 `main.js`
   - 音效（`js/audio/sfx.js`）與背景音樂（`js/audio/music.js`）都是 Web Audio 即時合成，沒有使用任何音檔或他人作品，因此沒有音樂版權問題
   - `core/` 設定載入、矩陣工具、隨機挑戰的代碼編碼（`random-code.js`）　`state/` 狀態與設定　`game/` 判定、簽章、過關收錄

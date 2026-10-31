@@ -95,7 +95,7 @@
 
 /* 設定視窗框之外（正下方）的「問題回報」小字：與視窗框一起垂直置中，貼在框的下緣之外 */
 #setModal.open{align-content:center}
-#setModal .set-report{display:block;margin-top:10px;padding:4px 10px;border-radius:6px;font-size:12px;line-height:1.4;
+#setModal .set-report{display:block;margin-top:10px;padding:4px 10px;border-radius:6px;font-size:12px;line-height:1.4;background:none;border:0;font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;
   color:rgba(255,255,255,.92);text-shadow:0 1px 2px rgba(0,0,0,.35);text-decoration:underline;text-underline-offset:2px}
 #setModal .set-report:hover{color:#fff}
 #setModal .set-report:focus-visible{outline:2px solid #fff;outline-offset:1px}

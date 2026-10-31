@@ -1,5 +1,5 @@
 /* 設定視窗：暱稱、語言、音樂 / 音效音量、背景、額外關卡、參與排行（帳戶與重置資料在各自的模組） */
-import { t, setLang, applyI18n } from '../../i18n/i18n.js';
+import { setLang, applyI18n } from '../../i18n/i18n.js';
 import { Sfx } from '../../audio/sfx.js';
 import { Music } from '../../audio/music.js';
 import { settings, saveSettings, saveSettingsLocal, applyTheme } from '../../state/settings.js';
@@ -13,28 +13,7 @@ import { renderSettings, renderVol } from './settings-view.js';
 import { initLangPicker, isLangView, closeLangView } from './lang-picker.js';
 
 const setModal = $('setModal');
-// 問題回報：手機 / 平板用 mailto（交給裝置預設的郵件程式）；桌機不呼叫系統郵件程式，改在新分頁開 Gmail 網頁版寫信。主旨依目前語言，換語言時一併更新
-const REPORT_MAIL = '830601ryan2@gmail.com';
-const reportLink = $('setReport');
-// 優先用 User-Agent Client Hints 的 mobile 旗標；不支援的瀏覽器（Safari / Firefox）才退回字串判斷
-const isDesktop = () => {
-  const uaMobile = navigator.userAgentData && navigator.userAgentData.mobile;
-  const mobile = typeof uaMobile === 'boolean' ? uaMobile
-    : /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);   // iPadOS 會偽裝成 Mac
-  return !mobile && matchMedia('(pointer:fine)').matches;
-};
-const syncReportLink = () => {
-  const su = encodeURIComponent(t('set.reportSubject'));
-  if (isDesktop()) {
-    reportLink.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(REPORT_MAIL)}&su=${su}`;
-    reportLink.target = '_blank'; reportLink.rel = 'noopener noreferrer';
-  } else {
-    reportLink.href = `mailto:${REPORT_MAIL}?subject=${su}`;
-    reportLink.removeAttribute('target'); reportLink.removeAttribute('rel');
-  }
-};
-document.addEventListener('i18n', syncReportLink);
-syncReportLink();
+// 問題回報：站內回報視窗（見 report.js）
 $('swExtra').addEventListener('click', () => {
   settings.extra = !settings.extra; saveSettings();
   if (!settings.extra && curLevel().extra) setLevel(8); else renderLevels();   // 關閉時若停在額外難度就回到 Lv8

@@ -142,6 +142,7 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
 <link rel="stylesheet" href="css/hint.css">
 <link rel="stylesheet" href="css/rank.css">
 <link rel="stylesheet" href="css/immersive.css">
+<link rel="stylesheet" href="css/admin.css">
 <link rel="stylesheet" href="css/rtl.css">
 </head>
 <body>
@@ -156,7 +157,8 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
   <header class="hero">
     <h1 id="heroTitle">Untouchable 11</h1>
     <div class="hero-acts">
-      <span class="fan-tag">Fan-made</span>
+      <span class="fan-tag" id="fanTag">Fan-made</span>
+      <button type="button" class="fan-tag fan-tag--admin" id="btnAdmin" hidden>Admin-Panel</button>   <!-- 管理員登入後取代「Fan-made」字樣（js/ui/modals/admin.js） -->
       <div class="hero-btns">
         <button type="button" class="ibtn ibtn--sm" id="btnInfo" data-i18n-title="tip.info"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button>
         <button type="button" class="ibtn ibtn--sm" id="btnSettings" data-i18n-title="tip.settings"><svg class="i-gear" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><svg class="i-sync" viewBox="0 0 24 24"><path d="M7 19.5a4.5 4.5 0 0 1-.7-8.95 6.2 6.2 0 0 1 11.7-1.1A4.8 4.8 0 0 1 17.5 19.5z"/><path d="M12 16.5v-5.5"/><path d="M9.5 13.3 12 10.8l2.5 2.5"/></svg></button>
@@ -386,8 +388,8 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
   <!-- 視窗框下方的固定區域：平常是問題回報小字；語言選擇畫面時小字變透明且點不到（區域與佔位保留），
        「翻譯可能不精確」說明疊在「同一個位置」（同樣的上邊距、內距、字級，文字對文字不位移），翻頁列接在說明下方 -->
   <div class="set-foot">
-    <!-- 視窗框之外的小字：問題回報（mailto 連結，主旨由 js/ui/modals/settings.js 依語言填入） -->
-    <a class="set-report" id="setReport" href="mailto:830601ryan2@gmail.com" data-i18n="set.report"></a>
+    <!-- 視窗框之外的小字：問題回報（開啟站內問題回報視窗，見 js/ui/modals/report.js） -->
+    <button type="button" class="set-report" id="setReport" data-i18n="set.report"></button>
     <!-- 語言選擇畫面專用：絕對定位疊在問題回報上，不佔版面；說明若換行只會往下長，不會推動視窗；有多頁時翻頁列（樣式沿用統計視窗的 .navbar）在說明下方 -->
     <div class="lang-foot" id="langFoot" hidden>
       <p class="lang-note" id="langNote" data-i18n="lang.note"></p>
@@ -399,6 +401,31 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- 問題回報（站內回報：登入的玩家填寫主旨與內文後提交，管理員在管理員面板查看） -->
+<div class="modal" id="reportModal">
+  <div class="box rptbox">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--blue);background:var(--blue)"><span data-i18n="set.report"></span><button type="button" class="ibtn ibtn--sm" id="rptClose" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+    </div>
+    <form class="rptform" id="rptForm" autocomplete="off">
+      <input class="rpt-subject" id="rptSubject" maxlength="100" data-i18n-ph="rpt.subject" data-i18n-label="rpt.subject">
+      <textarea class="rpt-body" id="rptBody" maxlength="2000" data-i18n-ph="rpt.body" data-i18n-label="rpt.body"></textarea>
+      <div class="rpt-foot"><div class="rpt-info"><span class="rpt-note" data-i18n="rpt.note"></span><a class="rpt-mail" id="rptMail" href="mailto:830601ryan2@gmail.com" data-i18n="rpt.mail"></a></div><button type="submit" class="btn main rpt-send" id="rptSend" data-i18n="rpt.submit"></button></div>
+    </form>
+  </div>
+</div>
+
+<!-- 管理員面板（只有管理員登入後才有入口；內容由 js/ui/modals/admin.js 繪製，資料讀取受 firestore.rules 限制） -->
+<div class="modal" id="adminModal">
+  <div class="box adminbox">
+    <div class="panel" style="margin:0;border:0;border-radius:0">
+      <h2 style="--c:var(--blue);background:var(--blue)"><span id="admTitle"></span><button type="button" class="ibtn ibtn--sm" id="admClose" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+    </div>
+    <div class="admtabs"><div class="admtabs-l"><button type="button" class="admtab" data-tab="site" id="admTabSite"></button><button type="button" class="admtab" data-tab="levels" id="admTabLevels"></button></div><button type="button" class="admtab" data-tab="reports" id="admTabReports"></button></div>
+    <div class="admbody" id="admBody"></div>
   </div>
 </div>
 

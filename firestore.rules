@@ -1,6 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // 管理員：admins/{uid} 文件存在的帳戶（只能在 Firebase 主控台手動建立；網站端與任何使用者都無法新增 / 修改，
+    // 所以管理員帳號不會出現在程式碼或這份規則裡）
+    function isAdmin() {
+      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    match /admins/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;   // 本人確認自己是不是管理員
+      allow list, write: if false;
+    }
+
     // 每位登入的使用者只能讀寫自己的資料
     match /users/{uid}/data/{doc} {
       allow read, delete: if request.auth != null && request.auth.uid == uid;
@@ -30,6 +40,51 @@ service cloud.firestore {
                             && request.resource.data.ct is int && request.resource.data.mt is int
                             && request.resource.data.ck is string && request.resource.data.ck.matches('^[0-9]{29}' + uid + '$')
                             && request.resource.data.mk is string && request.resource.data.mk.matches('^[0-9]{38}' + uid + '$');
+    }
+
+    // 會員統計：只有本人能寫自己的那一份（註冊日 + 各關已解組數），只有管理員能讀（管理員面板用）
+    match /members/{uid} {
+      allow read: if isAdmin();
+      allow create, update: if request.auth != null && request.auth.uid == uid
+                            && request.resource.data.keys().hasOnly(['v', 'c', 's'])
+                            && request.resource.data.c is string && request.resource.data.c.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+                            && request.resource.data.s is map && request.resource.data.s.size() <= 20;
+    }
+
+    // 造訪紀錄（不需登入；瀏覽器以隨機產生的裝置代碼記錄，不含任何個人資料）：
+    //   visitors/{裝置代碼}      { f = 第一次造訪日, l = 最近一次造訪日 }，用來統計「訪問人數」
+    //   visits/{日期}_{裝置代碼}  { d = 日期, v = 裝置代碼 }，每台裝置每天一份，只能新增，用來統計「日均活躍人數」
+    //   只有管理員能讀；寫入只檢查格式（日期以瀏覽器為準，無法防止刻意灌水，統計僅供參考）
+    match /visitors/{vid} {
+      allow read: if isAdmin();
+      allow create: if vid.matches('^[a-z0-9]{16,32}$')
+                    && request.resource.data.keys().hasOnly(['f', 'l'])
+                    && request.resource.data.f is string && request.resource.data.f.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+                    && request.resource.data.l is string && request.resource.data.l.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+      allow update: if request.resource.data.keys().hasOnly(['f', 'l'])
+                    && request.resource.data.f == resource.data.f
+                    && request.resource.data.l is string && request.resource.data.l.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+    match /visits/{id} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['d', 'v'])
+                    && request.resource.data.d is string && request.resource.data.d.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+                    && request.resource.data.v is string && request.resource.data.v.matches('^[a-z0-9]{16,32}$')
+                    && id == request.resource.data.d + '_' + request.resource.data.v;
+    }
+
+    // 問題回報：登入的玩家可以新增（只能以自己的身分）；只有管理員能讀、標記已處理（done）或刪除
+    match /reports/{id} {
+      allow read, delete: if isAdmin();
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasOnly(['t', 'b', 'u', 'n', 'ts', 'done'])
+                    && request.resource.data.t is string && request.resource.data.t.size() > 0 && request.resource.data.t.size() <= 100
+                    && request.resource.data.b is string && request.resource.data.b.size() > 0 && request.resource.data.b.size() <= 2000
+                    && request.resource.data.u == request.auth.uid
+                    && request.resource.data.n is string && request.resource.data.n.size() <= 40
+                    && request.resource.data.ts == request.time
+                    && request.resource.data.done == false;
+      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['done']);
     }
   }
 }

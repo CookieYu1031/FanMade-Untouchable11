@@ -12,4 +12,13 @@ html[data-series] .hero{background:#4A4D5C;color:#fff}   /* 獨立關卡（大�
 /* 粉絲作品標籤：在右上方、兩個按鈕上方；顏色跟隨頁首文字色（一般關卡深色、獨立關卡白色） */
 .fan-tag{font-size:11px;font-weight:700;letter-spacing:.04em;line-height:1;padding:3px 9px;border-radius:999px;
   border:1.5px solid currentColor;opacity:.78;user-select:none;white-space:nowrap}
+/* 管理員：同樣大小的「Admin-Panel」按鈕取代「Fan-made」字樣 */
+button.fan-tag--admin{font-family:inherit;color:inherit;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button.fan-tag--admin:hover{opacity:1;background:rgba(43,46,74,.1)}
+html[data-series] button.fan-tag--admin:hover{background:rgba(255,255,255,.18)}
+button.fan-tag--admin:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 @media (max-width:600px){html[data-lv="11"] .hero h1{padding-right:84px;text-wrap:balance}}   /* 標題較長（如 Hazmat Cargo 2）時換行，不要壓到右下角按鈕 */
+/* 有新的問題回報：Admin-Panel 按鈕閃爍（偏好減少動態的使用者改為固定高亮） */
+@keyframes admBlink{0%,100%{opacity:.78;background:none}50%{opacity:1;background:#F28B8B;color:#2B2E4A;border-color:#2B2E4A}}
+button.fan-tag--admin.blink{animation:admBlink 1.1s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){button.fan-tag--admin.blink{animation:none;opacity:1;background:#F28B8B;color:#2B2E4A}}

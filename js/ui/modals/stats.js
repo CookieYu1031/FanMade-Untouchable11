@@ -30,19 +30,19 @@ function exactCells(L, book, compact) {
   const solved = L.groups ? solvedGroups(L, list) : null;   // 摘星挑戰：收錄組數 = 已解出幾顆星（幾種拼圖組合）
   const got = solved ? solved.size : list.length;
   const n = L.total == null ? got : Math.min(got, L.total);
-  const prog = L.total == null ? '<span class="pct">—</span>'     // 總組數未知：只顯示收錄數
+  const prog = L.total == null ? '<span class="pct"></span>'     // 總組數未知：只顯示收錄數
     : compact ? `<span class="pct">${fmtPct(n, L.total)}</span>`   // 小視窗：只顯示 % 數
     : solved ? starsHTML(L, solved)                      // 每種拼圖組合一顆星
     : L.lv <= 6
     ? `<div class="pbar"><i style="width:${n / L.total * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div><span class="pct">${fmtPct(n, L.total)}</span>`
     : `<div class="dots">${Array.from({ length: L.total }, (_, i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</div>`;
-  return `<td>${L.total == null ? '—' : L.total.toLocaleString()}</td><td>${n.toLocaleString()}</td><td class="c-prog"><div class="pg">${prog}</div></td>`;
+  return `<td>${L.total == null ? '' : L.total.toLocaleString()}</td><td>${n.toLocaleString()}</td><td class="c-prog"><div class="pg">${prog}</div></td>`;
 }
 // 近似解那一列的三格（文字為灰字，樣式見 .nr）
 function nearCells(L, book, compact) {
   const tot = nearTotal(L), got = ((book.near || {})[L.lv] || []).length;
   if (tot == null) // 實際組數未知：只顯示收錄數，沒有進度條與 %
-    return `<td>—</td><td>${got.toLocaleString()}</td><td class="c-prog"><div class="pg"><span class="pct">—</span></div></td>`;
+    return `<td></td><td>${got.toLocaleString()}</td><td class="c-prog"><div class="pg"><span class="pct"></span></div></td>`;
   const n = Math.min(got, tot);
   return `<td>${tot.toLocaleString()}</td><td>${n.toLocaleString()}</td>`
     + `<td class="c-prog"><div class="pg">${compact ? '' : `<div class="pbar"><i style="width:${n / tot * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div>`}<span class="pct">${fmtPct(n, tot)}</span></div></td>`;

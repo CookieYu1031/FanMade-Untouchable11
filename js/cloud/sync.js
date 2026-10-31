@@ -5,6 +5,8 @@
  *   users/{uid}/data/boards     { level, group, lt, boards:{ 鍵: { t, p:[拼圖…] } } }  各關未完成的盤面（t = 最後變更時間，換裝置時以較晚的為準）
  *   users/{uid}/book/{s|n}{lv}_{k}   解答（s）/ 近似解（n），每 CHUNK 組一個文件（避免超過單一文件 1MiB 上限）
  *   leaderboard/{uid}           排行榜（任何人可讀、只有本人能寫）：暱稱、兩個榜的分數與排序鍵；只有分數 / 暱稱真的改變才會寫入
+ *   members/{uid}               會員統計（只有本人能寫、只有管理員能讀）：{ v, c = 註冊日（Firebase 帳戶建立日，UTC+8）, s = { L{關卡}: 已解組數 } }；給管理員面板統計用，內容有變才寫
+ *   admins/{uid}                管理員名單（只能在 Firebase 主控台手動建立，網站端無法寫入）；本人讀得到自己的那一份，登入後以此判斷是否顯示管理員面板，帳號不會出現在程式碼裡
  * 本機 localStorage 是快取：登入期間所有寫入同時存本機與雲端（只寫有變動的文件）。
  * 同步分兩類：
  *   主動同步（資料一改變就立刻同步）：收錄新解答（連同排行積分，同一個批次一次寫入）、暱稱變更、參與排行開關
@@ -21,7 +23,7 @@ import { loadBook } from '../storage/book.js';
 import { readBoardsStore, persistBoards } from '../storage/boards.js';
 import { settings, sanitizeSettings, saveSettingsLocal } from '../state/settings.js';
 import { computeScores, challengeKey, masterKey } from '../core/score.js';
-import { isLocalBoardKey, syncRandomKeys } from '../state/state.js';
+import { isLocalBoardKey, syncRandomKeys, solvedGroups } from '../state/state.js';
 import { splitStarBook, migrateBoardData, isMovedBoardKey } from '../storage/migrate.js';
 import { levelOf } from '../core/config.js';
 
@@ -31,7 +33,7 @@ const TICK = 5 * 60 * 1000;   // 延遲同步的定時點間隔：每 5 分鐘�
 const FOCUS_GAP = 30000;      // 回到分頁時檢查雲端是否有別台裝置的新進度：至少間隔 30 秒
 
 // ---- 對外狀態 ----
-export const cloud = { user: null, status: 'out', lastSync: 0, quiet: false };   // status: out | syncing | ok | error；lastSync = 最近一次同步完成的時間（毫秒）；quiet = 登入時的那次同步進行中（設定按鈕不顯示同步動畫）
+export const cloud = { user: null, status: 'out', lastSync: 0, quiet: false, admin: false };   // status: out | syncing | ok | error；lastSync = 最近一次同步完成的時間（毫秒）；quiet = 登入時的那次同步進行中（設定按鈕不顯示同步動畫）；admin = 目前登入者是管理員（登入後讀 admins/{uid} 確認，見 checkAdmin）
 const listeners = new Set();
 export const onCloud = fn => listeners.add(fn);
 const notify = () => listeners.forEach(f => f());
@@ -130,6 +132,52 @@ function boardDiff() {
   return Object.keys(diff).length || dels.length || metaDiff ? { lb, diff, dels } : null;
 }
 
+// ---- 會員統計（members/{uid}）與管理員判定 ----
+// 日期一律用 UTC+8 的 YYYY-MM-DD（與 js/cloud/visit.js、管理員面板相同）
+export const dayOf = ms => new Date(ms + 8 * 3600e3).toISOString().slice(0, 10);
+export const lvField = lv => 'L' + String(lv).replace('.', '_');   // 關卡編號 → 欄位名（12.1 → L12_1；欄位名不能含小數點）
+// 各關已解組數：摘星挑戰（有 groups）算「已解出的星數」，其餘算解答組數；只記有解出的關卡
+function levelCounts(book) {
+  const s = {};
+  for (const lv of Object.keys(book.levels || {})) {
+    const L = levelOf(lv), list = book.levels[lv];
+    if (!L || !Array.isArray(list)) continue;
+    const n = L.groups ? solvedGroups(L, list).size : list.length;
+    if (n > 0) s[lvField(lv)] = Math.min(n, 1e9);
+  }
+  return s;
+}
+function memberPlan(uid) {
+  const u = cloud.user, ct = u && u.metadata && Date.parse(u.metadata.creationTime);
+  const doc = { v: 1, c: dayOf(Number.isFinite(ct) ? ct : Date.now()), s: levelCounts(loadBook()) }, sig = canon(doc);
+  const st = Store.get(KEY_SYNC, null) || {};
+  return st.memUid === uid && st.memSig === sig ? null : { doc, sig };   // 與上次寫入的相同就不送請求
+}
+// 失敗只記錄、不影響同步狀態（統計資料不是玩家的進度）；與解答 / 設定分開寫，規則尚未更新時也不會拖累正常同步
+let memChain = Promise.resolve();
+export function pushMember() {
+  memChain = memChain.then(async () => {
+    if (!cloud.user || !ready) return;
+    const uid = cloud.user.uid, mp = memberPlan(uid);
+    if (!mp) return;
+    try {
+      const { fs, db } = await loadSdk();
+      await fs.setDoc(fs.doc(db, 'members', uid), mp.doc);
+      setSync({ memUid: uid, memSig: mp.sig });
+    } catch (e) { console.error('member push failed', e); }
+  });
+  return memChain;
+}
+// 管理員：admins/{uid} 存在才是（規則只允許本人讀自己的那一份）；查不到或失敗一律當作不是
+async function checkAdmin(user) {
+  try {
+    const { fs, db } = await loadSdk();
+    const snap = await fs.getDoc(fs.doc(db, 'admins', user.uid));
+    if (cloud.user !== user) return;
+    cloud.admin = snap.exists(); notify();
+  } catch { /* 沒有權限 / 離線：不是管理員 */ }
+}
+
 // ---- 寫入（去抖動 + 只送有變動的文件）----
 let mirror = new Map();     // 雲端目前的文件內容（id -> JSON）
 const pending = new Set();  // 待上傳：'book' | 'settings' | 'rank'（盤面另外用 bWaiting 記錄）
@@ -207,6 +255,7 @@ async function doPush() {
     if (what.includes('settings')) { priMirror = pri; settingsMirror = sc; }
     if (plan) setSync({ rankUid: uid, rankSig: plan.sig });
     failed.push = false; okIfHealthy();
+    if (what.includes('book')) pushMember();   // 解答變動：會員統計一併更新（獨立寫入，不在同一個批次）
     return true;
   } catch (e) {
     console.error('cloud push failed', e);
@@ -400,10 +449,11 @@ async function reconcile(user, opts = {}) {
 }
 async function onUser(user, quiet = true) {   // quiet：登入 / 開啟網頁時的同步不顯示設定按鈕的同步動畫
   ready = false; settingsMirror = null; pending.clear(); clearTimeout(timer); clearTimeout(bTimer); clearTick(); bWaiting = false; failed.push = failed.boards = false;
+  cloud.admin = false;
   if (!user) { cloud.user = null; setStatus('out'); return; }
-  cloud.user = user; cloud.quiet = quiet; quietGen++; quietTick = false; setStatus('syncing');
+  cloud.user = user; checkAdmin(user); cloud.quiet = quiet; quietGen++; quietTick = false; setStatus('syncing');
   reconciling = true;
-  try { await reconcile(user); ready = true; priMirror = priKey(); okIfHealthy(); if (bWaiting || pending.size) { quietTick = quiet; armTick(); } pushRank(); }   // 沒有變動的登入也要確認排行榜資料是最新的（本機簽章相同就不會寫入）
+  try { await reconcile(user); ready = true; priMirror = priKey(); okIfHealthy(); if (bWaiting || pending.size) { quietTick = quiet; armTick(); } pushRank(); pushMember(); }   // 沒有變動的登入也要確認排行榜與會員統計是最新的（本機簽章相同就不會寫入）
   catch (e) { console.error('cloud sync failed', e); setStatus('error'); handlers.notify('acct.syncFail'); }
   finally {
     reconciling = false;

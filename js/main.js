@@ -8,6 +8,7 @@ import { state, initState, applyMode, curLevel } from './state/state.js';
 import { restoreBoards, persistBoards } from './storage/boards.js';
 import { refresh } from './ui/render.js';
 import { initCloud } from './cloud/sync.js';
+import { logVisit } from './cloud/visit.js';
 import { hideLoader } from './ui/loader.js';
 import './audio/music.js';   // 背景音樂（使用者第一次操作後開始播放）
 
@@ -30,6 +31,8 @@ import './ui/modals/share.js';
 import './ui/modals/board-reset.js';
 import './ui/modals/settings.js';
 import './ui/modals/account.js';
+import './ui/modals/report.js';
+import './ui/modals/admin.js';
 import './ui/sync-indicator.js';
 import './ui/modals/stats.js';
 import './ui/modals/rank.js';
@@ -68,6 +71,7 @@ async function boot() {
   hideLoader();   // 第一次繪製完成：收起載入畫面（至少顯示 2 秒）
   showWelcomeOnce();
   initCloud();   // 曾登入過才會載入 Firebase 並還原登入狀態
+  setTimeout(logVisit, 3000);   // 造訪紀錄（每台裝置每天一次；稍後再送，不搶第一次繪製的資源）
   detectLangByIP();
 }
 boot();
