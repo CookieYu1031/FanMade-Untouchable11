@@ -1,0 +1,57 @@
+/* 由右至左語言（希伯來文 he、阿拉伯文 ar）的版面補充 —— <html dir="rtl"> 由 js/i18n/i18n.js 的 applyI18n 設定（index.html 載入畫面也有一份）。
+   flex / grid 的排列會自動左右對調（拼圖盤跑到右邊、關卡按鈕從右排到左），這裡只修「寫死 left / right」的樣式。
+   刻意保持實體位置不變的地方（與 JS 的座標計算一致）：圖板左側的工具列、沉浸模式右下角的圓點與小型拼圖盤、吐司、拖曳殘影。 */
+
+/* 阿拉伯文字母要相連，任何字距都會拆散字形 */
+html[lang="ar"] *{letter-spacing:normal!important}
+
+/* ---- 頁首：右上 / 右下的按鈕組移到左側（標題靠右對齊） ---- */
+html[dir="rtl"] .hero-acts{right:auto;left:12px;align-items:flex-start}
+@media (max-width:600px){html[dir="rtl"][data-lv="11"] .hero h1{padding-right:0;padding-left:84px}}
+
+/* ---- 圖板標題列 / 解答冊 ---- */
+html[dir="rtl"] #levelTitle .lvn,html[dir="rtl"] #levelTitle .lvg{margin-right:0;margin-left:1em}
+html[dir="rtl"] .bc-note{margin-left:0;margin-right:8px}
+html[dir="rtl"] .book-count .bc-l{text-align:right}
+html[dir="rtl"] .book-count .bc-r{text-align:left}
+
+/* ---- 翻頁箭頭：「上一頁」在右、「下一頁」在左，圖示左右翻轉 ---- */
+html[dir="rtl"] .navbtn svg{transform:scaleX(-1)}
+
+/* ---- 說明 / 關卡資訊的清單縮排 ---- */
+html[dir="rtl"] .help ul,html[dir="rtl"] .hsec ul.splist{padding-left:0;padding-right:18px}
+@media (max-width:640px){
+  html[dir="rtl"] .help .rulegrid{margin-left:0;margin-right:-18px}
+  html[dir="rtl"] .help .rulegrid li{padding-left:0;padding-right:18px}
+}
+
+/* ---- 設定視窗 ---- */
+html[dir="rtl"] #nickInput{text-align:left}
+html[dir="rtl"] .langbtn{margin-left:0;margin-right:auto}
+html[dir="rtl"] .vol b,html[dir="rtl"] .sgrp .vol b{text-align:left}
+html[dir="rtl"] .vslider input[type=range]{direction:ltr}   /* 滑桿維持「往右 = 變大」，填色（由左往右的漸層）才會與滑鈕對齊 */
+html[dir="rtl"] .srow2 .sgrp:first-child{padding-right:0;padding-left:16px}
+html[dir="rtl"] .sgrp-vol{padding-left:0;padding-right:16px}
+html[dir="rtl"] .sgrp-vol::before{left:auto;right:0}
+@media (max-width:460px){
+  html[dir="rtl"] .srow2 .sgrp:first-child{padding-right:0;padding-left:8px}
+  html[dir="rtl"] .sgrp-vol{padding-left:0;padding-right:8px}
+}
+html[dir="rtl"] .btn.gbtn .gtxt.wrap{text-align:right}
+html[dir="rtl"] .acct-txt small .syncbtn{margin-left:0;margin-right:5px}
+
+/* ---- 解答檢視 / 統計 / 排行榜 ---- */
+html[dir="rtl"] .solmeta #solNick{text-align:left}
+html[dir="rtl"] .pg,html[dir="rtl"] .pct{text-align:right}
+html[dir="rtl"] .rcol+.rcol{border-left:0;border-right:1px solid var(--line)}
+html[dir="rtl"] .ricol+.ricol{border-left:0;border-right:1px solid var(--line)}
+@media (max-width:640px){
+  html[dir="rtl"] .rcol+.rcol,html[dir="rtl"] .ricol+.ricol{border-right:0;border-top:1px solid var(--line)}
+}
+html[dir="rtl"] .rm-rank{margin-left:0;margin-right:auto;text-align:left}
+html[dir="rtl"] .rm-link{margin-left:0;margin-right:6px}
+html[dir="rtl"] .rtab th,html[dir="rtl"] .rtab td{text-align:left}
+html[dir="rtl"] .rtab tbody th,html[dir="rtl"] .rtab th:first-child{text-align:right}
+
+/* ---- 「隨機挑戰」的代碼框：代碼是拉丁字母 / 數字，永遠由左至右 ---- */
+html[dir="rtl"] .rnd-in{direction:ltr}

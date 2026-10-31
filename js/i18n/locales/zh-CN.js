@@ -68,6 +68,8 @@ export default {
     'rnd.loaded':c => `已套用组合代码：${c}`,
     'rnd.mapped':(a, c) => `“${a}”对应到组合代码：${c}`,
     'rnd.need4':'请输入 4 个字',
+    'hint.rnd':'点击可重抽拼图组',
+    'hint.grp':'点击切换拼图组',
 
     // ── 解答册 ──
     'book.title':'解答册',
@@ -162,10 +164,8 @@ export default {
     'set.report':'问题反馈',
     'set.reportSubject':'Untouchable 11 问题反馈',
     'lang.title':'选择语言',
-    'lang.recTitle':'当前语言与推荐',
-    'lang.rec':'推荐语言',
     'lang.all':'一般语言',
-    'lang.sort':'切换排序',
+    'lang.note':'翻译可能不够准确，欢迎反馈与协助',
 
     // ── 设置 / 账户与云端同步（Google 登录、合并记录、退出登录） ──
     'acct.title':'账户',

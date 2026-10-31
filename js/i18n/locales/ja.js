@@ -68,6 +68,8 @@ export default {
     'rnd.loaded':c => `コードを適用しました：${c}`,
     'rnd.mapped':(a, c) => `「${a}」はコード ${c} に対応します`,
     'rnd.need4':'4文字で入力してください',
+    'hint.rnd':'クリックで組み合わせを引き直し',
+    'hint.grp':'クリックで組み合わせを切り替え',
 
     // ── 解答冊 ──
     'book.title':'解答集',
@@ -162,10 +164,8 @@ export default {
     'set.report':'不具合を報告',
     'set.reportSubject':'Untouchable 11 不具合の報告',
     'lang.title':'言語を選択',
-    'lang.recTitle':'現在の言語とおすすめ',
-    'lang.rec':'おすすめの言語',
     'lang.all':'すべての言語',
-    'lang.sort':'並び順を切り替え',
+    'lang.note':'翻訳が正確でない場合があります。ご報告やご協力をお待ちしています。',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'アカウント',

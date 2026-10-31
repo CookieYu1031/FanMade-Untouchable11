@@ -3,7 +3,16 @@
  *   2) 違規定位：找出哪些邊線 / 頂點發生接觸（即時警示） */
 import { absCells } from '../state/state.js';
 
+// 同一個盤面在一次操作中會被分析好幾次（renderBoard、evaluate、解答判定、清除按鈕…）：以「已放置拼圖的姿態」當鍵，只保留最近一次的結果。
+// 回傳的物件視為唯讀（所有呼叫端都只讀取）。
+let memoKey = '', memoVal = null;
 export function analyze(pieces) {
+  let key = pieces.length + '|';
+  for (const p of pieces) if (p.placed) key += p.id + p.rot + (p.flip ? 1 : 0) + ',' + p.x + ',' + p.y + ';';
+  if (key !== memoKey) { memoVal = compute(pieces); memoKey = key; }
+  return memoVal;
+}
+function compute(pieces) {
   const placed = pieces.filter(p => p.placed);
 
   // --- 佔格表：格座標 -> 佔用該格的拼圖 id 陣列（長度 > 1 代表重疊）---

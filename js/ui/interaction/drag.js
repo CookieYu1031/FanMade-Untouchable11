@@ -8,6 +8,7 @@ import { miniSVG, cellRects } from '../svg.js';
 import { cellsOf } from '../../core/matrix.js';
 import { renderBoard } from '../render-board.js';
 import { renderTray } from '../render-tray.js';
+import { dismissHint } from '../hint.js';
 
 // 滑鼠位置 -> 底板格座標（可為小數）
 function pointerToGrid(cx, cy) {
@@ -29,6 +30,7 @@ function snapFromPointer(cx, cy, p) {
 export function startDrag(e, id, fromTray) {
   if (e.button > 0) return;
   e.preventDefault();
+  dismissHint();   // 開始玩這一關：消除骰子 / 星星按鈕的高光與提示字樣
   state.selected = id; state.chain = null;
   state.drag = { id, pid:e.pointerId, fromTray:!!fromTray, sx:e.clientX, sy:e.clientY, cx:e.clientX, cy:e.clientY, moved:false, ghost:null, before:clonePieces(curPieces()) };
   renderBoard(); renderTray();

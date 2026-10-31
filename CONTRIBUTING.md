@@ -26,7 +26,7 @@ GitHub Actions（`.github/workflows/ci.yml`）在每次 push / PR 也會跑同�
 - 不使用 inline 事件屬性（`onclick=` 等）
 
 ## 語言（`js/i18n/i18n.js`）
-- 新增語言步驟見檔案開頭；要讓它出現在「推薦語言」，另補 `REGION_LANGS` / `SIMILAR`
+- 新增語言步驟見檔案開頭；要讓「依 IP 所在國家」自動選到它，另補 `COUNTRY_LANG`
 - 語言以文字呈現（ISO 代碼 + 原名稱），不使用國旗：一種語言不等於一個國家
 
 ## 資料與授權

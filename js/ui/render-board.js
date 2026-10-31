@@ -68,15 +68,20 @@ export function fitBoard() {
   els.board.style.width = D.cols * c + 'px';
   els.board.style.height = D.rows * c + 'px';
 }
+let gridKey = '';   // 目前畫在底層的格線尺寸
 export function renderBoard() {
   const L = curLevel(), D = dims();
   const an = analyze(curPieces());
 
-  // 底層：格線
-  let grid = '';
-  for (let x = 1; x < D.cols; x++) grid += `<line x1="${x}" y1="0" x2="${x}" y2="${D.rows}"/>`;
-  for (let y = 1; y < D.rows; y++) grid += `<line x1="0" y1="${y}" x2="${D.cols}" y2="${y}"/>`;
-  els.gGrid.innerHTML = `<g stroke="var(--gridline)" stroke-width=".05">${grid}</g>`;
+  // 底層：格線（底板尺寸沒變就不重畫）
+  const gk = D.cols + 'x' + D.rows;
+  if (gk !== gridKey) {
+    let grid = '';
+    for (let x = 1; x < D.cols; x++) grid += `<line x1="${x}" y1="0" x2="${x}" y2="${D.rows}"/>`;
+    for (let y = 1; y < D.rows; y++) grid += `<line x1="0" y1="${y}" x2="${D.cols}" y2="${y}"/>`;
+    els.gGrid.innerHTML = `<g stroke="var(--gridline)" stroke-width=".05">${grid}</g>`;
+    gridKey = gk;
+  }
 
   // 拼圖層：每片拼圖一個 <g>，供拖曳事件代理
   els.gPieces.innerHTML = curPieces().filter(p => p.placed).map(p =>
@@ -93,8 +98,8 @@ export function renderBoard() {
   els.gOverlay.innerHTML = ov.join('');
 
   // 標題列狀態
-  const gk = curTag(L);   // 有拼圖組合的關卡：標題列顯示目前使用的組合（如「A組」；隨機挑戰顯示代碼，如「GOOD(3K7Z)」）
-  els.title.innerHTML = `<span class="lvn">${lvLong(L)}</span>${gk ? `<span class="lvg">${escapeHtml(gk)}</span>` : ''}<span class="dims">${L.cols} × ${L.rows}</span>`;
+  const tag = curTag(L);   // 有拼圖組合的關卡：標題列顯示目前使用的組合（如「A組」；隨機挑戰顯示代碼，如「GOOD(3K7Z)」）
+  els.title.innerHTML = `<span class="lvn">${lvLong(L)}</span>${tag ? `<span class="lvg">${escapeHtml(tag)}</span>` : ''}<span class="dims">${L.cols} × ${L.rows}</span>`;
   updateUndo();
   if (!(state.drag && state.drag.moved)) schedulePersist(); // 拖曳 / 吸附途中不存，放下後才存
   syncTools();

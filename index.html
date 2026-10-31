@@ -28,13 +28,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- 網頁字型改成非阻塞載入（先用系統字型顯示，載入後再換字型），避免 Google Fonts 較慢時整頁空白；載入完成後通知頁面重新量測標題 -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" id="webfonts">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+Hebrew:wght@400;500;700;900&family=Noto+Sans+Arabic:wght@400;500;700;900&family=Noto+Sans+Thai:wght@400;500;700;900&family=Noto+Sans+Devanagari:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" id="webfonts">
 <script>
 // 非阻塞載入網頁字型（不使用 inline 事件屬性，方便日後加上嚴格的 CSP）：載入完成才套用，再通知頁面重新量測標題
 (function(){ var l = document.getElementById('webfonts'); function on(){ l.media = 'all'; if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ window.dispatchEvent(new Event('resize')); }); }
   if (l.sheet) on(); else l.addEventListener('load', on, { once: true }); })();
 </script>
-<noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet"></noscript>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+Hebrew:wght@400;500;700;900&family=Noto+Sans+Arabic:wght@400;500;700;900&family=Noto+Sans+Thai:wght@400;500;700;900&family=Noto+Sans+Devanagari:wght@400;500;700;900&display=swap" rel="stylesheet"></noscript>
 <!-- 載入畫面（#loader）：樣式與內容全部內嵌，不依賴其他 CSS / JS；由 js/ui/loader.js 在第一次繪製完成後收起 -->
 <style>
 #loader{--ld-bg:#F3F5FB;--ld-ink:#2B2E4A;--ld-mut:#6B6F8F;--ld-blue:#A9CFF7;
@@ -48,7 +48,11 @@
 html[lang="zh-Hans"] #loader{font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Noto Sans TC",system-ui,sans-serif}
 html[lang="ja"] #loader{font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo","Noto Sans TC",system-ui,sans-serif}
 html[lang="ko"] #loader{font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans TC",system-ui,sans-serif}
-html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lang="pt-BR"] #loader,html[lang="it"] #loader,html[lang="ru"] #loader,html[lang="nl"] #loader,html[lang="pl"] #loader,html[lang="sv"] #loader,html[lang="cs"] #loader{font-family:"Noto Sans","Noto Sans TC",system-ui,sans-serif}
+html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lang="pt-BR"] #loader,html[lang="it"] #loader,html[lang="ru"] #loader,html[lang="nl"] #loader,html[lang="pl"] #loader,html[lang="sv"] #loader,html[lang="cs"] #loader,html[lang="uk"] #loader,html[lang="tr"] #loader,html[lang="vi"] #loader,html[lang="id"] #loader{font-family:"Noto Sans","Noto Sans TC",system-ui,sans-serif}
+html[lang="he"] #loader{font-family:"Noto Sans Hebrew","Noto Sans",system-ui,sans-serif}
+html[lang="ar"] #loader{font-family:"Noto Sans Arabic","Noto Sans",system-ui,sans-serif}
+html[lang="th"] #loader{font-family:"Noto Sans Thai","Noto Sans",system-ui,sans-serif}
+html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui,sans-serif}
 #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
 #loader *{box-sizing:border-box}
 /* 與頁首相同的色塊標題 */
@@ -73,22 +77,20 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
   var dk = set.theme !== 'light';   // 主題預設暗色
   document.documentElement.setAttribute('data-theme', dk ? 'dark' : 'light');
   Array.prototype.forEach.call(document.querySelectorAll('meta[name="theme-color"]'), function (m) { m.content = dk ? '#1B1D32' : '#F3F5FB'; });
-  var ok = { en:1, 'en-GB':1, zh:1, 'zh-CN':1, ja:1, ko:1, fr:1, de:1, es:1, 'pt-BR':1, it:1, ru:1, nl:1, pl:1, sv:1, cs:1 }, k = ok[set.lang] ? set.lang : '';
-  if (!k) {   // 還沒設定過：偵測瀏覽器偏好語言，邏輯同 js/i18n/i18n.js 的 detectLang()（精簡版），偵測不到就用 en
+  var ok = { en:1, 'en-GB':1, zh:1, 'zh-CN':1, ja:1, ko:1, fr:1, de:1, es:1, 'pt-BR':1, it:1, ru:1, nl:1, pl:1, sv:1, cs:1, uk:1, tr:1, he:1, ar:1, vi:1, id:1, th:1, hi:1 }, k = ok[set.lang] ? set.lang : '';
+  if (!k) {   // 還沒設定過：偵測瀏覽器偏好語言，邏輯同 js/i18n/i18n.js 的 browserLang()（精簡版），偵測不到就用 en
     var ps = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language], uk = /^(gb|uk|ie|au|nz|in|za|sg|hk|my|ng|ke|pk|bd|lk|mt|cy)$/, tw = /^(tw|hk|mo|hant)$/;
     for (var i = 0; i < ps.length && !k; i++) {
       var q = String(ps[i] || '').toLowerCase().split('-'), r = q.slice(1);
       if (q[0] === 'zh') k = r.some(function (x) { return tw.test(x); }) ? 'zh' : 'zh-CN';
       else if (q[0] === 'ja') k = 'ja'; else if (q[0] === 'ko') k = 'ko';
       else if (q[0] === 'pt') k = 'pt-BR';
-      else if (/^(fr|de|es|it|ru|nl|pl|sv|cs)$/.test(q[0])) k = q[0];
+      else if (/^(fr|de|es|it|ru|nl|pl|sv|cs|uk|tr|he|ar|vi|id|th|hi)$/.test(q[0])) k = q[0];
+      else if (q[0] === 'iw') k = 'he';
+      else if (q[0] === 'in') k = 'id';
       else if (q[0] === 'en') k = r.some(function (x) { return uk.test(x); }) ? 'en-GB' : 'en';
     }
-    if (!k) { var tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
-      k = { 'Asia/Taipei':'zh', 'Asia/Hong_Kong':'zh', 'Asia/Macau':'zh', 'Asia/Shanghai':'zh-CN', 'Asia/Tokyo':'ja', 'Asia/Seoul':'ko', 'Europe/London':'en-GB', 'Europe/Dublin':'en-GB', 'Australia/Sydney':'en-GB', 'Pacific/Auckland':'en-GB',
-        'Europe/Paris':'fr', 'Europe/Berlin':'de', 'Europe/Vienna':'de', 'Europe/Zurich':'de', 'Europe/Madrid':'es', 'America/Mexico_City':'es', 'America/Bogota':'es', 'America/Argentina/Buenos_Aires':'es',
-        'America/Sao_Paulo':'pt-BR', 'Europe/Rome':'it', 'Europe/Moscow':'ru',
-        'Europe/Amsterdam':'nl', 'Europe/Warsaw':'pl', 'Europe/Stockholm':'sv', 'Europe/Prague':'cs' }[tz] || 'en'; }
+    if (!k) k = 'en';   // 瀏覽器偏好語言都不支援：載入畫面先用英文（進入頁面後 main.js 會再依 IP 所在國家決定語言）
   }
   var TX = {
     zh: { load:'載入中…', slow:'網路較慢，仍在載入，請稍候…', fail:'載入時間比預期久，請檢查網路連線後重新整理頁面。', reload:'重新整理' },
@@ -105,11 +107,20 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
     nl: { load:'Laden…', slow:'Trage verbinding, nog bezig met laden…', fail:'Het laden duurt langer dan verwacht. Controleer je verbinding en laad de pagina opnieuw.', reload:'Opnieuw laden' },
     pl: { load:'Ładowanie…', slow:'Wolne połączenie, nadal się ładuje…', fail:'Ładowanie trwa dłużej, niż oczekiwano. Sprawdź połączenie i odśwież stronę.', reload:'Odśwież' },
     sv: { load:'Laddar…', slow:'Långsam anslutning, laddar fortfarande…', fail:'Det tar längre tid än väntat att ladda. Kontrollera din anslutning och ladda om sidan.', reload:'Ladda om' },
-    cs: { load:'Načítání…', slow:'Pomalé připojení, stále se načítá…', fail:'Načítání trvá déle, než se čekalo. Zkontrolujte připojení a stránku obnovte.', reload:'Obnovit' }
+    cs: { load:'Načítání…', slow:'Pomalé připojení, stále se načítá…', fail:'Načítání trvá déle, než se čekalo. Zkontrolujte připojení a stránku obnovte.', reload:'Obnovit' },
+    uk: { load:'Завантаження…', slow:'Повільне з\'єднання, завантаження триває…', fail:'Завантаження триває довше, ніж очікувалося. Перевірте з\'єднання та оновіть сторінку.', reload:'Оновити' },
+    tr: { load:'Yükleniyor…', slow:'Bağlantı yavaş, yükleme sürüyor…', fail:'Yükleme beklenenden uzun sürüyor. Lütfen bağlantınızı kontrol edip sayfayı yenileyin.', reload:'Yenile' },
+    he: { load:'טוען…', slow:'החיבור איטי, הטעינה עדיין נמשכת…', fail:'הטעינה נמשכת זמן רב מהצפוי. בדקו את החיבור ורעננו את הדף.', reload:'רענון' },
+    ar: { load:'جارٍ التحميل…', slow:'الاتصال بطيء، ما زال التحميل جاريًا…', fail:'يستغرق التحميل وقتًا أطول من المتوقع. تحقق من اتصالك ثم أعد تحميل الصفحة.', reload:'إعادة التحميل' },
+    vi: { load:'Đang tải…', slow:'Kết nối chậm, vẫn đang tải…', fail:'Việc tải mất nhiều thời gian hơn dự kiến. Hãy kiểm tra kết nối và tải lại trang.', reload:'Tải lại' },
+    id: { load:'Memuat…', slow:'Koneksi lambat, masih memuat…', fail:'Pemuatan memakan waktu lebih lama dari perkiraan. Periksa koneksi Anda lalu muat ulang halaman.', reload:'Muat ulang' },
+    th: { load:'กำลังโหลด…', slow:'การเชื่อมต่อช้า ยังคงโหลดอยู่…', fail:'การโหลดใช้เวลานานกว่าที่คาดไว้ โปรดตรวจสอบการเชื่อมต่อแล้วโหลดหน้าใหม่', reload:'โหลดใหม่' },
+    hi: { load:'लोड हो रहा है…', slow:'कनेक्शन धीमा है, अभी भी लोड हो रहा है…', fail:'लोड होने में अपेक्षा से अधिक समय लग रहा है। कृपया अपना कनेक्शन जाँचें और पेज को फिर से लोड करें।', reload:'फिर से लोड करें' }
   };
   var T = TX[k] || TX.en;   // 沒有該語言的載入文字 → 英文
-  var H = { zh:'zh-Hant', 'zh-CN':'zh-Hans', ja:'ja', ko:'ko', en:'en-US', 'en-GB':'en-GB', fr:'fr', de:'de', es:'es', 'pt-BR':'pt-BR', it:'it', ru:'ru', nl:'nl', pl:'pl', sv:'sv', cs:'cs' };
+  var H = { zh:'zh-Hant', 'zh-CN':'zh-Hans', ja:'ja', ko:'ko', en:'en-US', 'en-GB':'en-GB', fr:'fr', de:'de', es:'es', 'pt-BR':'pt-BR', it:'it', ru:'ru', nl:'nl', pl:'pl', sv:'sv', cs:'cs', uk:'uk', tr:'tr', he:'he', ar:'ar', vi:'vi', id:'id', th:'th', hi:'hi' };
   document.documentElement.lang = H[k];
+  document.documentElement.dir = (k === 'he' || k === 'ar') ? 'rtl' : 'ltr';   // 由右至左書寫的語言（同 js/i18n/i18n.js 的 LANG_INFO.dir）
   window.__u11Loader = T;
 })();
 </script>
@@ -128,8 +139,10 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
 <link rel="stylesheet" href="css/stats.css">
 <link rel="stylesheet" href="css/group.css">
 <link rel="stylesheet" href="css/random.css">
+<link rel="stylesheet" href="css/hint.css">
 <link rel="stylesheet" href="css/rank.css">
 <link rel="stylesheet" href="css/immersive.css">
+<link rel="stylesheet" href="css/rtl.css">
 </head>
 <body>
 <div id="loader" role="status" aria-live="polite">
@@ -367,25 +380,25 @@ html[lang="fr"] #loader,html[lang="de"] #loader,html[lang="es"] #loader,html[lan
     </div>
       <!-- 語言選擇畫面：點語言按鈕後取代上面的設定內容（標題列、視窗大小不變），選了語言就回到設定畫面（見 js/ui/modals/lang-picker.js） -->
       <div class="langbody" id="langBody" hidden>
-        <div class="lhead" id="langRecTitle" data-i18n="lang.recTitle"></div>
-        <div class="lgrid lrec" id="langRec" role="radiogroup" data-i18n-label="lang.rec"></div>
-        <div class="lsep"></div>
-        <button type="button" class="lsort" id="langSort" data-i18n-label="lang.sort" data-nosound></button>
         <div class="lgrid lall" id="langAll" role="radiogroup" data-i18n-label="lang.all"></div>
       </div>
   </div>
-  <!-- 視窗框下方的固定區域：平常是問題回報小字；語言選擇畫面時小字變透明且點不到（區域與佔位保留，視窗不會跑版），翻頁列疊在同一個位置 -->
+  <!-- 視窗框下方的固定區域：平常是問題回報小字；語言選擇畫面時小字變透明且點不到（區域與佔位保留），
+       「翻譯可能不精確」說明疊在「同一個位置」（同樣的上邊距、內距、字級，文字對文字不位移），翻頁列接在說明下方 -->
   <div class="set-foot">
-    <!-- 語言選擇的翻頁列（視窗外下方中間，取代問題回報小字；樣式沿用統計視窗的 .navbar）；只有一頁時隱藏 -->
-    <div class="navbar" id="langNav" hidden>
-      <div class="navgrp">
-        <button class="navbtn" id="langPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <span class="navpg" id="langPg" aria-live="polite"></span>
-        <button class="navbtn" id="langNext" type="button" disabled data-nosound data-i18n-label="a11y.next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-      </div>
-    </div>
     <!-- 視窗框之外的小字：問題回報（mailto 連結，主旨由 js/ui/modals/settings.js 依語言填入） -->
     <a class="set-report" id="setReport" href="mailto:830601ryan2@gmail.com" data-i18n="set.report"></a>
+    <!-- 語言選擇畫面專用：絕對定位疊在問題回報上，不佔版面；說明若換行只會往下長，不會推動視窗；有多頁時翻頁列（樣式沿用統計視窗的 .navbar）在說明下方 -->
+    <div class="lang-foot" id="langFoot" hidden>
+      <p class="lang-note" id="langNote" data-i18n="lang.note"></p>
+      <div class="navbar" id="langNav" hidden>
+        <div class="navgrp">
+          <button class="navbtn" id="langPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <span class="navpg" id="langPg" aria-live="polite"></span>
+          <button class="navbtn" id="langNext" type="button" disabled data-nosound data-i18n-label="a11y.next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

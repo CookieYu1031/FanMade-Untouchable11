@@ -1,5 +1,6 @@
 /* 重置版圖確認視窗 */
 import { Sfx } from '../../audio/sfx.js';
+import { isRecordedSolution } from '../../game/solve.js';
 import { t } from '../../i18n/i18n.js';
 import { state, freshPieces, boardKey } from '../../state/state.js';
 import { updateUndo } from '../../storage/history.js';
@@ -11,6 +12,7 @@ import { renderTray } from '../render-tray.js';
 const brdModal = $('boardResetModal');
 export function askResetBoard() {
   if (state.drag) return;
+  if (isRecordedSolution()) { doResetBoard(); return; }   // 正解且已收錄、之後沒有再動過：清掉不會損失任何東西，不必詢問
   brdModal.classList.add('open'); $('brdConfirm').focus();
 }
 function doResetBoard() {

@@ -68,6 +68,8 @@ export default {
     'rnd.loaded':c => `Set code applied: ${c}`,
     'rnd.mapped':(a, c) => `"${a}" maps to set code: ${c}`,
     'rnd.need4':'Please enter 4 characters',
+    'hint.rnd':'Click to redraw the piece set',
+    'hint.grp':'Click to switch the piece set',
 
     // ── 解答冊 ──
     'book.title':'Solutions',
@@ -162,10 +164,8 @@ export default {
     'set.report':'Report a problem',
     'set.reportSubject':'Untouchable 11 – Problem report',
     'lang.title':'Choose language',
-    'lang.recTitle':'Current & suggested',
-    'lang.rec':'Suggested languages',
     'lang.all':'All languages',
-    'lang.sort':'Toggle sort order',
+    'lang.note':'Translations may be inaccurate. Reports and help are welcome.',
 
     // ── 設定 / 帳戶與雲端同步（Google 登入、合併紀錄、登出） ──
     'acct.title':'Account',

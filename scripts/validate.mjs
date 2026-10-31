@@ -19,7 +19,7 @@ let pieces, levels;
 try { pieces = readJson('data/pieces.json'); levels = readJson('data/levels.json'); readJson('data/colors.json'); }
 catch (e) { fail(`資料檔無法解析：${e.message}`); }
 
-const LANG_CODES = ['zh', 'zh-CN', 'ja', 'ko', 'en', 'fr', 'de', 'es', 'pt-BR', 'it', 'ru', 'nl', 'pl', 'sv', 'cs'];   // levels.json 要求的名稱語言（en-GB 退回 en）
+const LANG_CODES = ['zh', 'zh-CN', 'ja', 'ko', 'en', 'fr', 'de', 'es', 'pt-BR', 'it', 'ru', 'nl', 'pl', 'sv', 'cs', 'uk', 'tr', 'he', 'ar', 'vi', 'id', 'th', 'hi'];   // levels.json 要求的名稱語言（en-GB 退回 en）
 
 if (levels) {
   const seen = new Set();

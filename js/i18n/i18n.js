@@ -1,7 +1,8 @@
-/* 多語系 —— 英(美) / 英(英) / 繁中 / 簡中 / 日 / 韓 / 法 / 德 / 西 / 葡(巴西) / 義 / 俄 / 荷 / 波 / 瑞典 / 捷克（語言選擇視窗見 ui/modals/lang-picker.js）。靜態文字用 data-i18n* 屬性，動態文字用 t('key', ...參數)
+/* 多語系 —— 英(美) / 英(英) / 繁中 / 簡中 / 日 / 韓 / 法 / 德 / 西 / 葡(巴西) / 義 / 俄 / 荷 / 波 / 瑞典 / 捷克 / 烏克蘭 / 土耳其 / 希伯來 / 阿拉伯 / 越南 / 印尼 / 泰 / 印地（語言選擇視窗見 ui/modals/lang-picker.js）。靜態文字用 data-i18n* 屬性，動態文字用 t('key', ...參數)
    缺少翻譯時一律退回英文（見 langChain）；偵測不到語言時預設英文(美國)。
    新增語言：① locales/ 放一份語言檔 ② 在 LANG_INFO 登記（code = 按鈕上顯示的 ISO 代碼、label = 語言原名稱）③ levels.json 各關卡 / 星名補名稱
-            ④ index.html 的 Google Fonts 與載入畫面文字 ⑤ css/base.css 補該語言的字體 ⑥ 若要讓它出現在「推薦語言」：補下方 REGION_LANGS / SIMILAR */
+            ④ index.html 的 Google Fonts 與載入畫面文字 ⑤ css/base.css 補該語言的字體 ⑥ 若要讓「依 IP 所在國家」自動選到它：在下方 COUNTRY_LANG 補國家代碼
+   由右至左書寫的語言（希伯來文、阿拉伯文）在 LANG_INFO 加 dir:'rtl'，並確認 css/rtl.css 涵蓋新增的版面 */
 import zh from './locales/zh.js';
 import zhCN from './locales/zh-CN.js';
 import ja from './locales/ja.js';
@@ -18,11 +19,20 @@ import nl from './locales/nl.js';
 import pl from './locales/pl.js';
 import sv from './locales/sv.js';
 import cs from './locales/cs.js';
+import uk from './locales/uk.js';
+import tr from './locales/tr.js';
+import he from './locales/he.js';
+import ar from './locales/ar.js';
+import vi from './locales/vi.js';
+import id from './locales/id.js';
+import th from './locales/th.js';
+import hi from './locales/hi.js';
 
-const I18N = { en, 'en-GB': enGB, zh, 'zh-CN': zhCN, ja, ko, fr, de, es, 'pt-BR': ptBR, it, ru, nl, pl, sv, cs };
+const I18N = { en, 'en-GB': enGB, zh, 'zh-CN': zhCN, ja, ko, fr, de, es, 'pt-BR': ptBR, it, ru, nl, pl, sv, cs, uk, tr, he, ar, vi, id, th, hi };
 const SANS_TC = '"Noto Sans TC","PingFang TC","Microsoft JhengHei"';
-const SANS_LAT = `"Noto Sans",${SANS_TC},system-ui,sans-serif`;   // 拉丁 / 西里爾字母語言（法 德 西 葡 義 俄 荷 波 瑞典 捷克）
-// 語言清單：code = 設定按鈕上顯示的 ISO 語言代碼（如 zh-TW），label = 語言原名稱（選擇視窗用），html = <html lang>，locale = 日期 / 數字格式，font = 分享圖（canvas）用的字體
+const SANS_LAT = `"Noto Sans",${SANS_TC},system-ui,sans-serif`;   // 拉丁 / 西里爾字母語言（法 德 西 葡 義 俄 荷 波 瑞典 捷克 烏克蘭 土耳其 越南 印尼）
+// 語言清單：code = 設定按鈕上顯示的 ISO 語言代碼（如 zh-TW），label = 語言原名稱（選擇視窗用），html = <html lang>，locale = 日期 / 數字格式，font = 分享圖（canvas）用的字體，
+// dir = 'rtl' 表示由右至左書寫（套用到 <html dir>；省略 = ltr）
 // 字體堆疊要與 css/base.css 的 html[lang] 規則一致
 export const LANG_INFO = {
   en:      { code:'en-US', label:'English(US)', html:'en-US',   locale:'en-US', font:`${SANS_TC},system-ui,sans-serif` },
@@ -41,6 +51,14 @@ export const LANG_INFO = {
   pl:      { code:'pl', label:'Polski',      html:'pl',      locale:'pl-PL', font:SANS_LAT },
   sv:      { code:'sv', label:'Svenska',     html:'sv',      locale:'sv-SE', font:SANS_LAT },
   cs:      { code:'cs', label:'Čeština',     html:'cs',      locale:'cs-CZ', font:SANS_LAT },
+  uk:      { code:'uk', label:'Українська',  html:'uk',      locale:'uk-UA', font:SANS_LAT },
+  tr:      { code:'tr', label:'Türkçe',      html:'tr',      locale:'tr-TR', font:SANS_LAT },
+  he:      { code:'he', label:'עברית',       html:'he',      locale:'he-IL', dir:'rtl', font:'"Noto Sans Hebrew","Noto Sans",system-ui,sans-serif' },
+  ar:      { code:'ar', label:'العربية',     html:'ar',      locale:'ar-AE', dir:'rtl', font:'"Noto Sans Arabic","Noto Sans",system-ui,sans-serif' },
+  vi:      { code:'vi', label:'Tiếng Việt',  html:'vi',      locale:'vi-VN', font:SANS_LAT },
+  id:      { code:'id', label:'Indonesia',  html:'id',      locale:'id-ID', font:SANS_LAT },
+  th:      { code:'th', label:'ภาษาไทย',     html:'th',      locale:'th-TH', font:'"Noto Sans Thai","Noto Sans",system-ui,sans-serif' },
+  hi:      { code:'hi', label:'हिन्दी',        html:'hi',      locale:'hi-IN', font:'"Noto Sans Devanagari","Noto Sans",system-ui,sans-serif' },
 };
 export const LANGS = Object.keys(LANG_INFO);
 export const DEFAULT_LANG = 'en';   // 偵測不到、或偵測到的語言不支援時使用英文(美國)
@@ -48,30 +66,50 @@ let LANG = DEFAULT_LANG;
 export const getLang = () => LANG;
 
 /* 自動偵測語言 —— 網頁拿不到 Google 帳戶的地區（要登入並取得額外授權才行），能用的是瀏覽器的「偏好語言清單」
-   （通常等於作業系統 / 瀏覽器的語言與地區設定）。順序：偏好語言（含地區碼）→ 時區 → 英文(美國)。
+   （通常等於作業系統 / 瀏覽器的語言與地區設定）。順序：偏好語言（含地區碼）→ IP 所在國家（langFromIP，非同步）→ 英文(美國)。
    ※ index.html 的載入畫面有一份相同邏輯的精簡版（頁面 JS 載入前就要決定文字語言），修改時請兩邊一起改 */
 const EN_UK = /^(gb|uk|ie|au|nz|in|za|sg|hk|my|ng|ke|pk|bd|lk|mt|cy)$/;   // 慣用英式拼寫 / 日期格式的英語地區
 const ZH_TW = /^(tw|hk|mo|hant)$/;                                          // 繁體中文地區 / 字體（其餘如 cn、sg、hans 與沒有地區碼的 zh 都用簡體）
-const TZ = { 'Asia/Taipei':'zh', 'Asia/Hong_Kong':'zh', 'Asia/Macau':'zh', 'Asia/Shanghai':'zh-CN', 'Asia/Tokyo':'ja', 'Asia/Seoul':'ko',
-  'Europe/London':'en-GB', 'Europe/Dublin':'en-GB', 'Australia/Sydney':'en-GB', 'Pacific/Auckland':'en-GB',
-  'Europe/Paris':'fr', 'Europe/Berlin':'de', 'Europe/Vienna':'de', 'Europe/Zurich':'de', 'Europe/Madrid':'es', 'America/Mexico_City':'es', 'America/Bogota':'es', 'America/Argentina/Buenos_Aires':'es',
-  'America/Sao_Paulo':'pt-BR', 'Europe/Rome':'it', 'Europe/Moscow':'ru',
-  'Europe/Amsterdam':'nl', 'Europe/Warsaw':'pl', 'Europe/Stockholm':'sv', 'Europe/Prague':'cs' };
 // 把一個 BCP-47 語言標籤（如 zh-TW、pt-PT、en-AU）對應到本站支援的語言；不支援就回傳 ''
 export function langFromTag(tag) {
   const [base, ...rest] = String(tag || '').toLowerCase().split('-');
   if (base === 'zh') return rest.some(s => ZH_TW.test(s)) ? 'zh' : 'zh-CN';
   if (base === 'ja' || base === 'ko') return base;
-  if (['fr', 'de', 'es', 'it', 'ru', 'nl', 'pl', 'sv', 'cs'].includes(base)) return base;
+  if (['fr', 'de', 'es', 'it', 'ru', 'nl', 'pl', 'sv', 'cs', 'uk', 'tr', 'he', 'ar', 'vi', 'id', 'th', 'hi'].includes(base)) return base;
+  if (base === 'iw') return 'he';   // 希伯來語的舊式代碼
+  if (base === 'in') return 'id';   // 印尼語的舊式代碼
   if (base === 'pt') return 'pt-BR';   // 葡萄牙語只提供巴西版，葡萄牙（pt-PT）也使用
   if (base === 'en') return rest.some(s => EN_UK.test(s)) ? 'en-GB' : 'en';
   return '';
 }
 export const browserLangs = () => (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language]).filter(Boolean);
-export const getTimeZone = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch { return ''; /* 無法取得時區 */ } };
-export function detectLang() {
-  for (const p of browserLangs()) { const l = langFromTag(p); if (l) return l; }
-  return TZ[getTimeZone()] || DEFAULT_LANG;
+// 只看瀏覽器偏好語言：有支援的語言就回傳，沒有就回傳 ''
+export const browserLang = () => { for (const p of browserLangs()) { const l = langFromTag(p); if (l) return l; } return ''; };
+export const detectLang = () => browserLang() || DEFAULT_LANG;
+
+/* 依 IP 判定語言（只在「第一次進站、且瀏覽器偏好語言沒有任何支援的語言」時使用，見 main.js）
+   向第三方服務查詢使用者 IP 所在的國家（只取國家代碼）：主要 api.country.is，失敗再用 ipwho.is；4 秒內沒回應或查不到就回傳 ''（呼叫端沿用英文） */
+const COUNTRY_LANG = {   // 國家 / 地區代碼 → 當地最常用的語言（本站支援的範圍內）
+  TW:'zh', HK:'zh', MO:'zh', CN:'zh-CN', SG:'zh-CN', MY:'en-GB', JP:'ja', KR:'ko',
+  GB:'en-GB', IE:'en-GB', AU:'en-GB', NZ:'en-GB', ZA:'en-GB', US:'en', CA:'en',
+  IN:'hi', VN:'vi', ID:'id', TH:'th',
+  FR:'fr', BE:'fr', LU:'fr', DE:'de', AT:'de', CH:'de', ES:'es', IT:'it', PT:'pt-BR', BR:'pt-BR',
+  RU:'ru', BY:'ru', KZ:'ru', UA:'uk', NL:'nl', PL:'pl', SE:'sv', CZ:'cs', TR:'tr', IL:'he',
+  SA:'ar', EG:'ar', AE:'ar', IQ:'ar', JO:'ar', LB:'ar', KW:'ar', QA:'ar', MA:'ar', DZ:'ar', TN:'ar', LY:'ar', SY:'ar', YE:'ar', OM:'ar', BH:'ar', SD:'ar', PS:'ar',
+  MX:'es', CO:'es', PE:'es', CL:'es', AR:'es', EC:'es', VE:'es', UY:'es', PY:'es', BO:'es', CR:'es', PA:'es', GT:'es', HN:'es', SV:'es', NI:'es', DO:'es', CU:'es', PR:'es',
+};
+const IP_SOURCES = [['https://api.country.is/', j => j.country], ['https://ipwho.is/', j => j.country_code]];
+export async function langFromIP() {
+  for (const [url, pick] of IP_SOURCES) {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 4000);
+    try {
+      const r = await fetch(url, { signal: ctl.signal, credentials: 'omit', referrerPolicy: 'no-referrer' });
+      if (!r.ok) continue;
+      const l = COUNTRY_LANG[String(pick(await r.json()) || '').toUpperCase()];
+      if (l) return l;
+    } catch { /* 網路錯誤 / 逾時：換下一個來源 */ } finally { clearTimeout(timer); }
+  }
+  return '';
 }
 // 存檔 / 雲端裡的語言代碼不合法（或從沒設定過）→ 自動偵測
 export const normLang = l => LANGS.includes(l) ? l : detectLang();
@@ -90,6 +128,7 @@ export const t = (k, ...a) => {
 // 套用到頁面上所有帶 data-i18n* 屬性的靜態元素
 export function applyI18n() {
   document.documentElement.lang = LANG_INFO[LANG].html;
+  document.documentElement.dir = LANG_INFO[LANG].dir || 'ltr';   // 希伯來文 / 阿拉伯文由右至左（版面細節見 css/rtl.css）
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
   document.querySelectorAll('[data-i18n-title]').forEach(el => { const v = t(el.dataset.i18nTitle); el.title = v; el.setAttribute('aria-label', v); });
@@ -99,56 +138,15 @@ export function applyI18n() {
 }
 export const fmtTime = ts => new Date(ts).toLocaleString(LANG_INFO[LANG].locale, { hour12:false });
 
-/* ───────── 推薦語言（語言選擇視窗的第一列）─────────
-   固定順序：① 目前語言（永遠在最左）→ ② 瀏覽器偏好語言 → ③ 依「所在地區 + 目前語言」推測的在地語言 / 第二語言 →
-   ④ 與目前語言相近的語言 → ⑤ English(US)。已出現過的語言會跳過，湊滿 count 個為止。
-   所在地區：網頁端不呼叫第三方 IP 定位服務（會把使用者 IP 送給外部、也需要額外授權），改用瀏覽器時區推測所在國家；
-   時區查不到就略過這一步。 */
-const TZ_REGION = {   // 時區 → 國家 / 地區（只列出會影響推薦結果的）
-  'Asia/Taipei':'TW', 'Asia/Hong_Kong':'HK', 'Asia/Macau':'MO', 'Asia/Shanghai':'CN', 'Asia/Urumqi':'CN', 'Asia/Singapore':'SG', 'Asia/Tokyo':'JP', 'Asia/Seoul':'KR',
-  'Europe/London':'GB', 'Europe/Dublin':'IE', 'Australia/Sydney':'AU', 'Australia/Melbourne':'AU', 'Australia/Perth':'AU', 'Pacific/Auckland':'NZ',
-  'America/New_York':'US', 'America/Chicago':'US', 'America/Denver':'US', 'America/Los_Angeles':'US', 'America/Phoenix':'US', 'America/Anchorage':'US', 'Pacific/Honolulu':'US',
-  'America/Toronto':'CA', 'America/Vancouver':'CA', 'America/Montreal':'CA', 'America/Halifax':'CA',
-  'Europe/Paris':'FR', 'Europe/Brussels':'BE', 'Europe/Luxembourg':'LU', 'Europe/Berlin':'DE', 'Europe/Vienna':'AT', 'Europe/Zurich':'CH',
-  'Europe/Madrid':'ES', 'Europe/Rome':'IT', 'Europe/Moscow':'RU', 'Europe/Kaliningrad':'RU', 'Asia/Yekaterinburg':'RU', 'Asia/Novosibirsk':'RU', 'Asia/Vladivostok':'RU',
-  'Europe/Minsk':'BY', 'Europe/Kiev':'UA', 'Europe/Kyiv':'UA', 'Asia/Almaty':'KZ',
-  'America/Mexico_City':'MX', 'America/Bogota':'CO', 'America/Lima':'PE', 'America/Santiago':'CL', 'America/Argentina/Buenos_Aires':'AR', 'America/Sao_Paulo':'BR',
-  'Europe/Amsterdam':'NL', 'Europe/Warsaw':'PL', 'Europe/Stockholm':'SE', 'Europe/Prague':'CZ',
-  'Europe/Lisbon':'PT', 'Atlantic/Madeira':'PT', 'Asia/Kolkata':'IN', 'Asia/Calcutta':'IN', 'Africa/Johannesburg':'ZA', 'Asia/Kuala_Lumpur':'MY',
-};
-const REGION_LANGS = {   // 國家 / 地區 → 當地常用語言（本站支援的範圍內，由常用到次常用）
-  TW:['zh','ja','en'], HK:['zh','en','zh-CN'], MO:['zh','en','zh-CN'], CN:['zh-CN','en'], SG:['zh-CN','en-GB','zh'], MY:['en-GB','zh-CN'], JP:['ja','en'], KR:['ko','en'],
-  GB:['en-GB','fr'], IE:['en-GB','fr'], AU:['en-GB','zh-CN'], NZ:['en-GB'], IN:['en-GB'], ZA:['en-GB'],
-  US:['en','es'], CA:['en','fr'],
-  FR:['fr','en-GB'], BE:['fr','nl','de'], LU:['fr','de'], DE:['de','en-GB'], AT:['de','it'], CH:['de','fr','it'], ES:['es','en-GB'], IT:['it','fr'], PT:['pt-BR','es'],
-  RU:['ru','en'], BY:['ru'], UA:['ru'], KZ:['ru'],
-  NL:['nl','en-GB'], PL:['pl','en-GB'], SE:['sv','en-GB'], CZ:['cs','en-GB'],
-  MX:['es','en'], CO:['es','en'], PE:['es','en'], CL:['es','en'], AR:['es','en'], BR:['pt-BR','es','en'],
-};
-const SIMILAR = {   // 與該語言相近（同語系 / 同文字 / 互通度高）的語言
-  en:['en-GB'], 'en-GB':['en'], zh:['zh-CN','ja'], 'zh-CN':['zh','ja'], ja:['zh','ko'], ko:['ja','zh'],
-  fr:['it','es'], de:['en-GB','fr'], es:['pt-BR','it'], 'pt-BR':['es','it'], it:['es','fr','pt-BR'], ru:[],
-  nl:['de','en-GB'], pl:['cs','ru'], sv:['en-GB','de'], cs:['pl','de'],
-};
-export function recommendLangs(selected, count) {
-  const out = [selected], add = l => { if (l && LANG_INFO[l] && !out.includes(l) && out.length < count) out.push(l); };
-  browserLangs().forEach(p => add(langFromTag(p)));
-  (REGION_LANGS[TZ_REGION[getTimeZone()]] || []).forEach(add);
-  (SIMILAR[selected] || []).forEach(add);
-  add(DEFAULT_LANG);
-  return out;
-}
-
-// 一般語言的排序：依語言原名稱的首字母，文字系統的先後同 Unicode / CLDR 的國際通用順序（拉丁 → 西里爾 → 韓文 → 日文 → 漢字），
-// 同一種文字內再用該語言自己的排序規則比較。desc = true 時整串反過來（Z~A）
-const SCRIPT_RANK = [[/^[\p{Script=Latin}]/u, 0], [/^\p{Script=Cyrillic}/u, 1], [/^\p{Script=Hangul}/u, 2], [/^[\p{Script=Hiragana}\p{Script=Katakana}]/u, 3], [/^\p{Script=Han}/u, 4]];
+// 一般語言的排序：依語言原名稱的首字母，文字系統的先後同 Unicode / CLDR 的國際通用順序（拉丁 → 西里爾 → 希伯來 → 阿拉伯 → 韓文 → 日文 → 漢字），
+// 同一種文字內再用該語言自己的排序規則比較
+const SCRIPT_RANK = [[/^[\p{Script=Latin}]/u, 0], [/^\p{Script=Cyrillic}/u, 1], [/^\p{Script=Hebrew}/u, 1.2], [/^\p{Script=Arabic}/u, 1.4], [/^\p{Script=Devanagari}/u, 1.6], [/^\p{Script=Thai}/u, 1.8], [/^\p{Script=Hangul}/u, 2], [/^[\p{Script=Hiragana}\p{Script=Katakana}]/u, 3], [/^\p{Script=Han}/u, 4]];
 const scriptOf = name => { const m = SCRIPT_RANK.find(([re]) => re.test(name)); return m ? m[1] : 9; };
-export function sortLangs(list, desc = false) {
+export function sortLangs(list) {
   const col = new Intl.Collator(undefined, { sensitivity: 'base' }), han = new Intl.Collator('zh-u-co-pinyin');
   const cmp = (a, b) => {
     const x = LANG_INFO[a].label, y = LANG_INFO[b].label, d = scriptOf(x) - scriptOf(y);
     return d || (scriptOf(x) === 4 ? han : col).compare(x, y);
   };
-  const r = [...list].sort(cmp);
-  return desc ? r.reverse() : r;
+  return [...list].sort(cmp);
 }

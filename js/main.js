@@ -1,7 +1,9 @@
 /* 進入點：載入設定檔 → 還原存檔 → 綁定介面 → 第一次繪製 */
 import { loadConfig } from './core/config.js';
-import { setLang, applyI18n } from './i18n/i18n.js';
-import { settings, applyTheme } from './state/settings.js';
+import { setLang, applyI18n, LANGS, browserLang, langFromIP } from './i18n/i18n.js';
+import { settings, applyTheme, saveSettings } from './state/settings.js';
+import { Store, KEY_SET } from './storage/store.js';
+import { syncLangPicker } from './ui/modals/lang-picker.js';
 import { state, initState, applyMode, curLevel } from './state/state.js';
 import { restoreBoards, persistBoards } from './storage/boards.js';
 import { refresh } from './ui/render.js';
@@ -42,6 +44,16 @@ function showLoadError(err) {
   box.querySelector('pre').textContent = String(err && err.message || err);
 }
 
+// 第一次進站（沒存過語言）且瀏覽器偏好語言沒有任何支援的語言 → 依 IP 所在國家選語言（非同步，查到才切換；查不到維持英文）
+async function detectLangByIP() {
+  const saved = () => LANGS.includes((Store.get(KEY_SET, {}) || {}).lang);
+  if (saved() || browserLang()) return;
+  const l = await langFromIP();
+  if (!l || l === settings.lang || saved()) return;   // 等待期間使用者自己選了語言就不覆蓋
+  settings.lang = l; setLang(l); saveSettings();
+  applyI18n(); refresh(); syncLangPicker();
+}
+
 async function boot() {
   try { await loadConfig(); } catch (err) { showLoadError(err); return; }
   initState();
@@ -56,5 +68,6 @@ async function boot() {
   hideLoader();   // 第一次繪製完成：收起載入畫面（至少顯示 2 秒）
   showWelcomeOnce();
   initCloud();   // 曾登入過才會載入 Firebase 並還原登入狀態
+  detectLangByIP();
 }
 boot();

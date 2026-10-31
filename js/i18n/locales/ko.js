@@ -68,6 +68,8 @@ export default {
     'rnd.loaded':c => `조합 코드를 적용했습니다: ${c}`,
     'rnd.mapped':(a, c) => `"${a}" → 조합 코드: ${c}`,
     'rnd.need4':'4글자를 입력해 주세요',
+    'hint.rnd':'클릭하여 조합 다시 뽑기',
+    'hint.grp':'클릭하여 조합 전환',
 
     // ── 정답집 ──
     'book.title':'정답집',
@@ -162,10 +164,8 @@ export default {
     'set.report':'문제 신고',
     'set.reportSubject':'Untouchable 11 문제 신고',
     'lang.title':'언어 선택',
-    'lang.recTitle':'현재 언어 및 추천',
-    'lang.rec':'추천 언어',
     'lang.all':'모든 언어',
-    'lang.sort':'정렬 순서 전환',
+    'lang.note':'번역이 정확하지 않을 수 있습니다. 제보와 도움을 환영합니다.',
 
     // ── 설정 / 계정과 클라우드 동기화 (Google 로그인, 기록 병합, 로그아웃) ──
     'acct.title':'계정',

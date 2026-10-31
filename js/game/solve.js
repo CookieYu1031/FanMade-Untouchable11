@@ -13,10 +13,21 @@ import { renderLevels } from '../ui/render-levels.js';
 import { renderBook } from '../ui/render-book.js';
 import { renderStats } from '../ui/modals/stats.js';
 
-function collectNear(L, an) {
+// 盤面 → { sig 標準簽章, disp 實際擺法 }；一律還原成簡報冊的原始方向再計算
+function solutionOf(an) {
   let g = gridOf(an);
-  if (state.rotated) g = rotateCW(rotateCW(rotateCW(g)));   // 還原成原始方向
-  const sig = canonicalSig(g), disp = g.map(r => r.join('')).join('/');
+  if (state.rotated) g = rotateCW(rotateCW(rotateCW(g)));
+  return { sig: canonicalSig(g), disp: g.map(r => r.join('')).join('/') };
+}
+// 目前圖板是否為「正解，且這組解答已收錄在解答冊」：此時清除盤面不會損失任何東西（清除按鈕可免確認，見 ui/modals/board-reset.js）
+export function isRecordedSolution() {
+  const an = analyze(curPieces());
+  if (!an.solved) return false;
+  const { sig } = solutionOf(an);
+  return (loadBook().levels[curLevel().lv] || []).some(it => it.sig === sig);
+}
+function collectNear(L, an) {
+  const { sig, disp } = solutionOf(an);
   const book = loadBook();
   if (!addSolution(book, L.lv, sig, null, disp, settings.nick, true)) return;   // 已收錄過就不再提示
   saveBook(book); renderBook(); renderStats();
@@ -25,10 +36,7 @@ function collectNear(L, an) {
 export function evaluate() {
   const L = curLevel(), an = analyze(curPieces());
   if (!an.solved) { if (L.near && isNear(an, curPieces().length)) collectNear(L, an); return; }
-  let g = gridOf(an);
-  if (state.rotated) g = rotateCW(rotateCW(rotateCW(g))); // 還原成簡報冊的原始方向再算簽章
-  const sig = canonicalSig(g);
-  const disp = g.map(r => r.join('')).join('/'); // 實際擺法（簡報冊原始方向）
+  const { sig, disp } = solutionOf(an);   // disp = 實際擺法（簡報冊原始方向）
   const book = loadBook();
   const typed = L.random ? typedOf(L).toUpperCase() : '';   // 隨機挑戰：玩家輸入的代碼與原代碼不同時（例如 GOOD）一併記下，解答冊標註成 GOOD(原代碼)
   const isNew = addSolution(book, L.lv, sig, null, disp, settings.nick, false, typed && typed !== curGroup(L) ? typed : null);

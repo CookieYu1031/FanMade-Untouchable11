@@ -1,21 +1,20 @@
 /* 語言選擇：設定視窗裡只放一顆「🌐 ISO 代碼」按鈕（如 zh-TW），點下去，設定視窗的「內容」換成語言選擇畫面
    （標題列與視窗大小不變；高度鎖成與設定內容相同），點任一語言就立刻套用並回到設定畫面；標題列的 ✕ 或 Esc = 不換語言、回到設定畫面。
-   畫面分兩區：「當前語言與推薦」（一列；最左固定為目前語言，其餘見 i18n.js 的 recommendLangs）、其下「一般語言」
-   （依語言原名稱首字母排序，已在推薦區的不重複；點「A~Z ↓」切換正 / 倒序）。每列 4 / 3 / 2 欄依視窗寬度決定；
-   一般語言放不下就分頁，翻頁列在視窗外下方中間（取代問題回報小字）。
+   所有語言排成一個格子區（依語言原名稱首字母排序，見 i18n.js 的 sortLangs；目前語言留在它原本的位置，打開時自動翻到它所在的頁）。
+   每列 4 / 3 / 2 欄依視窗寬度決定；放不下就分頁，翻頁列在視窗外下方中間（取代問題回報小字）。
    鍵盤：← → ↑ ↓ 在語言格間移動（到頁尾自動翻頁）、PageUp / PageDown 翻頁、Enter / 空白鍵選取、Esc 回設定畫面。 */
-import { LANGS, LANG_INFO, getLang, recommendLangs, sortLangs } from '../../i18n/i18n.js';
-import { $, escapeHtml } from '../dom.js';
+import { LANGS, LANG_INFO, getLang, sortLangs } from '../../i18n/i18n.js';
+import { $, escapeHtml, isRtl } from '../dom.js';
 
 const btn = $('selLang'), cur = $('langCur'), setModal = $('setModal'), setBody = $('setBody'), body = $('langBody');
-const recEl = $('langRec'), allEl = $('langAll'), sortBtn = $('langSort'), nav = $('langNav'), prev = $('langPrev'), next = $('langNext'), pg = $('langPg');
-const setTitle = $('setTitle'), langTitle = $('langTitle'), report = $('setReport');
+const allEl = $('langAll'), nav = $('langNav'), prev = $('langPrev'), next = $('langNext'), pg = $('langPg');
+const setTitle = $('setTitle'), langTitle = $('langTitle'), report = $('setReport'), foot = $('langFoot');
 let onPick = () => {};
-let desc = false;                 // 一般語言：false = A~Z、true = Z~A
-let current = '', cols = 4, page = 0, pages = 1, rec = [], rest = [];
+let current = '', cols = 4, page = 0, pages = 1;
+const ordered = sortLangs(LANGS);   // 固定排序（依語言原名稱）
 
 // 問題回報小字：語言選擇畫面時保留區域但看不見、點不到（視窗才不會跑版）
-const ghostReport = on => { report.classList.toggle('ghost', on); report.tabIndex = on ? -1 : 0; report.setAttribute('aria-hidden', String(on)); };
+const ghostReport = on => { report.classList.toggle('ghost', on); report.tabIndex = on ? -1 : 0; report.setAttribute('aria-hidden', String(on)); foot.hidden = !on; };   // 語言畫面同時顯示「翻譯可能不精確」說明
 // 剛切換畫面的 ARM_MS 毫秒內忽略點擊（連點保護：點語言按鈕時手滑連點兩下，第二下會落在剛出現的語言格上）。
 // 只在事件層攔截、不改任何樣式（不加 class、不改透明度、不用 pointer-events:none），所以使用者看不出來、畫面也不會閃爍
 const ARM_MS = 400;
@@ -35,36 +34,35 @@ const cssPx = name => parseFloat(getComputedStyle(body).getPropertyValue(name)) 
 
 const tile = l => `<button type="button" class="lopt" role="radio" data-lang="${l}" aria-checked="${l === current}" lang="${LANG_INFO[l].html}" style="font-family:${escapeHtml(LANG_INFO[l].font)}" data-nosound><span>${escapeHtml(LANG_INFO[l].label)}</span></button>`;
 
-function drawAll() {
+function drawAll(toCurrent = false) {
   const gap = cssPx('--lg'), row = cssPx('--lr');
-  const rows = Math.max(1, Math.floor((allEl.clientHeight + gap) / (row + gap)));   // 一般語言區放得下幾列
+  allEl.style.paddingTop = '0px';
+  const h = allEl.clientHeight, rows = Math.max(1, Math.floor((h + gap) / (row + gap)));   // 語言區放得下幾列
+  allEl.style.paddingTop = Math.max(0, (h - (rows * row + (rows - 1) * gap)) / 2) + 'px';   // 剩下的空間平均分到上下，讓語言格上、下的留白一致
   const cap = rows * cols;
-  pages = Math.max(1, Math.ceil(rest.length / cap));
+  pages = Math.max(1, Math.ceil(ordered.length / cap));
+  if (toCurrent) page = Math.floor(ordered.indexOf(current) / cap);   // 開啟時翻到目前語言所在的頁
   page = Math.min(page, pages - 1);
-  allEl.innerHTML = rest.slice(page * cap, page * cap + cap).map(tile).join('');
+  allEl.innerHTML = ordered.slice(page * cap, page * cap + cap).map(tile).join('');
   nav.hidden = pages <= 1;
   pg.textContent = `${page + 1} / ${pages}`;
   prev.disabled = page === 0; next.disabled = page >= pages - 1;
 }
-function layout() {   // 欄數、推薦列、一般列全部重算（開啟 / 視窗大小改變時）
+function layout(toCurrent = false) {   // 欄數與語言格全部重算（開啟 / 視窗大小改變時）
   cols = colsFor(body.clientWidth + 32);
   body.style.setProperty('--lc', cols);
-  rec = recommendLangs(current, cols);
-  rest = sortLangs(LANGS.filter(l => !rec.includes(l)), desc);
-  sortBtn.textContent = desc ? 'Z~A ↓' : 'A~Z ↓';
-  recEl.innerHTML = rec.map(tile).join('');
-  drawAll();
+  drawAll(toCurrent);
 }
 const tiles = () => [...body.querySelectorAll('.lopt')];
 
 function open() {
-  current = getLang(); page = 0;
+  current = getLang();
   body.style.height = setBody.getBoundingClientRect().height + 'px';   // 內容高度與設定畫面相同，視窗大小不變
   setBody.hidden = true; body.hidden = false;
   setTitle.hidden = true; langTitle.hidden = false; ghostReport(true);
   guard();
   btn.setAttribute('aria-expanded', 'true');
-  layout();
+  layout(true);
   (body.querySelector('.lopt[aria-checked="true"]') || tiles()[0]).focus();
 }
 export function closeLangView(focusBtn = true) {
@@ -97,7 +95,6 @@ body.addEventListener('click', e => {
   closeLangView();
   if (l !== current) onPick(l);   // 選了別的語言：立刻套用；選目前語言 = 直接回設定畫面
 });
-sortBtn.addEventListener('click', () => { desc = !desc; page = 0; layout(); });
 prev.addEventListener('click', () => turn(-1));
 next.addEventListener('click', () => turn(1));
 window.addEventListener('resize', () => { if (isLangView() && setModal.classList.contains('open')) layout(); });
@@ -110,7 +107,9 @@ document.addEventListener('keydown', e => {
   const t = tiles(), i = t.indexOf(document.activeElement);
   if (i < 0 || !e.key.startsWith('Arrow')) return;
   e.preventDefault(); e.stopPropagation();
-  const d = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -cols, ArrowDown: cols }[e.key], n = i + d;
+  const h = isRtl() ? -1 : 1;   // 由右至左：語言格的順序從右排到左，← = 往後一格
+  const d = { ArrowLeft: -h, ArrowRight: h, ArrowUp: -cols, ArrowDown: cols }[e.key], n = i + d;
   if (n >= 0 && n < t.length) t[n].focus();
-  else if (d > 0 && n >= t.length) turn(1, true);   // 超過最後一格：翻到下一頁（往上 / 往左永遠有格子可去，最前面是推薦列）
+  else if (d > 0 && n >= t.length) turn(1, true);   // 超過最後一格：翻到下一頁
+  else if (d < 0 && n < 0) turn(-1, true);          // 超過第一格：翻到上一頁最後一格
 }, true);

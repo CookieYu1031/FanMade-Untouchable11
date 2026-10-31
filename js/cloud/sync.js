@@ -10,7 +10,11 @@
  *   主動同步（資料一改變就立刻同步）：收錄新解答（連同排行積分，同一個批次一次寫入）、暱稱變更、參與排行開關
  *   延遲同步（等到下一個定時點才一起同步）：盤面、暱稱以外的設定；定時點 = 每 5 分鐘一個（12:00、12:05、…，見 TICK）
  *   有主動同步被觸發時，等待中的延遲項目會順帶一起同步；沒有變動就不會有任何網路動作（掛機不會一直同步）。
- *   登入對帳、登出、手動同步（設定頁的按鈕）也會把所有待同步的項目一次送出。*/
+ *   登入對帳、登出、手動同步（設定頁的按鈕）也會把所有待同步的項目一次送出。
+ * 「與雲端內容比對」：每一類資料都記著「上次從雲端拉下（或上傳成功）」的內容（mirror / bmirror / bmetaMirror / settingsMirror）；
+ *   資料改變時先與它比對，沒有差異（切換關卡又切回來、設定改了又改回原樣、盤面擺了又復原…）就不排定同步、不顯示「等待同步」，
+ *   已經排定的也會取消；真正上傳前（doPush / pushBoards）會再比對一次，沒有差異就不送出任何請求。
+ *   盤面的比對不含時間戳（t / lt）：時間戳每次變動都會更新，內容相同卻因時間不同而上傳就是浪費。*/
 import { FIREBASE_CONFIG, SDK_BASE } from './config.js';
 import { Store, Hooks, KEY_SYNC, KEY_REDIRECT, KEY_BOOK, KEY_BOARDS } from '../storage/store.js';
 import { loadBook } from '../storage/book.js';
@@ -101,7 +105,8 @@ const normPiece = q => (q && typeof q.id === 'string' && q.id.length <= 2) ? {
 const normBoard = e => (e && Number.isFinite(e.t) && Array.isArray(e.p) && e.p.length <= 20)
   ? { t: e.t, p: e.p.map(normPiece).filter(Boolean) } : null;
 const isFresh = p => p.every(q => !q.placed && !q.rot && !q.flip);   // 完全沒動過的盤面
-const metaOf = o => canon({ level: o.level || 1, group: o.group || {}, lt: o.lt || 0 });
+const metaOf = o => canon({ level: o.level || 1, group: o.group || {} });   // 不含 lt（最後變更時間）：只比對「內容」
+const bsig = e => canon(e.p);   // 盤面的比對簽章：只看拼圖姿態，不含 t（時間戳）
 const localBoards = () => {   // 本機盤面整理成 { 鍵: {t,p} }
   const lb = readBoardsStore(), out = {};
   const rk = syncRandomKeys(lb);   // 隨機挑戰：只有目前代碼的那一份會上雲端，其餘只留本機
@@ -110,12 +115,12 @@ const localBoards = () => {   // 本機盤面整理成 { 鍵: {t,p} }
 };
 let bmirror = new Map();    // 雲端目前的盤面（鍵 -> canon 字串）
 let bmetaMirror = '';       // 雲端目前記錄的 level / group / lt
-function setBoardMirror(boards, meta) { bmirror = new Map(Object.keys(boards).map(k => [k, canon(boards[k])])); bmetaMirror = metaOf(meta); }
+function setBoardMirror(boards, meta) { bmirror = new Map(Object.keys(boards).map(k => [k, bsig(boards[k])])); bmetaMirror = metaOf(meta); }
 // 本機與雲端的差異：只有真的不同的盤面才要上傳（雲端沒有、本機又沒動過的盤面不傳）
 function boardDiff() {
   const { lb, boards } = localBoards(), diff = {};
   for (const k of Object.keys(boards)) {
-    const c = canon(boards[k]), m = bmirror.get(k);
+    const c = bsig(boards[k]), m = bmirror.get(k);
     if (m === c || (m === undefined && isFresh(boards[k].p))) continue;
     diff[k] = boards[k];
   }
@@ -132,7 +137,8 @@ let timer = null, chain = Promise.resolve();
 const failed = { push: false, boards: false };   // 哪一類上次失敗（都成功才顯示「已同步」）
 const okIfHealthy = () => { if (failed.push || failed.boards) return; cloud.lastSync = Date.now(); setSync({ lastSync: cloud.lastSync }); setStatus('ok'); };
 const setSync = patch => Store.set(KEY_SYNC, { ...(Store.get(KEY_SYNC, {}) || {}), ...patch });
-const settingsPayload = () => ({ nick: settings.nick, lang: settings.lang, theme: settings.theme, extra: !!settings.extra, rank: settings.rank === true, near: !!settings.near, hideBook: !!settings.hideBook, vol: settings.vol, musicVol: settings.musicVol });
+const settingsPayload = (o = settings) => ({ nick: o.nick, lang: o.lang, theme: o.theme, extra: !!o.extra, rank: o.rank === true, near: !!o.near, hideBook: !!o.hideBook, vol: o.vol, musicVol: o.musicVol });
+let settingsMirror = null;   // 雲端目前的設定（canon 字串；null = 雲端沒有或還不知道，一律視為有差異）
 
 // 定時點：下一個「每 5 分鐘」的整點時刻（不含現在）
 // 是否有變動在等待同步（延遲同步的項目，或即將送出的主動同步）
@@ -150,6 +156,8 @@ function armTick() {   // 排定下一個定時點統一同步（已排定就不
   }, Math.max(0, tickDue - Date.now()) + 50);
 }
 const clearTick = () => { clearTimeout(tickTimer); tickTimer = null; };
+// 待同步的項目因為「改回原樣」都消失了：取消定時點（下次有真的變動再排定）
+const settle = () => { if (!pending.size && !bWaiting) { clearTick(); quietTick = false; } };
 // 立刻把所有待同步的項目（主動 + 等待中的延遲項目）一次送出
 export function syncNow() { clearTick(); return flushAll(); }
 // 主動同步：登記待傳項目後立刻同步（0.2 秒內的多個變動合併）；延遲同步：登記後等下一個定時點
@@ -164,28 +172,39 @@ function queue(items, immediate) {
 const priKey = () => (settings.nick || '') + '\u0000' + (settings.rank === true);
 let priMirror = '';
 Hooks.book = () => queue(['book', 'rank'], true);   // 收錄新解答：解答與排行積分同一批寫入
-Hooks.settings = () => { if (priKey() !== priMirror) queue(['settings', 'rank'], true); else queue(['settings'], false); };
+Hooks.settings = () => {
+  const priChanged = priKey() !== priMirror;
+  if (cloud.user && ready && !reconciling && !priChanged && settingsMirror !== null && canon(settingsPayload()) === settingsMirror) {   // 改回與雲端相同：不必同步，已排定的也取消
+    if (pending.delete('settings')) { if (!pending.size) setSync({ dirty: false }); settle(); notify(); }
+    return;
+  }
+  if (priChanged) queue(['settings', 'rank'], true); else queue(['settings'], false);
+};
 
 async function doPush() {
   if (!cloud.user || !ready || !pending.size) return true;
   const what = [...pending]; pending.clear();
-  setStatus('syncing');
   try {
     const { fs, db } = await loadSdk(), uid = cloud.user.uid, batch = fs.writeBatch(db), rev = Date.now();
     const next = new Map(mirror);
+    let ops = 0;   // 這個批次實際要寫的文件數：0 = 與雲端內容相同，不送出任何請求
     if (what.includes('book')) {
       const docs = bookToDocs(loadBook());
-      for (const [id, json] of docs) if (mirror.get(id) !== json) { batch.set(fs.doc(db, 'users', uid, 'book', id), JSON.parse(json)); next.set(id, json); }
-      for (const id of mirror.keys()) if (!docs.has(id)) { batch.delete(fs.doc(db, 'users', uid, 'book', id)); next.delete(id); }
+      for (const [id, json] of docs) if (mirror.get(id) !== json) { batch.set(fs.doc(db, 'users', uid, 'book', id), JSON.parse(json)); next.set(id, json); ops++; }
+      for (const id of mirror.keys()) if (!docs.has(id)) { batch.delete(fs.doc(db, 'users', uid, 'book', id)); next.delete(id); ops++; }
     }
-    const pri = priKey();
-    if (what.includes('settings')) batch.set(fs.doc(db, 'users', uid, 'data', 'settings'), settingsPayload());
+    const pri = priKey(), sp = settingsPayload(), sc = canon(sp);
+    if (what.includes('settings') && sc !== settingsMirror) { batch.set(fs.doc(db, 'users', uid, 'data', 'settings'), sp); ops++; }
     const plan = what.includes('rank') ? rankPlan(uid) : null;   // 排行榜：與解答 / 設定放在同一個批次，一次同步
-    if (plan && !plan.local) { const ref = fs.doc(db, 'leaderboard', uid); if (plan.del) batch.delete(ref); else batch.set(ref, plan.doc); }
-    batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { rev }, { merge: true });   // merge：不能蓋掉盤面的 brev
-    await batch.commit();
-    mirror = next; setSync({ uid, rev, dirty: pending.size > 0 });
-    if (what.includes('settings')) priMirror = pri;
+    if (plan && !plan.local) { const ref = fs.doc(db, 'leaderboard', uid); if (plan.del) batch.delete(ref); else batch.set(ref, plan.doc); ops++; }
+    if (ops) {
+      setStatus('syncing');   // 確定有東西要送才顯示「同步中」
+      batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { rev }, { merge: true });   // merge：不能蓋掉盤面的 brev
+      await batch.commit();
+      setSync({ uid, rev, dirty: pending.size > 0 });
+    } else setSync({ dirty: pending.size > 0 });
+    mirror = next;
+    if (what.includes('settings')) { priMirror = pri; settingsMirror = sc; }
     if (plan) setSync({ rankUid: uid, rankSig: plan.sig });
     failed.push = false; okIfHealthy();
     return true;
@@ -202,8 +221,13 @@ async function doPush() {
 let bTimer = null, bWaiting = false, reconciling = false;
 function scheduleBoards() {
   const st = Store.get(KEY_SYNC, null);
-  if (st && st.uid) setSync({ bdirty: true });             // 曾登入過：記下「有盤面還沒上傳」，離線 / 登出狀態下的變動下次登入才不會漏
-  if (!cloud.user || !ready) return;
+  if (!cloud.user || !ready) {   // 未登入 / 尚未對帳：沒有雲端內容可比對。曾登入過就記下「有盤面還沒上傳」，離線 / 登出狀態下的變動下次登入才不會漏
+    if (st && st.uid) setSync({ bdirty: true });
+    return;
+  }
+  // 與雲端內容（上次拉下或上傳成功的）比對：沒有差異（例如切換關卡又切回來、盤面擺了又復原）就不排定同步，已排定的也取消
+  if (!reconciling && !boardDiff()) { bWaiting = false; setSync({ bdirty: false }); settle(); notify(); return; }
+  setSync({ bdirty: true });
   bWaiting = true;
   armTick();   // 排定下一個定時點統一同步
   notify();
@@ -225,7 +249,7 @@ async function pushBoards() {
     batch.set(fs.doc(db, 'users', uid, 'data', 'boards'), { level: d.lb.level, group: d.lb.group, lt: d.lb.lt, boards: { ...d.diff, ...Object.fromEntries(d.dels.map(k => [k, fs.deleteField()])) } }, { merge: true });   // merge：只更新有變動的盤面
     batch.set(fs.doc(db, 'users', uid, 'data', 'meta'), { brev }, { merge: true });
     await batch.commit();
-    for (const k of Object.keys(d.diff)) bmirror.set(k, canon(d.diff[k]));
+    for (const k of Object.keys(d.diff)) bmirror.set(k, bsig(d.diff[k]));
     d.dels.forEach(k => bmirror.delete(k));
     bmetaMirror = metaOf(d.lb);
     setSync({ uid, brev, bdirty: bWaiting });
@@ -305,6 +329,7 @@ async function reconcileBook({ fs, db, uid, prev, same, cloudRev, local }) {
   else if (same && prev.dirty) book = mergeBooks(cloudBook, local);   // 上次離線時沒傳完的紀錄
 
   const cs = ss.exists() ? sanitizeSettings(ss.data()) : null;
+  settingsMirror = cs ? canon(settingsPayload(cs)) : null;   // 雲端目前的設定（之後的設定變動與它比對）
   if (cs && same && prev.dirty) pending.add('settings');   // 本機有還沒上傳的變動（延遲同步等待中就離開頁面）：以本機設定為準，再補傳
   else if (cs) Object.assign(settings, cs);
   else if (!merge) Object.assign(settings, sanitizeSettings({}));   // 不合併：本機設定一併捨棄
@@ -356,13 +381,13 @@ async function reconcile(user, opts = {}) {
   const bookSame = same && !prev.dirty && cloudRev && prev.rev === cloudRev;
   const boardsSame = same && !prev.bdirty && cloudBrev && (prev.brev || 0) === cloudBrev;   // 雲端還沒有盤面（cloudBrev = 0）時一律對帳，才能把本機既有的進度傳上去
   if (bookSame && boardsSame) {   // 沒有任何變動：不必再讀其他文件
-    mirror = bookToDocs(local);
+    mirror = bookToDocs(local); settingsMirror = canon(settingsPayload());   // 本機沒有未上傳的變動 = 本機設定就是雲端設定
     persistBoards();
     const { lb, boards } = localBoards(); setBoardMirror(boards, lb);
     return;
   }
   let merge = true, boardsInfo = { applied: false, level: false };
-  if (bookSame) mirror = bookToDocs(local); else merge = await reconcileBook({ fs, db, uid, prev, same, cloudRev, local });
+  if (bookSame) { mirror = bookToDocs(local); settingsMirror = canon(settingsPayload()); } else merge = await reconcileBook({ fs, db, uid, prev, same, cloudRev, local });
   if (!boardsSame) boardsInfo = await reconcileBoards({ fs, db, uid, merge, pullLevel: !opts.focus, cloudBrev });
   else { persistBoards(); const { lb, boards } = localBoards(); setBoardMirror(boards, lb); }
   ready = true;
@@ -374,7 +399,7 @@ async function reconcile(user, opts = {}) {
   await Promise.all(jobs);
 }
 async function onUser(user, quiet = true) {   // quiet：登入 / 開啟網頁時的同步不顯示設定按鈕的同步動畫
-  ready = false; pending.clear(); clearTimeout(timer); clearTimeout(bTimer); clearTick(); bWaiting = false; failed.push = failed.boards = false;
+  ready = false; settingsMirror = null; pending.clear(); clearTimeout(timer); clearTimeout(bTimer); clearTick(); bWaiting = false; failed.push = failed.boards = false;
   if (!user) { cloud.user = null; setStatus('out'); return; }
   cloud.user = user; cloud.quiet = quiet; quietGen++; quietTick = false; setStatus('syncing');
   reconciling = true;

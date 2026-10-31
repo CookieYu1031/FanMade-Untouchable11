@@ -1,0 +1,13 @@
+/* 關卡功能提示：骰子 / 星星按鈕的高光與上方的提示字樣（皆無動畫）（邏輯見 js/ui/hint.js） */
+
+/* 高光：金色底 + 固定光暈（不閃爍；亮 / 暗主題都看得清楚；.ibtn:hover 的內框不會蓋掉它） */
+.ibtn.hl{background:#FFD65A;color:#2B2E4A;position:relative;z-index:1;
+  box-shadow:0 0 0 3px #F7C948,0 0 14px 4px rgba(247,201,72,.75)}
+@media (hover:hover){.ibtn.hl:hover:not(:disabled){box-shadow:0 0 0 3px #F7C948,0 0 14px 4px rgba(247,201,72,.75)}}
+
+/* 提示字樣：浮在按鈕上方（放不下時 .below 改放下方）；不攔截點擊。層級在沉浸模式的圖板（45）之上、視窗（60）之下 */
+.feat-tip{position:fixed;z-index:48;left:0;top:0;box-sizing:border-box;max-width:min(260px,calc(100vw - 16px));padding:6px 12px;border-radius:12px;
+  background:var(--ink);color:var(--panel);font-size:13px;font-weight:700;line-height:1.35;text-align:center;
+  pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.feat-tip::after{content:"";position:absolute;left:var(--arrow-x,50%);top:100%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--ink)}
+.feat-tip.below::after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:var(--ink)}

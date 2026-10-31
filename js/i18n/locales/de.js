@@ -63,6 +63,8 @@ export default {
     'rnd.loaded':c => `Set-Code angewendet: ${c}`,
     'rnd.mapped':(a, c) => `„${a}“ entspricht dem Set-Code: ${c}`,
     'rnd.need4':`Bitte 4 Zeichen eingeben`,
+    'hint.rnd':`Klicken, um ein neues Teile-Set zu ziehen`,
+    'hint.grp':`Klicken, um das Teile-Set zu wechseln`,
     // ── 解答冊 ──
     'book.title':`Lösungen`,
     'book.count':(lv, n, m) => `<span class="bc-l">${lv}</span><span class="bc-r"><b>${m == null ? n : n + '/' + m}</b> gesammelt</span>`,
@@ -151,10 +153,8 @@ Alle Teile kommen zurück in die Ablage. Das lässt sich nicht rückgängig mach
     'set.report':`Problem melden`,
     'set.reportSubject':`Untouchable 11 – Problem melden`,
     'lang.title':`Sprache wählen`,
-    'lang.recTitle':`Aktuelle Sprache und Empfehlungen`,
-    'lang.rec':`Empfohlene Sprachen`,
     'lang.all':`Alle Sprachen`,
-    'lang.sort':`Sortierreihenfolge umschalten`,
+    'lang.note':`Übersetzungen können ungenau sein. Hinweise und Unterstützung sind willkommen.`,
     // ── 設定 / 帳戶與雲端同步 ──
     'acct.title':`Konto`,
     'acct.hint':`Melde dich an, um Einstellungen, Lösungen und laufende Spielfelder automatisch mit der Cloud zu synchronisieren`,
