@@ -107,6 +107,7 @@ export default {
     'rank.loginBtn':`Masuk`,
     'rank.zero':`Selesaikan level apa pun untuk mendapat peringkat`,
     'rank.pending':`Skor Anda sedang disinkronkan — buka lagi sebentar lagi untuk melihat peringkat Anda`,
+    'rank.off':`Tidak ikut peringkat`,
     'rank.loading':`Memuat…`,
     'rank.empty':`Belum ada pemain di papan`,
     'rank.fail':`Gagal memuat papan peringkat. Silakan coba lagi nanti.`,

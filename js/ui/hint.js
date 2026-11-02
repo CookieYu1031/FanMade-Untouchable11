@@ -1,7 +1,7 @@
 /* 關卡功能提示 —— 切換到「隨機挑戰」或「北斗 / 獵戶挑戰」時，讓玩家注意到該關卡最重要的按鈕：
  *   隨機挑戰 → 骰子按鈕高光 +「點擊可重抽拼圖組」；北斗 / 獵戶挑戰 → 星星按鈕高光 +「點擊切換拼圖組」。
  *   提示字樣是浮在按鈕上方的小標籤（掛在 <body>、用 fixed 定位，所以不會被標題列裁切；上方放不下時改放下方）。
- *   消除時機：點擊該按鈕、開始拖曳拼圖（見 interaction/drag.js 的 startDrag）、切換到沒有這顆按鈕的關卡。
+ *   消除時機：點擊該按鈕、開始拖曳拼圖（見 interaction/drag.js 的 startDrag）、切換到沒有這顆按鈕的關卡、顯示滿 10 秒。
  *   只在「玩家切換關卡」時出現（見 level-select.js），重新載入頁面或還原存檔不會出現。
  *   按鈕會因沉浸模式換位置、視窗大小改變，所以出現期間每個畫面影格都重新對位（只有一個元素，成本很小）。 */
 import { t } from '../i18n/i18n.js';
@@ -14,8 +14,9 @@ const KINDS = {
 };
 const GAP = 10;     // 標籤與按鈕的間距（含箭頭）
 const EDGE = 8;     // 標籤離視窗邊緣的最小距離
+const SHOW_MS = 10000;   // 高光與提示字樣最多顯示 10 秒
 
-let kind = null, lv = null, raf = 0, hl = null, sat = 0, last = '';   // sat = 上方安全區（避開瀏海）；last = 上一次的位置，沒變就不重寫樣式
+let kind = null, lv = null, raf = 0, timer = 0, hl = null, sat = 0, last = '';   // sat = 上方安全區（避開瀏海）；last = 上一次的位置，沒變就不重寫樣式
 const tip = document.createElement('div');
 tip.id = 'featTip'; tip.className = 'feat-tip'; tip.hidden = true; tip.setAttribute('role', 'status');
 document.body.appendChild(tip);
@@ -47,6 +48,7 @@ export function dismissHint() {
   if (hl) { hl.classList.remove('hl'); hl = null; }
   tip.hidden = true; kind = lv = null; last = '';
   if (raf) { cancelAnimationFrame(raf); raf = 0; }
+  clearTimeout(timer); timer = 0;
 }
 
 // 玩家切換到某關卡後呼叫：該關卡有對應按鈕就顯示提示，沒有就清掉上一個
@@ -58,6 +60,7 @@ export function showHint() {
   sat = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;   // 每次顯示讀一次即可
   hl = KINDS[k].btn(); hl.classList.add('hl');
   setText();
+  timer = setTimeout(dismissHint, SHOW_MS);   // 顯示 10 秒後自動消失
   raf = requestAnimationFrame(place);
 }
 

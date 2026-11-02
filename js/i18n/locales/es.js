@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Iniciar sesión`,
     'rank.zero':`Resuelve cualquier nivel para aparecer en la clasificación`,
     'rank.pending':`Tu puntuación se está sincronizando; vuelve a abrir en un momento para ver tu puesto`,
+    'rank.off':`Fuera de la clasificación`,
     'rank.loading':`Cargando…`,
     'rank.empty':`Todavía no hay jugadores en la clasificación`,
     'rank.fail':`No se pudo cargar la clasificación. Inténtalo de nuevo más tarde.`,

@@ -14,7 +14,7 @@ const stack = [];   // 目前開啟中的視窗（後開的在後）；元素 �
 document.querySelectorAll('.modal').forEach(m => {
   m.setAttribute('role', 'dialog');
   m.setAttribute('aria-modal', 'true');
-  const h = m.querySelector('h2');
+  const h = m.querySelector('[data-modal-title]') || m.querySelector('h2');   // 標題列裡還有別的文字（如排行榜的開關膠囊）時，用 data-modal-title 指定標題本身
   if (h) { if (!h.id) h.id = `modal-title-${++uid}`; m.setAttribute('aria-labelledby', h.id); }
   m.tabIndex = -1;
 });
@@ -31,7 +31,7 @@ function opened(m) {
   syncInert();
   requestAnimationFrame(() => {
     if (!m.classList.contains('open') || m.contains(document.activeElement)) return;
-    const list = focusables(m), first = list.find(el => !el.id.endsWith('Close')) || list[0];
+    const list = focusables(m), first = list.find(el => !el.id.endsWith('Close') && !el.hasAttribute('data-noinitfocus')) || list[0];
     (first || m).focus({ preventScroll: true });
   });
 }

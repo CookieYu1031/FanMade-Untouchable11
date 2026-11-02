@@ -107,6 +107,7 @@ export default {
     'rank.loginBtn':'Sign in',
     'rank.zero':'Solve any level to get ranked',
     'rank.pending':'Your score is syncing — reopen in a moment to see your rank',
+    'rank.off':'Not in the ranking',
     'rank.loading':'Loading…',
     'rank.empty':'No players on the board yet',
     'rank.fail':'Couldn\'t load the leaderboard. Please try again later.',

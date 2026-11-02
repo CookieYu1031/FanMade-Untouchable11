@@ -107,6 +107,7 @@ export default {
     'rank.loginBtn':'登录',
     'rank.zero':'完成任一关卡后即可上榜',
     'rank.pending':'分数同步中，稍后重新打开即可看到名次',
+    'rank.off':'未参与排行',
     'rank.loading':'加载中…',
     'rank.empty':'目前还没有玩家上榜',
     'rank.fail':'排行榜加载失败，请稍后再试',

@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Logga in`,
     'rank.zero':`Lös en valfri nivå för att få en placering`,
     'rank.pending':`Din poäng synkroniseras – öppna topplistan igen om en stund för att se din placering`,
+    'rank.off':`Inte med i topplistan`,
     'rank.loading':`Laddar…`,
     'rank.empty':`Inga spelare på topplistan än`,
     'rank.fail':`Det gick inte att ladda topplistan. Försök igen senare.`,

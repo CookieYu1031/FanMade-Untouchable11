@@ -2,21 +2,23 @@
  *   身分判定在 cloud/sync.js（讀 admins/{uid}）；真正的權限在 firestore.rules：非管理員就算手動開啟面板，也讀不到任何統計與回報。
  *   三個分頁：網站統計（訪問 / 註冊 / 日均活躍）、關卡統計（各關解出人數）、問題回報（玩家從站內送出的回報）。
  *   統計用 Firestore 的 count 聚合查詢，不需要把文件整批讀下來。
+ *   說明文字（備註）各自放在對應那一欄的下方；窄視窗（<= 700px）時，網站統計 / 關卡統計改成一次只顯示一欄，用視窗下方的 ← → 翻頁（做法同規則與資訊視窗）：
+ *   所有頁面疊在同一格（grid-area:1/1），只切換 visibility，所以翻頁時視窗大小與內容位置完全不會跳動。
  *   管理員面板只有繁體中文 / 英文（簡體中文使用者看到繁體中文，其他語言看到英文）。 */
 import { getLang, LANG_INFO } from '../../i18n/i18n.js';
 import { cloud, onCloud, rankApi, dayOf, lvField } from '../../cloud/sync.js';
 import { levelOf } from '../../core/config.js';
-import { $, escapeHtml } from '../dom.js';
+import { $, escapeHtml, pageDir } from '../dom.js';
 
 const STR = {
   zh: {
     panel: '管理員面板', site: '網站統計', levels: '關卡統計', reports: '問題回報',
     visitors: '訪問人數', members: '註冊人數', dau: '日均活躍人數', person: '人', perDay: '人/日',
     win: ['累計', '近半年', '近三月', '近一月', '近一週', '近三日', '當日'],
-    base: '基礎關解出人數', extra: '額外關解出人數', lv: '關卡', single: '解出', full: '全解出', colon: '：',
-    master: '大師', random: '隨機', dipper: '北斗', orion: '獵戶', hazmat: '危險', hazmat2: '危險2',
-    noteSite: ['訪問人數 = 期間內來訪的不重複裝置', '日均活躍 = 期間內每日來訪裝置數的平均（資料不足期間長度時，以已有資料的天數計算）', '註冊人數 = 登入過本站的 Google 帳戶（以帳戶建立日計）'],
-    noteLevels: ['只統計登入並同步過的帳戶。', '解出 = 至少解出 1 組；全解出 = 解出該關全部組數', '*隨機挑戰沒有固定組數，不統計全解出；摘星挑戰以「解出的星數」計。'],
+    lv: '關卡', single: '解出', full: '全解出', colon: '：',
+    master: '大師挑戰', random: '隨機挑戰', dipper: '北斗挑戰', orion: '獵戶挑戰', hazmat: '危險貨物', hazmat2: '危險貨物2',
+    noteSite: [['訪問人數 = 期間內來訪的不重複裝置'], ['註冊人數 = 登入過本站的 Google 帳戶（以帳戶建立日計）'], ['日均活躍 = 期間內每日來訪裝置數的平均（資料不足期間長度時，以已有資料的天數計算）']],   // 依欄位順序：訪問 / 註冊 / 日均活躍
+    noteLevels: [['只統計登入並同步過的帳戶。', '解出 = 至少解出 1 組；全解出 = 解出該關全部組數'], ['*隨機挑戰沒有固定組數，不統計全解出；摘星挑戰以「解出的星數」計。']],   // 依欄位順序：基礎關 / 額外關
     loading: '讀取中…', retry: '重試', fail: '讀取失敗（可能是 Firestore 規則尚未更新，或帳戶不是管理員）',
     empty: '目前沒有回報', anon: '（匿名）', done: '已處理（移除此回報）',
   },
@@ -24,10 +26,10 @@ const STR = {
     panel: 'Admin Panel', site: 'Site stats', levels: 'Level stats', reports: 'Reports',
     visitors: 'Visitors', members: 'Registered', dau: 'Avg. daily active', person: '', perDay: '/day',
     win: ['Total', '6 months', '3 months', '1 month', '1 week', '3 days', 'Today'],
-    base: 'Solved: base levels', extra: 'Solved: extra levels', lv: 'Level', single: 'Solved', full: 'All solved', colon: ': ',
-    master: 'Master', random: 'Random', dipper: 'Dipper', orion: 'Orion', hazmat: 'Hazmat', hazmat2: 'Hazmat 2',
-    noteSite: ['Visitors = distinct devices that visited in the period', 'Avg. daily active = mean number of visiting devices per day (if there is less data than the period, only days with data are counted)', 'Registered = Google accounts that signed in (by account creation date)'],
-    noteLevels: ['Signed-in, synced accounts only.', 'Solved = at least 1 solution; All solved = every solution of the level', '*Random has no fixed total, so no “All solved” count; star challenges count solved stars.'],
+    lv: 'Level', single: 'Solved', full: 'All solved', colon: ': ',
+    master: 'Master Challenge', random: 'Random Challenge', dipper: 'Dipper Challenge', orion: 'Orion Challenge', hazmat: 'Hazmat Cargo', hazmat2: 'Hazmat Cargo 2',
+    noteSite: [['Visitors = distinct devices that visited in the period'], ['Registered = Google accounts that signed in (by account creation date)'], ['Avg. daily active = mean number of visiting devices per day (if there is less data than the period, only days with data are counted)']],
+    noteLevels: [['Signed-in, synced accounts only.', 'Solved = at least 1 solution; All solved = every solution of the level'], ['*Random has no fixed total, so no “All solved” count; star challenges count solved stars.']],
     loading: 'Loading…', retry: 'Retry', fail: 'Failed to load (Firestore rules may not be updated yet, or this account is not an admin)',
     empty: 'No reports yet', anon: '(anonymous)', done: 'Handled (remove this report)',
   },
@@ -40,6 +42,10 @@ const CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
 const modal = $('adminModal'), bodyEl = $('admBody'), tabs = [...modal.querySelectorAll('.admtab')];
 const cache = {};   // tab -> { at, html | data }
 let tab = 'site', gen = 0, reports = [], sel = 0, newKnown = false;
+const pg = { site: 0, levels: 0 };   // 窄視窗各分頁目前的頁碼（0 起算）
+const PAGES = { site: 3, levels: 2 };   // 窄視窗：網站統計 3 頁（訪問 / 註冊 / 日均活躍）、關卡統計 2 頁（基礎關 / 額外關）
+const narrow = window.matchMedia('(max-width:700px)');   // 與 css/admin.css 的斷點一致
+const pager = $('admPager');
 
 // ---- 入口：管理員登入後，標題欄的「Fan-made」換成同樣大小的「Admin-Panel」按鈕 ----
 function syncEntry() {
@@ -109,19 +115,21 @@ async function loadReports() {
 }
 
 // ---- 繪製 ----
-const note = lines => `<div class="admnote">${lines.map(l => `<p>${escapeHtml(l)}</p>`).join('')}</div>`;   // 註解固定三行（每句一行）
+// 一欄 = 卡片（第 1 列）+ 該欄自己的備註（第 2 列）；所有欄的卡片先排、備註後排，寬視窗並排時兩列自然對齊；窄視窗疊在同一格，用 .off 切換顯示（見 css/admin.css）
+const note = (lines, i) => `<div class="admnote admpg" data-p="${i}">${lines.map(l => `<p>${escapeHtml(l)}</p>`).join('')}</div>`;
 const fmtAvg = n => (Math.round(n * 10) / 10).toLocaleString(undefined, { maximumFractionDigits: 1 });
+const columns = (cards, notes) => `<div class="admcols" style="--n:${cards.length}">${cards.join('')}${notes.map((l, i) => note(l, i)).join('')}</div>`;
 function siteHtml(r) {
-  const s = S(), col = (title, vals, fmt, unit) => `<div class="admcard"><h3>${title}</h3>${s.win.map((w, i) => `<div class="admrow"><span>${w}${s.colon.trim()}</span><b>${fmt(vals[i])}${unit ? ' ' + unit : ''}</b></div>`).join('')}</div>`;
-  const int = n => Number(n).toLocaleString();
-  return `<div class="admcols">${col(s.visitors, r.vis, int, s.person)}${col(s.members, r.mem, int, s.person)}${col(s.dau, r.avg, fmtAvg, s.perDay)}</div>${note(s.noteSite)}`;
+  const s = S(), int = n => Number(n).toLocaleString();
+  const col = (i, title, vals, fmt, unit) => `<div class="admcard admpg" data-p="${i}"><h3>${title}</h3>${s.win.map((w, k) => `<div class="admrow"><span>${w}${s.colon.trim()}</span><b>${fmt(vals[k])}${unit ? ' ' + unit : ''}</b></div>`).join('')}</div>`;
+  return columns([col(0, s.visitors, r.vis, int, s.person), col(1, s.members, r.mem, int, s.person), col(2, s.dau, r.avg, fmtAvg, s.perDay)], s.noteSite);
 }
 function levelsHtml(r) {
   const s = S(), n = v => Number(v).toLocaleString();
-  const table = (title, list, base) => `<div class="admcard"><h3>${title}</h3><table class="admtable"><thead><tr><th>${s.lv}</th><th>${s.single}</th><th>${s.full}</th></tr></thead><tbody>${
+  const table = (i, list, base) => `<div class="admcard admpg" data-p="${i}"><table class="admtable"><thead><tr><th>${s.lv}</th><th>${s.single}</th><th>${s.full}</th></tr></thead><tbody>${
     list.map(x => `<tr><th scope="row">${base ? 'Lv' + x.lv : s[x.k]}</th><td>${n(x.single)}</td><td>${x.all === null ? '' : n(x.all)}</td></tr>`).join('')   // 沒有「全解出」的關卡（隨機、危險貨物）留白
   }</tbody></table></div>`;
-  return `<div class="admcols" style="--n:2">${table(s.base, r.base, true)}${table(s.extra, r.extra, false)}</div>${note(s.noteLevels)}`;
+  return columns([table(0, r.base, true), table(1, r.extra, false)], s.noteLevels);
 }
 const fmtTs = ts => { try { return ts.toDate().toLocaleString(LANG_INFO[getLang()].locale, { hour12: false }); } catch { return ''; } };
 function reportsHtml() {
@@ -145,17 +153,29 @@ function drawTabs() {
   badge();
   tabs.forEach(b => { const on = b.dataset.tab === tab; b.setAttribute('aria-selected', String(on)); b.setAttribute('role', 'tab'); });
 }
+// 翻頁列（只在窄視窗的網站統計 / 關卡統計出現；問題回報分頁用 visibility 隱藏而不是移除，視窗高度才不會跟著分頁變動）
+function syncPager() {
+  const n = PAGES[tab] || 0, p = n ? Math.max(0, Math.min(n - 1, pg[tab])) : 0;
+  if (n) pg[tab] = p;
+  pager.classList.toggle('hide', !n || !cache[tab] || !bodyEl.querySelector('.admcols'));
+  bodyEl.querySelectorAll('.admpg').forEach(e => e.classList.toggle('off', +e.dataset.p !== p));
+  $('admPg').textContent = `${p + 1} / ${n || 1}`;
+  $('admPrev').disabled = p <= 0;
+  $('admNext').disabled = p >= n - 1;
+}
+function turn(d) { if (PAGES[tab]) { pg[tab] += d; syncPager(); } }
 function draw() {
   const c = cache[tab];
   if (!c) return;
   bodyEl.innerHTML = tab === 'site' ? siteHtml(c.data) : tab === 'levels' ? levelsHtml(c.data) : reportsHtml();
   if (tab === 'reports') { const it = bodyEl.querySelector('.admitem[aria-current]'); if (it) it.scrollIntoView({ block: 'nearest' }); }
+  syncPager();
 }
 async function show(force) {
   const my = ++gen, c = cache[tab];
   drawTabs();
   if (c && !force && Date.now() - c.at < CACHE_MS) { draw(); return; }
-  if (c) draw(); else bodyEl.innerHTML = `<div class="admstate">${S().loading}</div>`;
+  if (c) draw(); else { bodyEl.innerHTML = `<div class="admstate">${S().loading}</div>`; syncPager(); }
   try {
     const data = await ({ site: loadSite, levels: loadLevels, reports: loadReports }[tab])();
     if (tab === 'reports') reports = data;
@@ -166,6 +186,7 @@ async function show(force) {
     console.error('admin load failed', e);
     if (my !== gen) return;
     bodyEl.innerHTML = `<div class="admstate">${S().fail}<button type="button" class="btn" id="admRetry">${S().retry}</button></div>`;
+    syncPager();
   }
 }
 
@@ -178,6 +199,13 @@ $('btnAdmin').addEventListener('click', () => {
 $('admClose').addEventListener('click', () => modal.classList.remove('open'));
 modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
 tabs.forEach(b => b.addEventListener('click', () => { tab = b.dataset.tab; show(); }));
+$('admPrev').addEventListener('click', () => turn(-1));
+$('admNext').addEventListener('click', () => turn(1));
+window.addEventListener('keydown', e => {   // 管理員面板開著、窄視窗的網站 / 關卡統計：← → 或 A D 換頁
+  const d = pageDir(e);
+  if (!modal.classList.contains('open') || !d || !narrow.matches || !PAGES[tab] || pager.classList.contains('hide')) return;
+  turn(d); e.preventDefault();
+});
 bodyEl.addEventListener('click', async e => {
   if (e.target.closest('#admRetry')) { show(true); return; }
   const it = e.target.closest('.admitem');

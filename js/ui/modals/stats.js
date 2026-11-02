@@ -48,8 +48,8 @@ function nearCells(L, book, compact) {
     + `<td class="c-prog"><div class="pg">${compact ? '' : `<div class="pbar"><i style="width:${n / tot * 100}%${n > 0 ? ';min-width:3px' : ''}"></i></div>`}<span class="pct">${fmtPct(n, tot)}</span></div></td>`;
 }
 
-// 某一頁的表格內容（表頭 + 各關卡列）
-function tableHTML(page, near, book, all, compact) {
+// 某一頁的表格內容（欄寬設定 + 表頭 + 各關卡列）；cols = 各欄寬度（%，見 renderStats 的 lockColumns），量測時傳空字串
+function tableHTML(page, near, book, all, compact, cols = '') {
   const head = `<thead><tr><th>${t('stat.lv')}</th><th>${t(near ? 'stat.totalNear' : 'stat.total')}</th><th>${t('stat.got')}</th><th class="c-prog">${t('stat.progress')}</th></tr></thead>`;
   const tag = (L, span) => { const c = LV_COLORS[L.lv]; return `<td${span > 1 ? ` rowspan="${span}"` : ''}><span class="lvtag" style="background:${c};color:${LV_INK[L.lv]}">${lvTag(L)}</span></td>`; };
   const rows = all[page].map(L => {
@@ -57,7 +57,29 @@ function tableHTML(page, near, book, all, compact) {
     if (!(near && L.near)) return `<tr ${st}>${tag(L, 1)}${exactCells(L, book, compact)}</tr>`;   // 沒有近似解的關卡維持一列
     return `<tr class="g1" ${st}>${tag(L, 2)}${exactCells(L, book, compact)}</tr><tr class="nr" ${st}>${nearCells(L, book, compact)}</tr>`;   // 關卡標籤佔兩列高度
   }).join('');
-  return `${head}<tbody>${rows}</tbody>`;
+  return `${cols}${head}<tbody>${rows}</tbody>`;
+}
+// 欄寬鎖定：各頁（含窄視窗拆成三頁時）的等級 / 解答 / 收錄組數 / 收錄進度欄寬必須完全相同，否則換頁時欄位會左右跳動。
+// 做法（仿瀏覽器自動表格的演算法，但把所有頁面一起算）：每一頁各自量出每欄的「最小寬度」（表頭可換行）與「最大寬度」（完全不換行），各欄取所有頁的最大值；
+//   容器放得下最大寬度 → 用最大寬度，多出的空間依比例分配；放不下 → 在最小 ~ 最大之間內插到剛好填滿；連最小寬度都放不下 → 用最小寬度（外層橫向捲動，同以前）。
+// 再改成 table-layout:fixed，用 <colgroup> 把這組比例套用到每一頁。看不到的欄（窄視窗的收錄進度）寬度 = 0，不產生 <col>。
+function lockColumns(tbl, pageCount, render) {
+  tbl.style.tableLayout = ''; tbl.style.minWidth = '';
+  const measure = width => {
+    const W = [];
+    tbl.style.width = width;
+    for (let i = 0; i < pageCount; i++) {
+      tbl.innerHTML = render(i, '');
+      [...tbl.tHead.rows[0].cells].forEach((c, j) => { W[j] = Math.max(W[j] || 0, c.offsetWidth); });
+    }
+    return W;
+  };
+  const lo = measure('1px'), hi = measure('max-content').map((w, j) => Math.max(w, lo[j]));
+  const sum = a => a.reduce((x, y) => x + y, 0), C = tbl.parentElement.clientWidth, sl = sum(lo), sh = sum(hi);
+  const t = sh <= C ? 1 : sl >= C ? 0 : (C - sl) / (sh - sl);
+  const W = lo.map((w, j) => w + (hi[j] - w) * t), total = sum(W) || 1;
+  tbl.style.width = ''; tbl.style.tableLayout = 'fixed'; tbl.style.minWidth = Math.ceil(sl) + 'px';
+  return `<colgroup>${W.filter(w => w > 0).map(w => `<col style="width:${(w / total * 100).toFixed(3)}%">`).join('')}</colgroup>`;
 }
 
 export function renderStats() {
@@ -66,14 +88,17 @@ export function renderStats() {
   tbl.classList.toggle('more', near);   // 窄視窗：「收錄進度」欄預設隱藏，按下「顯示更多資訊」才出現（見 stats.css）
   tbl.classList.toggle('compact', compact);   // 小視窗 + 更多資訊：進度只顯示 % 數
   wrap.style.minHeight = '';
+  tbl.style.tableLayout = ''; tbl.style.minWidth = ''; tbl.style.width = '';
   // 小視窗：Lv1~8 整頁放不下（要上下捲動）時，自動拆成 Lv1~4 / Lv5~8 兩頁
   let all = pages(false);
   if (isSmall() && all[0].length > 4) { tbl.innerHTML = tableHTML(0, near, book, all, compact); if (tbl.offsetHeight > limit) all = pages(true); }
   state.statPage = Math.max(0, Math.min(all.length - 1, state.statPage || 0));   // 關閉額外關卡後頁數可能超出範圍
+  // 換頁時欄寬不變：各頁共用同一組欄寬（見 lockColumns）
+  const cols = lockColumns(tbl, all.length, (i, c) => tableHTML(i, near, book, all, compact, c));
   // 換頁時視窗高度不變：先量出每一頁的高度，取最高的當作固定高度（關卡由上往下依序擺放，下方留白沒關係）
   let maxH = 0;
-  all.forEach((_, i) => { tbl.innerHTML = tableHTML(i, near, book, all, compact); maxH = Math.max(maxH, tbl.offsetHeight); });
-  tbl.innerHTML = tableHTML(state.statPage, near, book, all, compact);
+  all.forEach((_, i) => { tbl.innerHTML = tableHTML(i, near, book, all, compact, cols); maxH = Math.max(maxH, tbl.offsetHeight); });
+  tbl.innerHTML = tableHTML(state.statPage, near, book, all, compact, cols);
   wrap.style.minHeight = Math.min(maxH, limit) + 'px';
   $('statTitle').textContent = t('stat.title');
   $('statPg').textContent = `${state.statPage + 1} / ${all.length}`;   // 頁數顯示在 ← → 兩個按鈕中間

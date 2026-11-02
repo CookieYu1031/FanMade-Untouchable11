@@ -10,9 +10,11 @@ import { refresh } from './ui/render.js';
 import { initCloud } from './cloud/sync.js';
 import { logVisit } from './cloud/visit.js';
 import { hideLoader } from './ui/loader.js';
+import './ui/app-icon.js';   // 主頁圖示依裝置深淺色換底色
 import './audio/music.js';   // 背景音樂（使用者第一次操作後開始播放）
 
 // 以下模組載入時會綁定各自負責的事件
+import './ui/touch-guard.js';   // 觸控守門員：最多兩指、滑鼠優先、禁止縮放與長按選單；要在其他綁定指標事件的模組之前載入
 import './audio/sfx-bindings.js';
 import './ui/level-select.js';
 import './ui/responsive.js';

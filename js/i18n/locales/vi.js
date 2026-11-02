@@ -107,6 +107,7 @@ export default {
     'rank.loginBtn':`Đăng nhập`,
     'rank.zero':`Giải một màn bất kỳ để có thứ hạng`,
     'rank.pending':`Điểm của bạn đang được đồng bộ — hãy mở lại sau giây lát để xem thứ hạng`,
+    'rank.off':`Không tham gia xếp hạng`,
     'rank.loading':`Đang tải…`,
     'rank.empty':`Chưa có người chơi nào trên bảng`,
     'rank.fail':`Không thể tải bảng xếp hạng. Vui lòng thử lại sau.`,

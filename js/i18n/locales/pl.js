@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Zaloguj się`,
     'rank.zero':`Rozwiąż dowolny poziom, aby znaleźć się w rankingu`,
     'rank.pending':`Twój wynik jest synchronizowany – otwórz ranking ponownie za chwilę, aby zobaczyć swoje miejsce`,
+    'rank.off':`Poza rankingiem`,
     'rank.loading':`Ładowanie…`,
     'rank.empty':`W rankingu nie ma jeszcze graczy`,
     'rank.fail':`Nie udało się wczytać rankingu. Spróbuj ponownie później.`,

@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Untouchable 11</title>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#F3F5FB" media="(prefers-color-scheme: light)">
@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
-<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="description" content="線上遊玩《Untouchable 11》與其衍伸作品">
@@ -339,21 +339,41 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
 </div>
 
 <div class="modal" id="rankModal">
-  <div class="box rankbox" id="rankBox">
-    <div class="panel" style="margin:0;border:0;border-radius:0">
-      <h2 style="--c:var(--yel);background:var(--yel)"><span data-i18n="rank.title"></span><span class="h2-acts"><button class="ibtn ibtn--sm" id="rankInfoBtn" type="button" data-i18n-title="tip.rankInfo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg></button><button class="ibtn ibtn--sm" id="rankClose" type="button" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></h2>
+  <div class="rankwrap" id="rankWrap">
+    <div class="box rankbox" id="rankBox">
+      <div class="panel" style="margin:0;border:0;border-radius:0">
+        <h2 style="--c:var(--yel);background:var(--yel)"><span class="rtitle"><span data-i18n="rank.title" data-modal-title></span></span><span class="h2-acts"><button type="button" class="rjoin" id="swRank" data-noinitfocus role="switch" aria-checked="false" data-i18n-title="set.rank"><span class="rjoin-t" data-i18n="set.rank"></span><span class="rsw" aria-hidden="true"><i></i></span></button><button class="ibtn ibtn--sm" id="rankInfoBtn" type="button" data-i18n-title="tip.rankInfo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg></button><button class="ibtn ibtn--sm" id="rankClose" type="button" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></span></h2>
+      </div>
+      <div class="rankcols" id="rankCols"></div>
+      <div class="rnote" id="rankNote"></div>
     </div>
-    <div class="rankcols" id="rankCols"></div>
-    <div class="rnote" id="rankNote"></div>
+    <!-- 小視窗（<= 640px）且開啟額外關卡：挑戰榜 / 大師榜分成兩頁，用這裡的 ← → 換頁（其他情況不顯示；見 css/rank.css） -->
+    <div class="navbar rankpager" id="rankPager">
+      <div class="navgrp">
+        <button class="navbtn" id="rankPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="navpg" id="rankPg" aria-live="polite">1 / 2</span>
+        <button class="navbtn" id="rankNext" type="button" data-nosound data-i18n-label="a11y.next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="modal" id="rankInfoModal">
-  <div class="box rinfobox">
-    <div class="panel" style="margin:0;border:0;border-radius:0">
-      <h2 style="--c:var(--yel);background:var(--yel)"><span data-i18n="ri.title"></span><button class="ibtn ibtn--sm" id="rankInfoClose" type="button" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+  <div class="rankwrap rinfowrap" id="rankInfoWrap">
+    <div class="box rinfobox">
+      <div class="panel" style="margin:0;border:0;border-radius:0">
+        <h2 style="--c:var(--yel);background:var(--yel)"><span data-i18n="ri.title"></span><button class="ibtn ibtn--sm" id="rankInfoClose" type="button" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+      </div>
+      <div class="rinfo" id="rankInfoBody"></div>
     </div>
-    <div class="rinfo" id="rankInfoBody"></div>
+    <!-- 小視窗（<= 640px）且開啟額外關卡：挑戰榜 / 大師榜分成兩頁，用這裡的 ← → 換頁（其他情況不顯示；見 css/rank.css） -->
+    <div class="navbar rankpager" id="rankInfoPager">
+      <div class="navgrp">
+        <button class="navbtn" id="rankInfoPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="navpg" id="rankInfoPg" aria-live="polite">1 / 2</span>
+        <button class="navbtn" id="rankInfoNext" type="button" data-nosound data-i18n-label="a11y.next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -377,7 +397,8 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
       </div>
       <div class="srow srow2">
         <div class="sgrp sgrp-extra"><span><span data-i18n="set.extra"></span><small class="sub" data-i18n="set.extraDesc"></small></span><button type="button" class="switch" id="swExtra" role="switch" aria-checked="false" data-i18n-title="set.extra"><i></i></button></div>
-        <div class="sgrp sgrp-vol sgrp-extra"><span><span data-i18n="set.rank"></span><small class="sub" data-i18n="set.rankDesc"></small></span><button type="button" class="switch" id="swRank" role="switch" aria-checked="true" data-i18n-title="set.rank"><i></i></button></div>
+        <!-- 保留的空格（原「參與排行」開關已移到排行榜視窗頂欄，見 js/ui/modals/rank.js）：之後新增的設定放這裡 -->
+        <div class="sgrp sgrp-vol sgrp-extra sgrp-slot" id="setSlot"></div>
       </div>
     </div>
       <!-- 語言選擇畫面：點語言按鈕後取代上面的設定內容（標題列、視窗大小不變），選了語言就回到設定畫面（見 js/ui/modals/lang-picker.js） -->
@@ -420,12 +441,22 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
 
 <!-- 管理員面板（只有管理員登入後才有入口；內容由 js/ui/modals/admin.js 繪製，資料讀取受 firestore.rules 限制） -->
 <div class="modal" id="adminModal">
-  <div class="box adminbox">
-    <div class="panel" style="margin:0;border:0;border-radius:0">
-      <h2 style="--c:var(--blue);background:var(--blue)"><span id="admTitle"></span><button type="button" class="ibtn ibtn--sm" id="admClose" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+  <div class="admwrap">
+    <div class="box adminbox">
+      <div class="panel" style="margin:0;border:0;border-radius:0">
+        <h2 style="--c:var(--blue);background:var(--blue)"><span id="admTitle"></span><button type="button" class="ibtn ibtn--sm" id="admClose" data-i18n-title="tip.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></h2>
+      </div>
+      <div class="admtabs"><div class="admtabs-l"><button type="button" class="admtab" data-tab="site" id="admTabSite"></button><button type="button" class="admtab" data-tab="levels" id="admTabLevels"></button></div><button type="button" class="admtab" data-tab="reports" id="admTabReports"></button></div>
+      <div class="admbody" id="admBody"></div>
     </div>
-    <div class="admtabs"><div class="admtabs-l"><button type="button" class="admtab" data-tab="site" id="admTabSite"></button><button type="button" class="admtab" data-tab="levels" id="admTabLevels"></button></div><button type="button" class="admtab" data-tab="reports" id="admTabReports"></button></div>
-    <div class="admbody" id="admBody"></div>
+    <!-- 窄視窗（<= 700px）：網站統計 / 關卡統計一次顯示一欄，用這裡的 ← → 翻頁（樣式沿用 .navbar；其他視窗大小不顯示，見 css/admin.css） -->
+    <div class="navbar admpager hide" id="admPager">
+      <div class="navgrp">
+        <button class="navbtn" id="admPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <span class="navpg" id="admPg" aria-live="polite">1 / 3</span>
+        <button class="navbtn" id="admNext" type="button" data-nosound data-i18n-label="a11y.next"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
   </div>
 </div>
 

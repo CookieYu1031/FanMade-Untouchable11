@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Přihlásit se`,
     'rank.zero':`Vyřešte libovolnou úroveň a získejte umístění`,
     'rank.pending':`Vaše skóre se synchronizuje – žebříček za chvíli otevřete znovu a uvidíte své umístění`,
+    'rank.off':`Mimo žebříček`,
     'rank.loading':`Načítání…`,
     'rank.empty':`V žebříčku zatím nejsou žádní hráči`,
     'rank.fail':`Žebříček se nepodařilo načíst. Zkuste to prosím později.`,

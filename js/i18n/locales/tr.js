@@ -107,6 +107,7 @@ export default {
     'rank.loginBtn':`Giriş yap`,
     'rank.zero':`Sıralamaya girmek için herhangi bir seviyeyi çözün`,
     'rank.pending':`Puanınız eşitleniyor — sıranızı görmek için birazdan tekrar açın`,
+    'rank.off':`Sıralamada değil`,
     'rank.loading':`Yükleniyor…`,
     'rank.empty':`Tabloda henüz oyuncu yok`,
     'rank.fail':`Liderlik tablosu yüklenemedi. Lütfen daha sonra tekrar deneyin.`,

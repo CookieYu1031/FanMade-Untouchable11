@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Se connecter`,
     'rank.zero':`Résolvez un niveau pour être classé`,
     'rank.pending':`Votre score est en cours de synchronisation — rouvrez dans un instant pour voir votre rang`,
+    'rank.off':`Hors classement`,
     'rank.loading':`Chargement…`,
     'rank.empty':`Aucun joueur au classement pour l'instant`,
     'rank.fail':`Impossible de charger le classement. Réessayez plus tard.`,

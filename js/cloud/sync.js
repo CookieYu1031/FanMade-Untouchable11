@@ -13,12 +13,14 @@
  *   延遲同步（等到下一個定時點才一起同步）：盤面、暱稱以外的設定；定時點 = 每 5 分鐘一個（12:00、12:05、…，見 TICK）
  *   有主動同步被觸發時，等待中的延遲項目會順帶一起同步；沒有變動就不會有任何網路動作（掛機不會一直同步）。
  *   登入對帳、登出、手動同步（設定頁的按鈕）也會把所有待同步的項目一次送出。
+ * 主動同步的用量上限（防止被惡意大量同步，見 ACTIVE_LIMIT）：每個帳號、每個 5 分鐘時段（與定時點對齊）最多 ACTIVE_LIMIT 次；
+ *   用完後，之後的主動同步改成延遲同步，等下一個定時點（時段重新計算）才一起送出。定時點本身的同步不受限、也不計入。
  * 「與雲端內容比對」：每一類資料都記著「上次從雲端拉下（或上傳成功）」的內容（mirror / bmirror / bmetaMirror / settingsMirror）；
  *   資料改變時先與它比對，沒有差異（切換關卡又切回來、設定改了又改回原樣、盤面擺了又復原…）就不排定同步、不顯示「等待同步」，
  *   已經排定的也會取消；真正上傳前（doPush / pushBoards）會再比對一次，沒有差異就不送出任何請求。
  *   盤面的比對不含時間戳（t / lt）：時間戳每次變動都會更新，內容相同卻因時間不同而上傳就是浪費。*/
 import { FIREBASE_CONFIG, SDK_BASE } from './config.js';
-import { Store, Hooks, KEY_SYNC, KEY_REDIRECT, KEY_BOOK, KEY_BOARDS } from '../storage/store.js';
+import { Store, Hooks, KEY_SYNC, KEY_QUOTA, KEY_REDIRECT, KEY_BOOK, KEY_BOARDS } from '../storage/store.js';
 import { loadBook } from '../storage/book.js';
 import { readBoardsStore, persistBoards } from '../storage/boards.js';
 import { settings, sanitizeSettings, saveSettingsLocal } from '../state/settings.js';
@@ -30,6 +32,9 @@ import { levelOf } from '../core/config.js';
 const CHUNK = 400, RETRY = 15000;
 const MERGE_DELAY = 200;      // 主動同步：同一瞬間的多個變動合併成一次（0.2 秒）
 const TICK = 5 * 60 * 1000;   // 延遲同步的定時點間隔：每 5 分鐘（整點、05、10…分）
+// 主動同步的用量上限：每個帳號、每 5 分鐘（一個定時點到下一個定時點）最多幾次。
+//   估算：一般玩家持續遊玩時，主動同步（收錄新解答、改暱稱、切換參與排行）平均約每 75 秒一次 = 每 5 分鐘 4 次；上限取 5 倍 = 20 次。
+const ACTIVE_AVG = 4, ACTIVE_LIMIT = ACTIVE_AVG * 5;
 const FOCUS_GAP = 30000;      // 回到分頁時檢查雲端是否有別台裝置的新進度：至少間隔 30 秒
 
 // ---- 對外狀態 ----
@@ -188,6 +193,18 @@ const setSync = patch => Store.set(KEY_SYNC, { ...(Store.get(KEY_SYNC, {}) || {}
 const settingsPayload = (o = settings) => ({ nick: o.nick, lang: o.lang, theme: o.theme, extra: !!o.extra, rank: o.rank === true, near: !!o.near, hideBook: !!o.hideBook, vol: o.vol, musicVol: o.musicVol });
 let settingsMirror = null;   // 雲端目前的設定（canon 字串；null = 雲端沒有或還不知道，一律視為有差異）
 
+// ---- 主動同步用量（每個帳號獨立；存在本機，換分頁 / 重新整理 / 登出再登入都不會重置，到下一個定時點才歸零）----
+const windowOf = (now = Date.now()) => Math.floor(now / TICK);
+const quotaOf = uid => { const e = (Store.get(KEY_QUOTA, {}) || {})[uid]; return e && e.w === windowOf() ? e.n : 0; };
+const quotaFull = () => !!cloud.user && quotaOf(cloud.user.uid) >= ACTIVE_LIMIT;
+function spendQuota() {
+  if (!cloud.user) return;
+  const uid = cloud.user.uid, w = windowOf(), all = Store.get(KEY_QUOTA, {}) || {}, next = {};
+  for (const [k, e] of Object.entries(all)) if (e && e.w === w) next[k] = e;   // 順便清掉已過期的時段
+  next[uid] = { w, n: quotaOf(uid) + 1 };
+  Store.set(KEY_QUOTA, next);
+}
+
 // 定時點：下一個「每 5 分鐘」的整點時刻（不含現在）
 // 是否有變動在等待同步（延遲同步的項目，或即將送出的主動同步）
 export const hasWaiting = () => pending.size > 0 || bWaiting;
@@ -213,7 +230,8 @@ function queue(items, immediate) {
   if (!cloud.user || !ready) return;
   items.forEach(i => pending.add(i)); setSync({ dirty: true });
   notify();   // 設定頁的狀態文字：有延遲項目在等待時顯示「等待自動同步」
-  if (immediate) { clearTimeout(timer); timer = setTimeout(syncNow, MERGE_DELAY); }
+  if (immediate && quotaFull()) immediate = false;   // 用量已滿：改成延遲同步，等下一個定時點
+  if (immediate) { clearTimeout(timer); timer = setTimeout(() => { spendQuota(); syncNow(); }, MERGE_DELAY); }
   else armTick();
 }
 // 暱稱與參與排行會改變排行榜資料，屬於主動同步；其他設定（語言、背景、音量…）屬於延遲同步
@@ -343,6 +361,8 @@ async function doRank() {
   const uid = cloud.user.uid, plan = rankPlan(uid);
   if (!plan) return true;
   if (plan.local) { setSync({ rankUid: uid, rankSig: plan.sig }); return true; }
+  if (quotaFull()) { pending.add('rank'); setSync({ dirty: true }); armTick(); notify(); return true; }   // 用量已滿：留到下一個定時點，與其他項目一起送出
+  spendQuota();
   try {
     const { fs, db } = await loadSdk(), ref = fs.doc(db, 'leaderboard', uid);
     if (plan.del) await fs.deleteDoc(ref); else await fs.setDoc(ref, plan.doc);
@@ -466,6 +486,7 @@ export const retry = () => cloud.user && onUser(cloud.user, false);
 export async function manualSync() {
   if (!cloud.user || !ready || reconciling) return false;
   if (cloud.status === 'ok' && !hasWaiting()) return true;   // 已同步到雲端、沒有待同步的變動：按了不會有任何變化
+  if (hasWaiting() && cloud.status !== 'error') { if (quotaFull()) return false; spendQuota(); }   // 用量已滿：不能用手動同步繞過，等下一個定時點
   clearTick(); setStatus('syncing');
   try {
     if (!(await flushAll())) return false;   // 失敗時狀態已是「同步失敗」，15 秒後也會自動重試

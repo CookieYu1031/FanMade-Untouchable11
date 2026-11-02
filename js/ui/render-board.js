@@ -1,5 +1,5 @@
 /* 底板 —— 格子大小計算與底板 SVG（格線、拼圖、違規警示、標題列） */
-import { layoutTools, toolsReserveBottom } from './piece-tools.js';
+import { layoutTools } from './piece-tools.js';
 import { analyze } from '../game/analyze.js';
 import { schedulePersist } from '../storage/boards.js';
 import { updateUndo } from '../storage/history.js';
@@ -26,10 +26,7 @@ export function fitBoard() {
   const toolsW = layoutTools();
   // 沉浸模式：左右各讓出工具列的位置（圖板維持左右置中），上下邊緣僅留小邊距，圖板盡量放大
   // 左右對稱地讓出工具列的寬度，圖板才會在整個頁面左右置中
-  // 工具列因靈動島 / 挖孔遮擋而橫放在左下時，改成在圖板下方讓出工具列的高度（toolsW = 0，左右不讓）
-  const reserveB = toolsReserveBottom();
-  els.wrap.style.paddingLeft = els.wrap.style.paddingRight = imm ? (reserveB ? '' : toolsW + 14 + 'px') : '';
-  els.wrap.style.paddingBottom = reserveB ? reserveB + 'px' : '';
+  els.wrap.style.paddingLeft = els.wrap.style.paddingRight = imm ? toolsW + 14 + 'px' : '';
   const wCS0 = getComputedStyle(els.wrap);
   const availW = imm
     ? Math.max(120, els.wrap.clientWidth - parseFloat(wCS0.paddingLeft) - parseFloat(wCS0.paddingRight))

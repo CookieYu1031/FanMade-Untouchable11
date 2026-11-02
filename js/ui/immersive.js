@@ -10,6 +10,7 @@ import { renderTray } from './render-tray.js';
 import { startDrag } from './interaction/drag.js';
 import { isFanOpen, setFanOpen } from './fan.js';
 import { isSmall, isPortrait } from './viewport.js';
+import { reflow } from './responsive.js';
 
 const root = document.documentElement, btn = $('btnImmersive');
 
@@ -36,14 +37,26 @@ function syncRotateHint() {
   hint.hidden = !(state.immersive && smallPortrait());
 }
 let wasSmallPortrait = smallPortrait();
+// 轉向的瞬間，許多瀏覽器（尤其 iOS Safari）回報的視窗大小還是舊的、過一小段時間才更新；
+// 引導玩家轉成橫向、提示消失後，要在視窗大小穩定前後各重新偵測一次版面並重畫，否則圖板大小 / 工具列位置會停在直向時算出的結果而跑版
+let settleTimers = [];
+function settleLayout() {
+  settleTimers.forEach(clearTimeout);
+  const run = () => { if (state.immersive && !state.drag) reflow(); };
+  run();
+  requestAnimationFrame(() => requestAnimationFrame(run));   // 下一次繪製之後
+  settleTimers = [120, 350, 800].map(ms => setTimeout(run, ms));   // 視窗大小陸續更新後再量幾次
+}
 function onViewportChange() {
-  const sp = smallPortrait(), turned = sp && !wasSmallPortrait;
+  const sp = smallPortrait(), turned = sp && !wasSmallPortrait, back = !sp && wasSmallPortrait;
   wasSmallPortrait = sp;
   if (turned && state.immersive) { exitImmersive(); return; }   // 橫向轉直向（手機）：自動離開沉浸模式
   syncRotateHint();
+  if (back && state.immersive) settleLayout();                  // 依提示轉成橫向：重新偵測版面
 }
 window.matchMedia('(orientation:portrait)').addEventListener('change', onViewportChange);
 window.addEventListener('resize', onViewportChange);
+window.addEventListener('orientationchange', () => { onViewportChange(); if (state.immersive && !smallPortrait()) settleLayout(); });
 hint.addEventListener('click', () => exitImmersive());
 
 // 切換後重新計算圖板大小並重畫

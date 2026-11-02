@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Aanmelden`,
     'rank.zero':`Los een level op om een plek te krijgen`,
     'rank.pending':`Je score wordt gesynchroniseerd – open de ranglijst zo meteen opnieuw om je plek te zien`,
+    'rank.off':`Niet in de ranglijst`,
     'rank.loading':`Laden…`,
     'rank.empty':`Nog geen spelers in de ranglijst`,
     'rank.fail':`De ranglijst kon niet worden geladen. Probeer het later opnieuw.`,

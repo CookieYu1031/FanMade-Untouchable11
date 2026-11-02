@@ -9,8 +9,14 @@
   --sat:env(safe-area-inset-top,0px); --sar:env(safe-area-inset-right,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px);
   padding-top:var(--sat); padding-bottom:var(--sab);
 }
-/* 關閉觸控裝置的雙擊放大（保留捲動與雙指縮放）；#board、拼圖卡片、工具列另有更嚴格的 touch-action:none */
-*{touch-action:manipulation}
+/* 觸控裝置：只允許單指捲動（pan-x pan-y），不要雙擊放大、也不要雙指縮放；#board、拼圖卡片、工具列另有更嚴格的 touch-action:none（另見 js/ui/touch-guard.js） */
+*{touch-action:pan-x pan-y}
+/* 觸控裝置：遊玩時長按不要選取文字（不跳出「複製」選取框）、不跳出系統選單、不拖曳圖片；輸入框與管理員的回報內容仍可選取 */
+@media (pointer:coarse){
+  html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  input,textarea,.admdetail{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+  img,a{-webkit-user-drag:none;user-drag:none}
+}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;

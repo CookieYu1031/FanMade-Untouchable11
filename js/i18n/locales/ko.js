@@ -107,6 +107,7 @@ export default {
     'rank.loginBtn':'로그인',
     'rank.zero':'레벨을 하나라도 클리어하면 랭킹에 오릅니다',
     'rank.pending':'점수를 동기화하는 중입니다. 잠시 후 다시 열면 순위를 볼 수 있습니다',
+    'rank.off':'랭킹 미참여',
     'rank.loading':'불러오는 중…',
     'rank.empty':'아직 랭킹에 오른 플레이어가 없습니다',
     'rank.fail':'랭킹을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요',

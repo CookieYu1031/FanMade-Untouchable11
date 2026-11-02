@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Entrar`,
     'rank.zero':`Resolva qualquer fase para entrar no ranking`,
     'rank.pending':`Sua pontuação está sendo sincronizada — abra novamente em instantes para ver sua posição`,
+    'rank.off':`Fora do ranking`,
     'rank.loading':`Carregando…`,
     'rank.empty':`Ainda não há jogadores no ranking`,
     'rank.fail':`Não foi possível carregar o ranking. Tente novamente mais tarde.`,

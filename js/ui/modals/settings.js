@@ -1,4 +1,4 @@
-/* 設定視窗：暱稱、語言、音樂 / 音效音量、背景、額外關卡、參與排行（帳戶與重置資料在各自的模組） */
+/* 設定視窗：暱稱、語言、音樂 / 音效音量、背景、額外關卡（帳戶與重置資料在各自的模組；「參與排行」在排行榜視窗頂欄） */
 import { setLang, applyI18n } from '../../i18n/i18n.js';
 import { Sfx } from '../../audio/sfx.js';
 import { Music } from '../../audio/music.js';
@@ -7,7 +7,6 @@ import { curLevel } from '../../state/state.js';
 import { $ } from '../dom.js';
 import { refresh } from '../render.js';
 import { renderLevels } from '../render-levels.js';
-import { renderBook } from '../render-book.js';
 import { setLevel } from '../level-select.js';
 import { renderSettings, renderVol } from './settings-view.js';
 import { initLangPicker, isLangView, closeLangView } from './lang-picker.js';
@@ -19,12 +18,7 @@ $('swExtra').addEventListener('click', () => {
   if (!settings.extra && curLevel().extra) setLevel(8); else renderLevels();   // 關閉時若停在額外難度就回到 Lv8
   renderSettings();
 });
-// 參與排行：關閉 → 不計分 / 不上榜，並立刻移除榜上已上傳的積分資料（排行榜按鈕一併隱藏）；重新開啟 → 當下重新計算並上傳
-$('swRank').addEventListener('click', () => {
-  settings.rank = !settings.rank; saveSettings();
-  renderSettings(); renderBook();   // renderBook 會依設定顯示 / 隱藏排行榜按鈕
-  // 登入時：參與排行屬於主動同步，立刻與設定一起同步（關閉 → 刪除榜上資料；重新開啟 → 重新計算並上傳），見 js/cloud/sync.js
-});
+// 「參與排行」開關已移到排行榜視窗的頂欄（見 js/ui/modals/rank.js）；設定畫面保留該欄位的空格（index.html 的 #setSlot），之後新增的設定放在那裡
 $('btnSettings').addEventListener('click', () => { renderSettings(); setModal.classList.add('open'); });
 $('setClose').addEventListener('click', () => { if (isLangView()) closeLangView(); else setModal.classList.remove('open'); });   // 語言選擇畫面裡的 ✕ = 回到設定畫面
 setModal.addEventListener('click', e => { if (e.target === setModal) setModal.classList.remove('open'); });

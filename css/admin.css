@@ -14,7 +14,11 @@
 .rpt-send{flex:none;min-width:96px;padding:9px 18px}
 
 /* ============ 管理員面板 ============ */
-#adminModal .adminbox{width:min(820px,100%);display:flex;flex-direction:column;max-height:100%}
+/* 外層 = 面板 + 窄視窗的翻頁列（翻頁列在面板外，樣式沿用 .navbar，見 css/solution.css） */
+.admwrap{width:min(820px,100%);max-height:100%;display:flex;flex-direction:column;gap:12px}
+#adminModal .adminbox{width:100%;display:flex;flex-direction:column;flex:0 1 auto;min-height:0}
+.admpager{display:none;flex:none}
+.admpager.hide{visibility:hidden}   /* 問題回報分頁 / 讀取中：保留位置但不顯示，視窗高度不變 */
 .admtabs{display:flex;justify-content:space-between;gap:8px;padding:12px 14px 0}
 .admtabs-l{display:flex;gap:6px}
 .admtab{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 18px;cursor:pointer;font-weight:700;font-size:14px;-webkit-tap-highlight-color:transparent}
@@ -22,7 +26,7 @@
 .admtab:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .admtab .dot{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#F28B8B;color:#2B2E4A;font-size:11px;line-height:18px;text-align:center}
 .admbody{margin:10px 14px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto;height:min(480px,calc(100vh - 190px));min-height:220px;display:flex;flex-direction:column;gap:10px}
-.admcols{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:12px;align-items:stretch;flex:1 1 auto;min-height:0}   /* 卡片拉長到只剩下註解（三行）的空間 */
+.admcols{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto;gap:10px 12px;align-items:stretch;flex:1 1 auto;min-height:0}   /* 第 1 列：各欄卡片（拉長到只剩備註的空間）；第 2 列：各欄自己的備註（卡片先排、備註後排，自動對齊各欄） */
 .admcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);min-width:0;display:flex;flex-direction:column;justify-content:space-between}
 .admcard h3{margin:0 0 8px;text-align:center;font-size:15px}
 .admrow{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -35,7 +39,7 @@
 .admtable td{font-weight:700}
 .admtable tbody tr:last-child th,.admtable tbody tr:last-child td{border-bottom:0}
 html[dir="rtl"] .admtable tbody th{text-align:right}
-.admnote{flex:none;margin:0 2px;font-size:12px;color:var(--muted);line-height:1.5;min-height:4.5em}   /* 固定三行（每句一行）；小視窗放不下時自動換行 */
+.admnote{margin:0 2px;font-size:12px;color:var(--muted);line-height:1.5;min-width:0}   /* 每欄備註放在該欄卡片正下方；每句一行（太長自動換行） */
 .admnote p{margin:0}
 .admstate{padding:28px 0;text-align:center;color:var(--muted)}
 .admstate button{margin-left:8px}
@@ -57,7 +61,13 @@ html[dir="rtl"] .admtable tbody th{text-align:right}
 .admdetail .okbtn:hover{background:var(--mint);color:#2B2E4A}
 @media (hover:hover){.admtab:hover,.admitem:hover,.admdetail .okbtn:hover{border-color:var(--ink)}}
 @media (max-width:700px){
-  .admcols{--n:1!important}
+  /* 窄視窗：每欄一頁。所有頁疊在同一格（卡片在第 1 列、備註在第 2 列），格子高度 = 各頁最高者，用 .off 只切換顯示 → 翻頁時完全不會跳動 */
+  .admcols{grid-template-columns:minmax(0,1fr)}
+  .admcols>.admcard{grid-area:1/1}
+  .admcols>.admnote{grid-area:2/1}
+  .admpg.off{visibility:hidden;pointer-events:none}
+  .admpager{display:grid}
+  .admbody{height:min(480px,calc(100vh - 250px))}   /* 多出翻頁列（38px + 邊距 8px + 間距 12px）的高度 */
   .admrep{grid-template-columns:1fr;grid-template-rows:minmax(110px,2fr) minmax(0,3fr)}
   .admtab{padding:8px 12px}
 }

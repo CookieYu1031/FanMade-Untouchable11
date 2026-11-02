@@ -98,6 +98,7 @@ export default {
     'rank.loginBtn':`Anmelden`,
     'rank.zero':`Löse ein beliebiges Level, um platziert zu werden`,
     'rank.pending':`Dein Punktestand wird synchronisiert – öffne die Rangliste gleich erneut, um deinen Platz zu sehen`,
+    'rank.off':`Nicht in der Rangliste`,
     'rank.loading':`Wird geladen …`,
     'rank.empty':`Noch keine Spieler in der Rangliste`,
     'rank.fail':`Die Rangliste konnte nicht geladen werden. Bitte versuche es später erneut.`,
