@@ -160,6 +160,8 @@ export default {
     'set.sfx':`Efektler`,
     'set.extra':`Ek paket`,
     'set.extraDesc':`Açıkken: ek seviyeler ve Usta liderlik tablosu`,
+    'set.aid':`Yardım modu`,
+    'set.aidDesc':`Parçaların çevresini genişlet`,
     'set.rank':`Liderlik tablosuna katıl`,
     'set.rankDesc':`Açıkken: puanlar kaydedilir ve sıralanır`,
     'set.report':`Sorun bildir`,

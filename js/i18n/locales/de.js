@@ -149,6 +149,8 @@ Alle Teile kommen zurück in die Ablage. Das lässt sich nicht rückgängig mach
     'set.sfx':`Effekte`,
     'set.extra':`Erweiterungspaket`,
     'set.extraDesc':`Wenn an: Zusatz-Level und Meister-Rangliste`,
+    'set.aid':`Hilfsmodus`,
+    'set.aidDesc':`Rand der Teile erweitern`,
     'set.rank':`An der Rangliste teilnehmen`,
     'set.rankDesc':`Wenn an: Punkte werden erfasst und platziert`,
     'set.report':`Problem melden`,

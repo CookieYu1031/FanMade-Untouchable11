@@ -6,6 +6,7 @@ import { settings, saveSettings, saveSettingsLocal, applyTheme } from '../../sta
 import { curLevel } from '../../state/state.js';
 import { $ } from '../dom.js';
 import { refresh } from '../render.js';
+import { renderBoard } from '../render-board.js';
 import { renderLevels } from '../render-levels.js';
 import { setLevel } from '../level-select.js';
 import { renderSettings, renderVol } from './settings-view.js';
@@ -18,7 +19,9 @@ $('swExtra').addEventListener('click', () => {
   if (!settings.extra && curLevel().extra) setLevel(8); else renderLevels();   // 關閉時若停在額外難度就回到 Lv8
   renderSettings();
 });
-// 「參與排行」開關已移到排行榜視窗的頂欄（見 js/ui/modals/rank.js）；設定畫面保留該欄位的空格（index.html 的 #setSlot），之後新增的設定放在那裡
+// 輔助模式（設定頁最後一項）：開關後重畫圖板即可顯示 / 隱藏提示線（見 js/ui/aid-layer.js）
+$('swAid').addEventListener('click', () => { settings.aid = !settings.aid; saveSettings(); renderBoard(); renderSettings(); });
+// 「參與排行」開關已移到排行榜視窗的頂欄（見 js/ui/modals/rank.js）
 $('btnSettings').addEventListener('click', () => { renderSettings(); setModal.classList.add('open'); });
 $('setClose').addEventListener('click', () => { if (isLangView()) closeLangView(); else setModal.classList.remove('open'); });   // 語言選擇畫面裡的 ✕ = 回到設定畫面
 setModal.addEventListener('click', e => { if (e.target === setModal) setModal.classList.remove('open'); });

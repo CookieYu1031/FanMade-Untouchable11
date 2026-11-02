@@ -6,6 +6,8 @@ import { updateUndo } from '../storage/history.js';
 import { state, curLevel, curPieces, curTag, dims, absCells, colorOf, lvLong, clamp } from '../state/state.js';
 import { els, escapeHtml } from './dom.js';
 import { cellRects } from './svg.js';
+import { aidSVG } from './aid-layer.js';
+import { settings } from '../state/settings.js';
 import { trayUnit, trayPerRow, renderTray } from './render-tray.js';
 import { syncTools } from './piece-tools.js';
 import { isSmall, sideBySide as isSideBySide } from './viewport.js';
@@ -57,11 +59,13 @@ export function fitBoard() {
     availH = Math.max(120, els.wrap.clientHeight - parseFloat(wCS.paddingTop) - parseFloat(wCS.paddingBottom));
   } else availH = Math.max(300, viewportH() - 240);
   // #board 為 content-box，外框 2px × 2 另外加在格子區之外：兩個方向都先扣掉 4px，否則會多出 2px 而冒出捲軸（灰色條）
+  // 圖板四周另外預留 0.5 格（一般 / 沉浸模式都一樣）：輔助模式的延伸範圍會伸出框外 0.5 格，這樣才不會超出介面；所以格數各 +1 來算
   const BORDER = 4;
-  const c = clamp(Math.floor(Math.min((availW - BORDER) / D.cols, (availH - BORDER) / D.rows)), 8, imm ? 160 : 48);   // 下限 8：Lv7（24 格寬）在窄手機上若硬撐到 14px 會超出寬度而冒出捲軸
+  const c = clamp(Math.floor(Math.min((availW - BORDER) / (D.cols + 1), (availH - BORDER) / (D.rows + 1))), 8, imm ? 160 : 48);   // 下限 8：Lv7（24 格寬）在窄手機上若硬撐到 14px 會超出寬度而冒出捲軸
   state.cell = c;
 
   els.board.setAttribute('viewBox', `0 0 ${D.cols} ${D.rows}`);
+  els.board.style.margin = c / 2 + 'px';   // 預留的外圍 0.5 格（不影響格線與座標換算）
   els.board.style.width = D.cols * c + 'px';
   els.board.style.height = D.rows * c + 'px';
 }
@@ -79,6 +83,9 @@ export function renderBoard() {
     els.gGrid.innerHTML = `<g stroke="var(--gridline)" stroke-width=".05">${grid}</g>`;
     gridKey = gk;
   }
+
+  // 輔助模式：拼圖同色的 0.5 格延伸範圍（畫在拼圖下方；關閉時清空）
+  els.gAid.innerHTML = settings.aid ? aidSVG(curPieces().filter(p => p.placed).map(p => ({ cells: absCells(p), fill: colorOf(p.id).fill }))) : '';
 
   // 拼圖層：每片拼圖一個 <g>，供拖曳事件代理
   els.gPieces.innerHTML = curPieces().filter(p => p.placed).map(p =>

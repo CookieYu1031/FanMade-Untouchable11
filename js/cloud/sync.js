@@ -190,7 +190,7 @@ let timer = null, chain = Promise.resolve();
 const failed = { push: false, boards: false };   // 哪一類上次失敗（都成功才顯示「已同步」）
 const okIfHealthy = () => { if (failed.push || failed.boards) return; cloud.lastSync = Date.now(); setSync({ lastSync: cloud.lastSync }); setStatus('ok'); };
 const setSync = patch => Store.set(KEY_SYNC, { ...(Store.get(KEY_SYNC, {}) || {}), ...patch });
-const settingsPayload = (o = settings) => ({ nick: o.nick, lang: o.lang, theme: o.theme, extra: !!o.extra, rank: o.rank === true, near: !!o.near, hideBook: !!o.hideBook, vol: o.vol, musicVol: o.musicVol });
+const settingsPayload = (o = settings) => ({ nick: o.nick, lang: o.lang, theme: o.theme, extra: !!o.extra, rank: o.rank === true, aid: !!o.aid, near: !!o.near, hideBook: !!o.hideBook, vol: o.vol, musicVol: o.musicVol });
 let settingsMirror = null;   // 雲端目前的設定（canon 字串；null = 雲端沒有或還不知道，一律視為有差異）
 
 // ---- 主動同步用量（每個帳號獨立；存在本機，換分頁 / 重新整理 / 登出再登入都不會重置，到下一個定時點才歸零）----

@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Untouchable 11</title>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#F3F5FB" media="(prefers-color-scheme: light)">
@@ -186,6 +186,7 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
         <div class="board-wrap" id="boardWrap">
           <svg id="board" xmlns="http://www.w3.org/2000/svg" role="img" data-i18n-label="a11y.board">
             <g id="gGrid"></g>
+            <g id="gAid" style="pointer-events:none"></g>
             <g id="gPieces"></g>
             <g id="gPreview" style="pointer-events:none"></g>
             <g id="gOverlay" style="pointer-events:none"></g>
@@ -397,8 +398,8 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
       </div>
       <div class="srow srow2">
         <div class="sgrp sgrp-extra"><span><span data-i18n="set.extra"></span><small class="sub" data-i18n="set.extraDesc"></small></span><button type="button" class="switch" id="swExtra" role="switch" aria-checked="false" data-i18n-title="set.extra"><i></i></button></div>
-        <!-- 保留的空格（原「參與排行」開關已移到排行榜視窗頂欄，見 js/ui/modals/rank.js）：之後新增的設定放這裡 -->
-        <div class="sgrp sgrp-vol sgrp-extra sgrp-slot" id="setSlot"></div>
+        <!-- 輔助模式（設定頁最後一項；預設關）：延伸拼圖外圍，見 js/ui/aid-layer.js -->
+        <div class="sgrp sgrp-vol sgrp-extra" id="setSlot"><span><span data-i18n="set.aid"></span><small class="sub" data-i18n="set.aidDesc"></small></span><button type="button" class="switch" id="swAid" role="switch" aria-checked="false" data-i18n-title="set.aid"><i></i></button></div>
       </div>
     </div>
       <!-- 語言選擇畫面：點語言按鈕後取代上面的設定內容（標題列、視窗大小不變），選了語言就回到設定畫面（見 js/ui/modals/lang-picker.js） -->

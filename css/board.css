@@ -1,7 +1,7 @@
 /* 底板、選取拼圖的工具列、拖曳殘影 */
 .stage{margin-bottom:0;display:flex;flex-direction:column}
-.board-wrap{padding:14px;overflow:auto;display:flex;justify-content:center;flex:1}
-#board{display:block;box-sizing:content-box;flex:none;margin:auto;touch-action:none;background:var(--board);border-radius:3px;
+.board-wrap{padding:14px;overflow:auto;display:flex;justify-content:center;align-items:center;align-items:safe center;flex:1}   /* 圖板的 margin（0.5 格）由 fitBoard 設定 */
+#board{display:block;box-sizing:content-box;flex:none;margin:auto;overflow:visible;touch-action:none;background:var(--board);border-radius:3px;
   border:2px solid var(--line);user-select:none;-webkit-user-select:none}
 .pc{cursor:grab}
 .pc.sel rect{stroke:var(--ink);stroke-width:.1}

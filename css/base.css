@@ -2,15 +2,16 @@
 /* ============ 色彩 token（亮 / 暗主題）============ */
 :root{
   --bg:#F3F5FB; --panel:#FFFFFF; --ink:#2B2E4A; --muted:#6B6F8F; --line:#DADDF0;
-  --board:#FFFFFF; --gridline:#E3E6F5; --blue:#A9CFF7; --p6:#D2F0B5; --p4:#F9B8D2; --lvc:#F28B8B;
+  --zone-op:.4;   /* 輔助模式延伸範圍的不透明度：淺色模式較不明顯，所以調高；深色維持 .18 */
+  --board:#FFFFFF; --gridline:#CBD0E8; --blue:#A9CFF7; --p6:#D2F0B5; --p4:#F9B8D2; --lvc:#F28B8B;
   --mint:#B7E5CD;
   box-sizing:border-box;
   /* 安全區域（Safe Area：瀏覽器圓角 / 動態島 / 底部手勢列）：統一宣告成變數，全站共用（需 viewport-fit=cover，已於 index.html 宣告） */
   --sat:env(safe-area-inset-top,0px); --sar:env(safe-area-inset-right,0px); --sab:env(safe-area-inset-bottom,0px); --sal:env(safe-area-inset-left,0px);
   padding-top:var(--sat); padding-bottom:var(--sab);
 }
-/* 觸控裝置：只允許單指捲動（pan-x pan-y），不要雙擊放大、也不要雙指縮放；#board、拼圖卡片、工具列另有更嚴格的 touch-action:none（另見 js/ui/touch-guard.js） */
-*{touch-action:pan-x pan-y}
+/* 觸控裝置：允許單指捲動與雙指縮放（不限制縮放），但不要雙擊放大（manipulation）；#board、拼圖卡片、工具列另有更嚴格的 touch-action:none（拖曳拼圖用，另見 js/ui/touch-guard.js） */
+*{touch-action:manipulation}
 /* 觸控裝置：遊玩時長按不要選取文字（不跳出「複製」選取框）、不跳出系統選單、不拖曳圖片；輸入框與管理員的回報內容仍可選取 */
 @media (pointer:coarse){
   html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -20,12 +21,12 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;
-    --board:#20223B; --gridline:#34375A;
+    --board:#20223B; --gridline:#4A4E7A; --zone-op:.2;
   }
 }
 :root[data-theme="dark"]{
   --bg:#1B1D32; --panel:#262945; --ink:#ECEEFF; --muted:#A3A8CC; --line:#3A3E63;
-  --board:#20223B; --gridline:#34375A;
+  --board:#20223B; --gridline:#4A4E7A; --zone-op:.2;
 }
 html{scroll-padding-top:var(--sat)}
 *{box-sizing:border-box}

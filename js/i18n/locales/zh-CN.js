@@ -160,6 +160,8 @@ export default {
     'set.sfx':'音效',
     'set.extra':'扩展包',
     'set.extraDesc':'开启额外关卡与大师榜',
+    'set.aid':'辅助模式',
+    'set.aidDesc':'延伸拼图外围',
     'set.rank':'参与排行',
     'set.rankDesc':'开启时记录积分并排名',
     'set.report':'问题反馈',

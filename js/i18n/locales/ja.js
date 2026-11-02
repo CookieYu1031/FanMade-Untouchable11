@@ -160,6 +160,8 @@ export default {
     'set.sfx':'効果音',
     'set.extra':'拡張パック',
     'set.extraDesc':'オン：追加レベルとマスターランキングを解放',
+    'set.aid':'アシストモード',
+    'set.aidDesc':'パズルの外周を広げて表示',
     'set.rank':'ランキング参加',
     'set.rankDesc':'オン：得点を記録しランキングに反映',
     'set.report':'不具合を報告',

@@ -160,6 +160,8 @@ export default {
     'set.sfx':`Hiệu ứng`,
     'set.extra':`Gói mở rộng`,
     'set.extraDesc':`Khi bật: có thêm màn chơi bổ sung và bảng xếp hạng Bậc thầy`,
+    'set.aid':`Chế độ hỗ trợ`,
+    'set.aidDesc':`Mở rộng viền mảnh ghép`,
     'set.rank':`Tham gia bảng xếp hạng`,
     'set.rankDesc':`Khi bật: điểm số được ghi lại và xếp hạng`,
     'set.report':`Báo cáo sự cố`,

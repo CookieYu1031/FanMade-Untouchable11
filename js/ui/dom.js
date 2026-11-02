@@ -15,7 +15,7 @@ export const pageDir = e => {
   return k === 'a' ? -1 : k === 'd' ? 1 : 0;
 };
 export const els = {
-  board: $('board'), gGrid: $('gGrid'), gPieces: $('gPieces'), gPreview: $('gPreview'), gOverlay: $('gOverlay'),
+  board: $('board'), gGrid: $('gGrid'), gAid: $('gAid'), gPieces: $('gPieces'), gPreview: $('gPreview'), gOverlay: $('gOverlay'),
   wrap: $('boardWrap'), tray: $('tray'), title: $('levelTitle'),
   levels: $('levels'), bookInfo: $('bookInfo'), bookThumbs: $('bookThumbs'), toast: $('toast'), tools: $('pieceTools'),
 };

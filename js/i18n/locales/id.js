@@ -160,6 +160,8 @@ export default {
     'set.sfx':`Efek suara`,
     'set.extra':`Paket tambahan`,
     'set.extraDesc':`Saat aktif: level tambahan dan papan peringkat Master`,
+    'set.aid':`Mode bantuan`,
+    'set.aidDesc':`Perluas tepi potongan`,
     'set.rank':`Ikut papan peringkat`,
     'set.rankDesc':`Saat aktif: skor dicatat dan diberi peringkat`,
     'set.report':`Laporkan masalah`,

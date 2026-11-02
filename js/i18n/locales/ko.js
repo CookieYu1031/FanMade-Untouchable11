@@ -160,6 +160,8 @@ export default {
     'set.sfx':'효과음',
     'set.extra':'확장팩',
     'set.extraDesc':'켜면 추가 레벨과 마스터 랭킹 사용',
+    'set.aid':'도움 모드',
+    'set.aidDesc':'퍼즐 외곽 확장',
     'set.rank':'랭킹 참여',
     'set.rankDesc':'켜면 점수를 기록하고 랭킹에 반영',
     'set.report':'문제 신고',

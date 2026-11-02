@@ -8,6 +8,7 @@ export const sanitizeSettings = (s = {}) => ({
   lang: normLang(s.lang),
   theme: s.theme === 'light' ? 'light' : 'dark', // 預設暗色
   extra: s.extra === true,   // 是否啟用獨立關卡（預設關閉）（大師挑戰、危險貨物）
+  aid: s.aid === true,       // 輔助模式（預設關閉）：延伸拼圖外圍 0.5 格（同色透明範圍）
   rank: s.rank === true,     // 是否參與排行（預設關閉）；關閉時不計分、不上榜、不上傳積分，並移除榜上的積分資料
   near: s.near === true,     // 統計：是否顯示近似解（更多資訊）
   hideBook: s.hideBook === true, // 解答冊：是否隱藏解答

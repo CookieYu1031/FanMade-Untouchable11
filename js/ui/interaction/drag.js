@@ -6,6 +6,8 @@ import { state, curPieces, dims, getP, shapeOf, clamp, clonePieces, colorOf, boa
 import { els } from '../dom.js';
 import { miniSVG, cellRects } from '../svg.js';
 import { cellsOf } from '../../core/matrix.js';
+import { settings } from '../../state/settings.js';
+import { zoneRects } from '../aid-layer.js';
 import { renderBoard } from '../render-board.js';
 import { renderTray } from '../render-tray.js';
 import { dismissHint } from '../hint.js';
@@ -40,20 +42,25 @@ export function startDrag(e, id, fromTray) {
 }
 export function updateGhost() {
   const d = state.drag, p = getP(d.id);
-  d.ghost.innerHTML = miniSVG(shapeOf(p), state.cell, colorOf(p.id));
+  const m = shapeOf(p), pal = colorOf(p.id);
+  if (settings.aid) {   // 輔助模式：殘影四周多 0.5 格同色透明的延伸範圍
+    const cells = cellsOf(m), w = m[0].length + 1, h = m.length + 1;
+    d.ghost.innerHTML = `<svg viewBox="-.5 -.5 ${w} ${h}" width="${w * state.cell}" height="${h * state.cell}" aria-hidden="true">${zoneRects(cells, pal.fill)}${cellRects(cells, pal)}</svg>`;
+  } else d.ghost.innerHTML = miniSVG(m, state.cell, pal);
   placeGhost();
 }
 function placeGhost() {
-  const d = state.drag, m = shapeOf(getP(d.id));
-  d.ghost.style.left = d.cx - m[0].length * state.cell / 2 + 'px';
-  d.ghost.style.top = d.cy - m.length * state.cell / 2 + 'px';
+  const d = state.drag, m = shapeOf(getP(d.id)), pad = settings.aid ? 1 : 0;   // 輔助模式的殘影四周各多 0.5 格
+  d.ghost.style.left = d.cx - (m[0].length + pad) * state.cell / 2 + 'px';
+  d.ghost.style.top = d.cy - (m.length + pad) * state.cell / 2 + 'px';
 }
 // 底板上的半透明吸附預覽
 export function movePreview() {
   const d = state.drag, p = getP(d.id), snap = snapFromPointer(d.cx, d.cy, p);
   if (!snap) { els.gPreview.innerHTML = ''; return; }
   const cells = cellsOf(shapeOf(p)).map(([x, y]) => [snap.x + x, snap.y + y]);
-  els.gPreview.innerHTML = `<g opacity=".55">${cellRects(cells, colorOf(p.id))}</g>`;
+  const pal = colorOf(p.id);
+  els.gPreview.innerHTML = (settings.aid ? zoneRects(cells, pal.fill) : '') + `<g opacity=".55">${cellRects(cells, pal)}</g>`;   // 輔助模式：預覽也帶 0.5 格延伸範圍
 }
 function onMove(e) {
   const d = state.drag; if (!d) return;

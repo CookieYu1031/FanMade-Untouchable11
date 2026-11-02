@@ -160,6 +160,8 @@ export default {
     'set.sfx':'SFX',
     'set.extra':'Expansion pack',
     'set.extraDesc':'When on: extra levels and the Master leaderboard',
+    'set.aid':'Assist mode',
+    'set.aidDesc':'Extend piece perimeter',
     'set.rank':'Join leaderboard',
     'set.rankDesc':'When on: scores are recorded and ranked',
     'set.report':'Report a problem',
