@@ -1,10 +1,11 @@
 /* 沉浸模式 —— 圖板放大到佔滿整個頁面
  *   標題列：關卡名稱在左上角、「關閉沉浸模式」按鈕（與開啟按鈕同一顆）在右上角；左側維持工具列；
- *   右下角圓點（或按空格鍵）展開 / 收起小型拼圖盤（js/ui/fan.js；同拼圖盤、沒有頂欄），直接從裡面拖曳拼圖放進圖板。
+ *   右下角圓點（或按空格鍵）展開 / 收起小型拼圖盤（js/ui/fan.js；同拼圖盤、沒有頂欄，展開時直接蓋在圓點上），直接從裡面拖曳拼圖放進圖板。
+ *   沉浸模式禁止任何縮放（頁面縮放鎖定 + 手勢攔截見 touch-guard.js），並持續偵測版面：出現縮放 / 位移 / 圖板超出視窗時自動還原並重新排版（見下方 checkLayout）。
  *   樣式見 css/immersive.css；圖板大小的計算見 render-board.js 的 fitBoard。 */
 import { t } from '../i18n/i18n.js';
 import { state } from '../state/state.js';
-import { $ } from './dom.js';
+import { $, els } from './dom.js';
 import { fitBoard, renderBoard } from './render-board.js';
 import { renderTray } from './render-tray.js';
 import { startDrag } from './interaction/drag.js';
@@ -12,7 +13,7 @@ import { isFanOpen, setFanOpen } from './fan.js';
 import { isSmall, isPortrait } from './viewport.js';
 import { reflow } from './responsive.js';
 
-const root = document.documentElement, btn = $('btnImmersive');
+const root = document.documentElement, btn = $('btnImmersive'), vpMeta = $('viewportMeta'), stage = document.querySelector('.stage');
 
 // 按鈕在「開啟 / 關閉」兩種狀態的圖示（CSS 依 html.immersive 切換）、提示文字與 aria 狀態
 function syncButton() {
@@ -62,10 +63,49 @@ hint.addEventListener('click', () => exitImmersive());
 // 切換後重新計算圖板大小並重畫
 function relayout() { fitBoard(); renderBoard(); renderTray(); }
 
+// ---- 沉浸模式的縮放鎖定與版面偵測 ----
+// 一般模式的 viewport 允許縮放；沉浸模式改成鎖定（Android / 桌機瀏覽器會遵守；iOS Safari 無視鎖定，改靠 touch-guard.js 攔手勢 + 下面的偵測還原）
+const VP_NORMAL = vpMeta.content;
+const VP_LOCKED = 'width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+const VP_RESET = 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover';   // 與鎖定版內容不同，才會讓瀏覽器重新套用 viewport（把已縮放的頁面拉回 1 倍）
+const vv = window.visualViewport;
+const EPS = 1.5;   // 版面比對容許的誤差（px）
+let checkTimer = 0, lastRepair = 0;
+
+// 版面是否正常：沒有縮放 / 視覺視窗位移 / 頁面捲動，圖板區塊蓋滿視窗，圖板沒有跑出視窗
+function layoutOk() {
+  if (vv && (Math.abs(vv.scale - 1) > 0.01 || Math.abs(vv.offsetLeft) > EPS || Math.abs(vv.offsetTop) > EPS)) return false;
+  if (window.scrollX || window.scrollY) return false;
+  const r = stage.getBoundingClientRect(), b = els.board.getBoundingClientRect();
+  if (Math.abs(r.left) > EPS || Math.abs(r.top) > EPS || Math.abs(r.width - window.innerWidth) > EPS || Math.abs(r.height - window.innerHeight) > EPS) return false;
+  return b.left >= -EPS && b.top >= -EPS && b.right <= window.innerWidth + EPS && b.bottom <= window.innerHeight + EPS;
+}
+function resetZoom() {
+  vpMeta.content = VP_RESET;
+  requestAnimationFrame(() => { if (state.immersive) vpMeta.content = VP_LOCKED; });
+}
+// 偵測到異常：縮放拉回 1 倍、捲動歸位、重新排版（拖曳中先等放下；0.4 秒內不重複處理，避免來回震盪）
+function checkLayout() {
+  if (!state.immersive) return;
+  if (state.drag) { scheduleCheck(300); return; }
+  if (layoutOk() || performance.now() - lastRepair < 400) return;
+  lastRepair = performance.now();
+  if (vv && Math.abs(vv.scale - 1) > 0.01) resetZoom();
+  window.scrollTo(0, 0);
+  reflow();
+}
+function scheduleCheck(ms = 0) { clearTimeout(checkTimer); checkTimer = setTimeout(() => requestAnimationFrame(checkLayout), ms); }
+if (vv) ['resize', 'scroll'].forEach(t => vv.addEventListener(t, () => scheduleCheck()));
+window.addEventListener('scroll', () => scheduleCheck());
+setInterval(() => { if (state.immersive) checkLayout(); }, 1500);   // 保險：事件沒觸發的情況（如瀏覽器選單縮放）
+
 export function enterImmersive() {
   if (state.immersive || state.drag) return;
   state.immersive = true;
   root.classList.add('immersive');
+  vpMeta.content = VP_LOCKED;
+  if (vv && Math.abs(vv.scale - 1) > 0.01) resetZoom();   // 進入前頁面已被縮放：拉回 1 倍
+  window.scrollTo(0, 0);
   setFanOpen(false); syncButton(); placeGroupBtn(); relayout(); syncRotateHint();
 }
 export function exitImmersive() {
@@ -73,6 +113,7 @@ export function exitImmersive() {
   setFanOpen(false);
   state.immersive = false;
   root.classList.remove('immersive');
+  vpMeta.content = VP_NORMAL;
   syncButton(); placeGroupBtn(); relayout(); syncRotateHint();
 }
 // 空格鍵 / 圓點：換出或收起小型拼圖盤（只在沉浸模式有效；拖曳中不處理）

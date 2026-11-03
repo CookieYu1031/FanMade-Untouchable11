@@ -1,7 +1,7 @@
 {
   "name": "Untouchable 11",
   "short_name": "Untouchable 11",
-  "description": "線上遊玩《Untouchable 11》與其衍伸作品",
+  "description": "Play Untouchable 11 and more puzzles online.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

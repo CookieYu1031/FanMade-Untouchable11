@@ -14,7 +14,7 @@ html.immersive #btnImmersive .i-off{display:block}
 
 html.immersive{overflow:hidden}
 /* 圖板區塊：蓋滿整個視窗（低於拖曳殘影 z=50 與各視窗 z=60） */
-html.immersive .stage{position:fixed;inset:0;z-index:45;margin:0;border:0;border-radius:0;contain:none}
+html.immersive .stage{position:fixed;inset:0;z-index:45;margin:0;border:0;border-radius:0;contain:none;touch-action:none}   /* touch-action:none：沉浸模式不允許縮放 / 平移手勢 */
 /* 標題列：名稱在左、按鈕在右；避開動態島 / 圓角 */
 html.immersive .stage>h2{flex:none;height:calc(48px + var(--sat));padding:var(--sat) calc(14px + var(--sar)) 0 calc(16px + var(--sal))}
 html.immersive .stage-body{padding:0 var(--sar) var(--sab) var(--sal)}
@@ -31,8 +31,8 @@ html.immersive .fan-dot{display:block;position:absolute;z-index:8;width:28px;hei
 .fan-dot:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .fan-dot.open{background:var(--ink)}
 
-/* ---- 小型拼圖盤：圓點上方、靠右對齊；寬高由 js/ui/fan.js 依可用空間設定（內容沿用 tray.css 的 .trow / .card，沒有頂欄）---- */
-html.immersive .fan{display:block;position:absolute;z-index:7;right:calc(18px + var(--sar));bottom:calc(18px + var(--sab) + 28px + 14px);
+/* ---- 小型拼圖盤：右下角、直接蓋在圓點上（不避開圓點；拖出拼圖會自動收起）；寬高由 js/ui/fan.js 依可用空間設定（內容沿用 tray.css 的 .trow / .card，沒有頂欄）---- */
+html.immersive .fan{display:block;position:absolute;z-index:9;right:calc(18px + var(--sar));bottom:calc(18px + var(--sab));
   overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box;
   background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.28);
   transform-origin:100% 100%;visibility:hidden;opacity:0;transform:scale(.85);

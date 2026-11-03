@@ -14,9 +14,12 @@
 .rpt-send{flex:none;min-width:96px;padding:9px 18px}
 
 /* ============ 管理員面板 ============ */
+#adminModal{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}   /* 讓格子高度 = 視窗高度：.admwrap 的 max-height:100% 才有基準，內容過高時面板縮進視窗、改在內容區捲動（否則百分比高度被當成沒有上限） */
 /* 外層 = 面板 + 窄視窗的翻頁列（翻頁列在面板外，樣式沿用 .navbar，見 css/solution.css） */
 .admwrap{width:min(820px,100%);max-height:100%;display:flex;flex-direction:column;gap:12px}
 #adminModal .adminbox{width:100%;display:flex;flex-direction:column;flex:0 1 auto;min-height:0}
+#adminModal{overflow:hidden;overscroll-behavior:none}   /* 視窗本身與背後的頁面都不捲動 */
+#adminModal .adminbox>.panel,.admtabs{flex:none}   /* 頂欄（標題列 + 分頁）固定不縮、不隨內容捲動；只有 .admbody 內部捲動 */
 .admpager{display:none;flex:none}
 .admpager.hide{visibility:hidden}   /* 問題回報分頁 / 讀取中：保留位置但不顯示，視窗高度不變 */
 .admtabs{display:flex;justify-content:space-between;gap:8px;padding:12px 14px 0}
@@ -25,33 +28,32 @@
 .admtab[aria-selected="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .admtab:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .admtab .dot{display:inline-block;min-width:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:#F28B8B;color:#2B2E4A;font-size:11px;line-height:18px;text-align:center}
-.admbody{margin:10px 14px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto;height:min(480px,calc(100vh - 190px));min-height:220px;display:flex;flex-direction:column;gap:10px}
+.admbody{margin:10px 14px 14px;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto;height:min(480px,calc(100vh - 190px));min-height:220px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}   /* 捲到底 / 頂時不把捲動傳給外層，頂欄不受影響 */
 .admcols{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));grid-template-rows:minmax(0,1fr) auto;gap:10px 12px;align-items:stretch;flex:1 1 auto;min-height:0}   /* 第 1 列：各欄卡片（拉長到只剩備註的空間）；第 2 列：各欄自己的備註（卡片先排、備註後排，自動對齊各欄） */
 .admcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);min-width:0;display:flex;flex-direction:column;justify-content:space-between}
 .admcard h3{margin:0 0 8px;text-align:center;font-size:15px}
 .admrow{display:flex;justify-content:space-between;gap:10px;padding:3px 0;font-size:13.5px;font-variant-numeric:tabular-nums}
 .admrow span:first-child{color:var(--muted);white-space:nowrap}
 .admrow b{font-weight:700;text-align:right}
-.admtable{flex:1 1 auto;width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
-.admtable th,.admtable td{text-align:center;padding:2px 6px;border-bottom:1px dashed var(--line)}
+.admtable{flex:1 1 auto;width:100%;table-layout:fixed;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+.admtable th,.admtable td{text-align:center;padding:4px 6px;border-bottom:1px dashed var(--line);vertical-align:middle}
 .admtable thead th{font-size:12px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line)}
-.admtable tbody th{text-align:left;font-weight:400;color:var(--muted);white-space:nowrap}
 .admtable td{font-weight:700}
-.admtable tbody tr:last-child th,.admtable tbody tr:last-child td{border-bottom:0}
-html[dir="rtl"] .admtable tbody th{text-align:right}
+.admtable tbody tr:last-child td{border-bottom:0}
+.admtable .lvtag{white-space:normal;line-height:1.3}   /* 欄寬固定：較長的關卡名稱可換行 */
 .admnote{margin:0 2px;font-size:12px;color:var(--muted);line-height:1.5;min-width:0}   /* 每欄備註放在該欄卡片正下方；每句一行（太長自動換行） */
 .admnote p{margin:0}
 .admstate{padding:28px 0;text-align:center;color:var(--muted)}
 .admstate button{margin-left:8px}
 /* 問題回報：左側清單、右側內容 */
 .admrep{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,8fr);gap:12px;height:100%;min-height:0}
-.admlist{display:flex;flex-direction:column;gap:8px;overflow:auto;border:1px solid var(--line);border-radius:14px;padding:8px;min-height:0}
+.admlist{display:flex;flex-direction:column;gap:8px;overflow:auto;overscroll-behavior:contain;border:1px solid var(--line);border-radius:14px;padding:8px;min-height:0}
 .admitem{display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:8px 10px;cursor:pointer;min-width:0;-webkit-tap-highlight-color:transparent}
 .admitem[aria-current="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 .admitem b{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .admitem small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .admitem .who{align-self:flex-end;font-size:12px;color:var(--ink)}
-.admdetail{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:0;overflow:auto}
+.admdetail{position:relative;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:0;overflow:auto;overscroll-behavior:contain}
 .admdetail h3{margin:0 56px 8px 0;font-size:16px;overflow-wrap:anywhere}
 .admdetail p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;font-size:14px}
 .admdetail .meta{margin-top:auto;padding-top:12px;text-align:right;font-size:13px}
@@ -72,3 +74,11 @@ html[dir="rtl"] .admtable tbody th{text-align:right}
   .admtab{padding:8px 12px}
 }
 html[dir="rtl"] .admitem{text-align:right}
+/* 視窗高度不足（如手機橫放）：面板固定撐滿視窗高度（各分頁高度一致、切換不跳動），內容區可上下捲動 */
+@media (max-height:560px){
+  .admwrap{height:100%}
+  #adminModal .adminbox{flex:1 1 0}
+  .admbody{height:auto;flex:1 1 0;min-height:0}
+  .admcols{flex:none}
+  .admrep{height:auto;flex:1 0 240px}
+}

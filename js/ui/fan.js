@@ -1,4 +1,4 @@
-/* 沉浸模式的小型拼圖盤 —— 點右下角圓點，在圓點上方彈出（內容與一般拼圖盤相同，只是沒有頂欄）
+/* 沉浸模式的小型拼圖盤 —— 點右下角圓點，在右下角展開並蓋住圓點（內容與一般拼圖盤相同，只是沒有頂欄）
  *   排列沿用 render-tray.js 的 trayRows（同樣的行、欄寬比重、槽位順序）。
  *   高度上限：視窗夠高（如電腦視窗，>= 560px）→ 不超過視窗高度的一半；
  *             視窗不夠高（如手機打橫）→ 只要不擋到上方標題列的按鈕（關閉沉浸模式等）即可。
@@ -39,7 +39,7 @@ export function renderFan() {
   const bar = stage.querySelector(':scope > h2');
   const barBottom = bar ? bar.getBoundingClientRect().bottom - sr.top : 0;   // 標題列下緣（含右上角按鈕與安全區）
   const rightEdge = dr.right - sr.left;
-  const bottomGap = parseFloat(getComputedStyle(fan).bottom) || 0;           // 小拼圖盤下緣 → 圖板區塊下緣（由 CSS 決定，在圓點上方）
+  const bottomGap = parseFloat(getComputedStyle(fan).bottom) || 0;           // 小拼圖盤下緣 → 圖板區塊下緣（由 CSS 決定，與圓點下緣齊平）
   const popBottom = sr.height - bottomGap;                                   // 小拼圖盤下緣（相對圖板區塊上緣）
 
   // 可用高度：不擋到標題列按鈕；視窗夠高時再限制在一半以內

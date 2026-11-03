@@ -7,7 +7,7 @@
  *   管理員面板只有繁體中文 / 英文（簡體中文使用者看到繁體中文，其他語言看到英文）。 */
 import { getLang, LANG_INFO } from '../../i18n/i18n.js';
 import { cloud, onCloud, rankApi, dayOf, lvField } from '../../cloud/sync.js';
-import { levelOf } from '../../core/config.js';
+import { levelOf, LV_COLORS, LV_INK } from '../../core/config.js';
 import { $, escapeHtml, pageDir } from '../dom.js';
 
 const STR = {
@@ -126,8 +126,10 @@ function siteHtml(r) {
 }
 function levelsHtml(r) {
   const s = S(), n = v => Number(v).toLocaleString();
-  const table = (i, list, base) => `<div class="admcard admpg" data-p="${i}"><table class="admtable"><thead><tr><th>${s.lv}</th><th>${s.single}</th><th>${s.full}</th></tr></thead><tbody>${
-    list.map(x => `<tr><th scope="row">${base ? 'Lv' + x.lv : s[x.k]}</th><td>${n(x.single)}</td><td>${x.all === null ? '' : n(x.all)}</td></tr>`).join('')   // 沒有「全解出」的關卡（隨機、危險貨物）留白
+  // 兩張表欄寬完全相同（<colgroup> + table-layout:fixed）；關卡標籤帶該關卡的顏色底，與一般統計頁面相同
+  const tag = (x, base) => `<span class="lvtag" style="background:${LV_COLORS[x.lv] || 'var(--bg)'};color:${LV_INK[x.lv] || 'var(--ink)'}">${base ? 'Lv' + x.lv : s[x.k]}</span>`;
+  const table = (i, list, base) => `<div class="admcard admpg" data-p="${i}"><table class="admtable"><colgroup><col style="width:40%"><col style="width:30%"><col style="width:30%"></colgroup><thead><tr><th>${s.lv}</th><th>${s.single}</th><th>${s.full}</th></tr></thead><tbody>${
+    list.map(x => `<tr><td>${tag(x, base)}</td><td>${n(x.single)}</td><td>${x.all === null ? '' : n(x.all)}</td></tr>`).join('')   // 沒有「全解出」的關卡（隨機、危險貨物）留白
   }</tbody></table></div>`;
   return columns([table(0, r.base, true), table(1, r.extra, false)], s.noteLevels);
 }

@@ -2,7 +2,7 @@
  *   分頁：第 1 頁 = Lv1~8；第 2 頁 = 獨立關卡（大師挑戰、危險貨物…，需開啟額外關卡）
  *   小視窗（<= 640px，手機直向）：「更多資訊」開啟時，收錄進度只顯示 % 數（不放進度條 / 圓點 / 星星），整張表不需要左右滑動；
  *     視窗高度放不下 Lv1~8 整頁時，自動改成 Lv1~4 / Lv5~8 / 獨立關卡三頁
- *   換頁：視窗下方的左右箭頭（或鍵盤左右鍵），做法與解答檢視相同；沒有上（下）一頁時箭頭不可點按 */
+ *   換頁：視窗下方的左右箭頭（或鍵盤左右鍵），做法與解答檢視相同；沒有上（下）一頁時箭頭不可點按；只有一頁時整個翻頁列隱藏 */
 import { t } from '../../i18n/i18n.js';
 import { LEVEL_ORDER, LV_COLORS, LV_INK } from '../../core/config.js';
 import { loadBook } from '../../storage/book.js';
@@ -101,6 +101,7 @@ export function renderStats() {
   tbl.innerHTML = tableHTML(state.statPage, near, book, all, compact, cols);
   wrap.style.minHeight = Math.min(maxH, limit) + 'px';
   $('statTitle').textContent = t('stat.title');
+  $('statNav').hidden = all.length < 2;   // 只有一頁（沒開額外關卡、視窗放得下）：隱藏頁碼與翻頁列
   $('statPg').textContent = `${state.statPage + 1} / ${all.length}`;   // 頁數顯示在 ← → 兩個按鈕中間
   const nb = $('statNearBtn');   // 更多資訊（近似解列；窄視窗另含收錄進度欄）：睜眼 = 目前顯示，閉眼 = 目前隱藏（與解答冊的隱藏按鈕相同）
   nb.innerHTML = near ? EYE : EYE_OFF;

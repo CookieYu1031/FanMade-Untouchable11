@@ -2,20 +2,20 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Untouchable 11</title>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#F3F5FB" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1B1D32" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192-dark.png">
 <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon-dark.png">
+<link rel="manifest" href="manifest-dark.webmanifest">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="線上遊玩《Untouchable 11》與其衍伸作品">
+<meta name="description" content="Play Untouchable 11 and more puzzles online.">
 <meta property="og:title" content="Untouchable 11">
-<meta property="og:description" content="線上遊玩《Untouchable 11》與其衍伸作品">
+<meta property="og:description" content="Play Untouchable 11 and more puzzles online.">
 <meta property="og:url" content="https://cookieyu1031.github.io/untouchable11/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Untouchable 11">
@@ -329,7 +329,7 @@ html[lang="hi"] #loader{font-family:"Noto Sans Devanagari","Noto Sans",system-ui
       </div>
       <div style="overflow:auto;max-height:calc(100vh - 160px)"><table class="stat" id="statTable"></table></div>
     </div>
-    <div class="navbar">
+    <div class="navbar" id="statNav">
       <div class="navgrp">
         <button class="navbtn" id="statPrev" type="button" disabled data-nosound data-i18n-label="a11y.prev"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
         <span class="navpg" id="statPg" aria-live="polite"></span>
